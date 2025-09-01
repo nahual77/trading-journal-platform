@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-06-08 01:41:47",
+  "login": 80340837,
+  "server": "DerivSVG-Server-02",
+  "balance": 37.00,
+  "equity": 37.00,
+  "margin": 0.00,
+  "freeMargin": 37.00,
+  "currency": "USD",
+  "connected": true,
+  "ea_version": "corrected",
+  "export_count": 1
+}
