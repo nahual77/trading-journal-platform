@@ -32,4 +32,4 @@ Puedes abrir un *issue* o enviar un *pull request* en GitHub.
 
 ---
 
-✍️ Autor: Ivan M.  
+✍️ Autor: Ivan M.
