@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TradingJournal } from '../types/trading';
 import { Plus, Edit3, Trash2, X, Check } from 'lucide-react';
+import { UserMenu } from './UserMenu';
 
 interface JournalTabsProps {
   journals: TradingJournal[];
@@ -9,6 +10,8 @@ interface JournalTabsProps {
   onCreateJournal: (name: string) => void;
   onUpdateJournalName: (journalId: string, name: string) => void;
   onDeleteJournal: (journalId: string) => void;
+  user?: any;
+  onLogout?: () => void;
 }
 
 export function JournalTabs({
@@ -18,6 +21,8 @@ export function JournalTabs({
   onCreateJournal,
   onUpdateJournalName,
   onDeleteJournal,
+  user,
+  onLogout,
 }: JournalTabsProps) {
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
@@ -63,10 +68,12 @@ export function JournalTabs({
 
   return (
     <div className="border-b border-gray-700">
-      <div className="flex items-center overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-        {/* Pestañas de diarios */}
-        <div className="flex space-x-1 px-4">
-          {journals.map((journal) => {
+      <div className="flex items-center justify-between">
+        {/* Contenedor de pestañas con scroll */}
+        <div className="flex items-center overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 flex-1">
+          {/* Pestañas de diarios */}
+          <div className="flex space-x-1 px-4">
+            {journals.map((journal) => {
             const isActive = journal.id === activeJournalId;
             const isEditing = editingTabId === journal.id;
             
@@ -165,52 +172,60 @@ export function JournalTabs({
           })}
         </div>
 
-        {/* Botón para agregar nuevo diario */}
-        <div className="flex-shrink-0 px-4">
-          {showCreateForm ? (
-            <div className="flex items-center space-x-2 bg-gray-800 rounded-lg px-3 py-2">
-              <input
-                type="text"
-                placeholder="Nombre del diario"
-                value={newJournalName}
-                onChange={(e) => setNewJournalName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleCreateJournal();
-                  if (e.key === 'Escape') {
+          {/* Botón para agregar nuevo diario */}
+          <div className="flex-shrink-0 px-4">
+            {showCreateForm ? (
+              <div className="flex items-center space-x-2 bg-gray-800 rounded-lg px-3 py-2">
+                <input
+                  type="text"
+                  placeholder="Nombre del diario"
+                  value={newJournalName}
+                  onChange={(e) => setNewJournalName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleCreateJournal();
+                    if (e.key === 'Escape') {
+                      setShowCreateForm(false);
+                      setNewJournalName('');
+                    }
+                  }}
+                  className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-blue-500 min-w-[150px]"
+                  autoFocus
+                />
+                <button
+                  onClick={handleCreateJournal}
+                  disabled={!newJournalName.trim()}
+                  className="p-1 text-green-400 hover:text-green-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Check className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => {
                     setShowCreateForm(false);
                     setNewJournalName('');
-                  }
-                }}
-                className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-blue-500 min-w-[150px]"
-                autoFocus
-              />
+                  }}
+                  className="p-1 text-red-400 hover:text-red-300"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
               <button
-                onClick={handleCreateJournal}
-                disabled={!newJournalName.trim()}
-                className="p-1 text-green-400 hover:text-green-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => setShowCreateForm(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600/10 border border-blue-600/30 text-blue-400 rounded-lg hover:bg-blue-600/20 hover:border-blue-600/50 transition-colors"
               >
-                <Check className="h-4 w-4" />
+                <Plus className="h-4 w-4" />
+                <span className="text-sm">Nuevo Diario</span>
               </button>
-              <button
-                onClick={() => {
-                  setShowCreateForm(false);
-                  setNewJournalName('');
-                }}
-                className="p-1 text-red-400 hover:text-red-300"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600/10 border border-blue-600/30 text-blue-400 rounded-lg hover:bg-blue-600/20 hover:border-blue-600/50 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              <span className="text-sm">Nuevo Diario</span>
-            </button>
-          )}
+            )}
+          </div>
         </div>
+
+        {/* Menú de usuario */}
+        {user && onLogout && (
+          <div className="flex-shrink-0 px-4">
+            <UserMenu user={user} onLogout={onLogout} />
+          </div>
+        )}
       </div>
 
       {/* Información del diario activo */}

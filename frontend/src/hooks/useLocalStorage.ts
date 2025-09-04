@@ -28,18 +28,47 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   // Escuchar cambios en el localStorage desde otras pestañas
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === key && e.newValue !== null) {
-        try {
-          setStoredValue(JSON.parse(e.newValue));
-        } catch (error) {
-          console.error(`Error parsing localStorage value for key "${key}":`, error);
+      if (e.key === key) {
+        if (e.newValue === null) {
+          // Si se eliminó la clave, usar el valor inicial
+          setStoredValue(initialValue);
+        } else {
+          try {
+            setStoredValue(JSON.parse(e.newValue));
+          } catch (error) {
+            console.error(`Error parsing localStorage value for key "${key}":`, error);
+            setStoredValue(initialValue);
+          }
         }
       }
     };
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [key]);
+  }, [key, initialValue]);
+
+  // Verificar periódicamente si el localStorage fue limpiado
+  useEffect(() => {
+    const checkLocalStorage = () => {
+      try {
+        const item = window.localStorage.getItem(key);
+        if (item === null && storedValue !== initialValue) {
+          // Si la clave no existe en localStorage pero tenemos un valor diferente al inicial
+          setStoredValue(initialValue);
+        }
+      } catch (error) {
+        console.error(`Error checking localStorage key "${key}":`, error);
+      }
+    };
+
+    // Verificar inmediatamente
+    checkLocalStorage();
+    
+    // Verificar cada segundo por si se limpia el localStorage
+    const interval = setInterval(checkLocalStorage, 1000);
+    
+    return () => clearInterval(interval);
+  }, [key, initialValue, storedValue]);
 
   return [storedValue, setValue] as const;
 }

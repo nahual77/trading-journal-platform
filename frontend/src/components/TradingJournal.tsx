@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTradingJournalState } from '../hooks/useTradingJournalState';
 import { JournalTabs } from './JournalTabs';
-import { TradingTable } from './TradingTable';
+import { TradingTableWithFilters } from './TradingTableWithFilters';
 import { TradingPlan } from './TradingPlan';
 import { MT5Panel } from './MT5Panel';
 import BalanceChart from './BalanceChart';
+import { supabase } from '../supabaseClient';
 import { 
   BookOpen, 
   Target, 
@@ -17,9 +18,14 @@ import {
 
 type ActiveView = 'journals' | 'plan' | 'mt5';
 
-export function TradingJournal() {
+interface TradingJournalProps {
+  isNewUser?: boolean;
+}
+
+export default function TradingJournal({ isNewUser = false }: TradingJournalProps) {
   const [activeView, setActiveView] = useState<ActiveView>('journals');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   
   // Estados para calculadora independiente por diario
   const [initialBalances, setInitialBalances] = useState<{[key: string]: number}>({});
@@ -61,19 +67,40 @@ export function TradingJournal() {
     handleExportAllJournalsCSV,
   } = useTradingJournalState();
 
+
+
+
+
+  // Resetear estado para usuarios nuevos
+  useEffect(() => {
+    if (isNewUser) {
+      // Limpiar el localStorage para que use el estado inicial de usuario nuevo
+      localStorage.removeItem('nagual-trader-journal-state');
+      // Recargar la página para aplicar el nuevo estado
+      window.location.reload();
+    }
+  }, [isNewUser]);
+
   const handleExportData = () => {
     exportData();
   };
 
-  // Obtener balance del diario activo
-  const currentInitialBalance = initialBalances[activeJournal.id] || 0;
+  // Obtener balance del diario activo (solo localStorage)
+  const currentInitialBalance = activeJournal ? 
+    (initialBalances[activeJournal.id] || 0) : 0;
 
   // Actualizar balance específico del diario activo
-  const updateInitialBalance = (value: number) => {
+  const updateInitialBalanceLocal = (value: number) => {
+    console.log('🚀 updateInitialBalanceLocal llamada con valor:', value);
+    console.log('💰 Actualizando saldo inicial:', { journalId: activeJournal?.id, value });
+    
     setInitialBalances(prev => ({
       ...prev,
-      [activeJournal.id]: value
+      [activeJournal?.id || '']: value
     }));
+    
+    // Solo guardar en localStorage (base de datos desactivada temporalmente)
+    console.log('💾 Guardando en localStorage...');
   };
 
   // Funciones para manejar puntos del plan de trading
@@ -94,11 +121,12 @@ export function TradingJournal() {
 
   // Calcular total de beneficios del diario activo
   const totalBenefits = useMemo(() => {
+    if (!activeJournal) return 0;
     return activeJournal.entries.reduce((total, entry) => {
       const benefit = parseFloat(entry.beneficio) || 0;
       return total + benefit;
     }, 0);
-  }, [activeJournal.entries]);
+  }, [activeJournal?.entries]);
 
   // Persistencia separada por diario
   useEffect(() => {
@@ -134,6 +162,43 @@ export function TradingJournal() {
     localStorage.setItem('nagual_plan_points', JSON.stringify(planPoints));
   }, [planPoints]);
 
+  // Obtener usuario actual
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+    };
+    getUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+
+
+  // Verificar que tenemos un activeJournal válido
+  if (!activeJournal) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full mb-4">
+            <BookOpen className="h-8 w-8 text-white animate-spin" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">Cargando...</h2>
+          <p className="text-gray-400">Inicializando tu diario de trading</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Función para manejar logout
+  const handleLogout = () => {
+    setUser(null);
+  };
+
   const navigationItems = [
     {
       id: 'journals' as ActiveView,
@@ -168,6 +233,8 @@ export function TradingJournal() {
               onCreateJournal={createJournal}
               onUpdateJournalName={updateJournalName}
               onDeleteJournal={deleteJournal}
+              user={user}
+              onLogout={handleLogout}
             />
 
             {/* Tabla de operaciones */}
@@ -192,7 +259,10 @@ export function TradingJournal() {
                         type="number"
                         step="0.01"
                         value={currentInitialBalance || ''}
-                        onChange={(e) => updateInitialBalance(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => {
+                          console.log('📝 Input onChange ejecutado:', e.target.value);
+                          updateInitialBalanceLocal(parseFloat(e.target.value) || 0);
+                        }}
                         className="w-20 px-2 py-1 bg-gray-700 border border-gray-600 rounded text-white text-xs text-right"
                         placeholder="0.00"
                       />
@@ -217,7 +287,7 @@ export function TradingJournal() {
                 </div>
               </div>
               
-              <TradingTable
+              <TradingTableWithFilters
                 entries={activeJournal.entries}
                 columns={activeJournal.customColumns}
                 onAddEntry={() => createTradeEntry(activeJournal.id)}

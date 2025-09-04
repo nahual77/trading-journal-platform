@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { 
   AppState, 
@@ -11,7 +11,36 @@ import {
   TradeImage
 } from '../types/trading';
 
-// Estado inicial de la aplicación
+// Estado inicial para usuarios nuevos (solo un diario)
+const createNewUserState = (): AppState => {
+  const journalId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+  
+  return {
+    journals: [
+      {
+        id: journalId,
+        name: 'Mi Diario de Trading',
+        entries: [],
+        customColumns: DEFAULT_COLUMNS,
+        mt5Config: {
+          broker: 'Deriv (SVG) LLC',
+          accountNumber: journalId.substr(0, 8),
+          serverName: 'DerivSVG-Server-02',
+          password: '',
+          balance: 1000.00,
+          equity: 1000.00,
+          margin: 0.00,
+          freeMargin: 1000.00,
+          connected: false,
+        }
+      }
+    ],
+    activeJournalId: journalId,
+    tradingPlan: DEFAULT_TRADING_PLAN,
+  };
+};
+
+// Estado inicial de la aplicación (para usuarios existentes)
 const initialAppState: AppState = {
   journals: [
     {
@@ -54,10 +83,36 @@ const initialAppState: AppState = {
 };
 
 export function useTradingJournalState() {
-  const [appState, setAppState] = useLocalStorage<AppState>('nagual-trader-journal-state', initialAppState);
+  // Detectar si es un usuario nuevo (sin datos guardados)
+  const [appState, setAppState] = useLocalStorage<AppState>('nagual-trader-journal-state', createNewUserState);
 
+  // Crear un estado válido siempre
+  const getValidState = (): AppState => {
+    if (appState && appState.journals && appState.journals.length > 0) {
+      return appState;
+    }
+    return createNewUserState();
+  };
+
+  const validAppState = getValidState();
+  
+  // Debug: ver qué está pasando
+  console.log('useTradingJournalState Debug:', {
+    appState,
+    validAppState,
+    hasJournals: validAppState.journals?.length,
+    activeJournalId: validAppState.activeJournalId
+  });
+  
   // Obtener journal activo
-  const activeJournal = appState.journals.find(j => j.id === appState.activeJournalId) || appState.journals[0];
+  const activeJournal = validAppState.journals.find(j => j.id === validAppState.activeJournalId) || validAppState.journals[0];
+
+  // Si el estado no era válido, actualizarlo
+  React.useEffect(() => {
+    if (appState !== validAppState) {
+      setAppState(validAppState);
+    }
+  }, [appState, validAppState, setAppState]);
 
   // Función para generar IDs únicos
   const generateId = () => Date.now().toString() + Math.random().toString(36).substr(2, 9);
@@ -140,6 +195,7 @@ export function useTradingJournalState() {
       id: generateId(),
       fecha: today.toISOString().split('T')[0],
       hora: today.toTimeString().split(' ')[0].substring(0, 5),
+      activo: '',
       razonEntrada: '',
       antes: [], // Array de imágenes
       durante: [], // Array de imágenes
@@ -172,7 +228,7 @@ export function useTradingJournalState() {
   }, [setAppState]);
 
   const updateTradeEntry = useCallback((entryId: string, updates: Partial<TradeEntry>, journalId?: string) => {
-    const targetJournalId = journalId || appState.activeJournalId;
+    const targetJournalId = journalId || validAppState.activeJournalId;
     
     setAppState(prev => ({
       ...prev,
@@ -187,10 +243,10 @@ export function useTradingJournalState() {
           : journal
       ),
     }));
-  }, [appState.activeJournalId, setAppState]);
+  }, [validAppState.activeJournalId, setAppState]);
 
   const deleteTradeEntry = useCallback((entryId: string, journalId?: string) => {
-    const targetJournalId = journalId || appState.activeJournalId;
+    const targetJournalId = journalId || validAppState.activeJournalId;
     
     setAppState(prev => ({
       ...prev,
@@ -200,12 +256,12 @@ export function useTradingJournalState() {
           : journal
       ),
     }));
-  }, [appState.activeJournalId, setAppState]);
+  }, [validAppState.activeJournalId, setAppState]);
 
   // === GESTIÓN DE COLUMNAS ===
   
   const addCustomColumn = useCallback((column: Omit<ColumnDefinition, 'id' | 'order'>, journalId?: string) => {
-    const targetJournalId = journalId || appState.activeJournalId;
+    const targetJournalId = journalId || validAppState.activeJournalId;
     
     setAppState(prev => ({
       ...prev,
@@ -225,10 +281,10 @@ export function useTradingJournalState() {
           : journal
       ),
     }));
-  }, [appState.activeJournalId, setAppState]);
+  }, [validAppState.activeJournalId, setAppState]);
 
   const updateColumn = useCallback((columnId: string, updates: Partial<ColumnDefinition>, journalId?: string) => {
-    const targetJournalId = journalId || appState.activeJournalId;
+    const targetJournalId = journalId || validAppState.activeJournalId;
     
     setAppState(prev => ({
       ...prev,
@@ -243,10 +299,10 @@ export function useTradingJournalState() {
           : journal
       ),
     }));
-  }, [appState.activeJournalId, setAppState]);
+  }, [validAppState.activeJournalId, setAppState]);
 
   const removeColumn = useCallback((columnId: string, journalId?: string) => {
-    const targetJournalId = journalId || appState.activeJournalId;
+    const targetJournalId = journalId || validAppState.activeJournalId;
     
     setAppState(prev => ({
       ...prev,
@@ -256,22 +312,22 @@ export function useTradingJournalState() {
           : journal
       ),
     }));
-  }, [appState.activeJournalId, setAppState]);
+  }, [validAppState.activeJournalId, setAppState]);
 
   const toggleColumn = useCallback((columnId: string, journalId?: string) => {
-    const targetJournalId = journalId || appState.activeJournalId;
-    const journal = appState.journals.find(j => j.id === targetJournalId);
+    const targetJournalId = journalId || validAppState.activeJournalId;
+    const journal = validAppState.journals.find(j => j.id === targetJournalId);
     const column = journal?.customColumns.find(col => col.id === columnId);
     
     if (column) {
       updateColumn(columnId, { visible: !column.visible }, targetJournalId);
     }
-  }, [appState.activeJournalId, appState.journals, updateColumn]);
+  }, [validAppState.activeJournalId, validAppState.journals, updateColumn]);
 
   // === GESTIÓN DE IMÁGENES ===
   
   const addImageToEntry = useCallback((entryId: string, image: TradeImage, journalId?: string) => {
-    const targetJournalId = journalId || appState.activeJournalId;
+    const targetJournalId = journalId || validAppState.activeJournalId;
     
     setAppState(prev => ({
       ...prev,
@@ -288,10 +344,10 @@ export function useTradingJournalState() {
           : journal
       ),
     }));
-  }, [appState.activeJournalId, setAppState]);
+  }, [validAppState.activeJournalId, setAppState]);
 
   const removeImageFromEntry = useCallback((entryId: string, imageId: string, journalId?: string) => {
-    const targetJournalId = journalId || appState.activeJournalId;
+    const targetJournalId = journalId || validAppState.activeJournalId;
     
     setAppState(prev => ({
       ...prev,
@@ -308,7 +364,7 @@ export function useTradingJournalState() {
           : journal
       ),
     }));
-  }, [appState.activeJournalId, setAppState]);
+  }, [validAppState.activeJournalId, setAppState]);
 
   // === GESTIÓN DEL PLAN DE TRADING ===
   
@@ -346,7 +402,7 @@ export function useTradingJournalState() {
   // === CONFIGURACIÓN MT5 ===
   
   const updateMT5Config = useCallback((config: Partial<typeof activeJournal.mt5Config>, journalId?: string) => {
-    const targetJournalId = journalId || appState.activeJournalId;
+    const targetJournalId = journalId || validAppState.activeJournalId;
     
     setAppState(prev => ({
       ...prev,
@@ -356,12 +412,12 @@ export function useTradingJournalState() {
           : journal
       ),
     }));
-  }, [appState.activeJournalId, setAppState]);
+  }, [validAppState.activeJournalId, setAppState]);
 
   // === UTILIDADES ===
   
   const exportData = useCallback(() => {
-    const dataStr = JSON.stringify(appState, null, 2);
+    const dataStr = JSON.stringify(validAppState, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
     
@@ -372,7 +428,7 @@ export function useTradingJournalState() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  }, [appState]);
+  }, [validAppState]);
 
   const importData = useCallback((data: AppState) => {
     setAppState(data);
@@ -495,8 +551,8 @@ export function useTradingJournalState() {
   // Función para manejar exportación con prompt
   const handleExportJournalCSV = useCallback((journalId?: string) => {
     const journal = journalId ? 
-      appState.journals.find(j => j.id === journalId) : 
-      appState.journals.find(j => j.id === appState.activeJournalId);
+      validAppState.journals.find(j => j.id === journalId) : 
+      validAppState.journals.find(j => j.id === validAppState.activeJournalId);
     
     if (!journal) {
       alert('No se encontró el diario a exportar');
@@ -521,14 +577,14 @@ export function useTradingJournalState() {
 
     // Exportar CSV
     exportToCSV(journal.entries, journal.name, cleanDriveUrl);
-  }, [appState.journals, appState.activeJournalId, exportToCSV]);
+  }, [validAppState.journals, validAppState.activeJournalId, exportToCSV]);
 
   // Función para exportar todos los diarios
   const handleExportAllJournalsCSV = useCallback(() => {
     const allEntries: TradeEntry[] = [];
     const journalNames: string[] = [];
     
-    appState.journals.forEach(journal => {
+    validAppState.journals.forEach(journal => {
       if (journal.entries && journal.entries.length > 0) {
         allEntries.push(...journal.entries);
         journalNames.push(journal.name);
@@ -557,11 +613,11 @@ export function useTradingJournalState() {
     const cleanDriveUrl = driveUrl?.trim() || undefined;
 
     exportToCSV(allEntries, `Todos_los_Diarios_${journalNames.join('_')}`, cleanDriveUrl);
-  }, [appState.journals, exportToCSV]);
+  }, [validAppState.journals, exportToCSV]);
 
   return {
     // Estado
-    appState,
+    appState: validAppState,
     activeJournal,
     
     // Journals

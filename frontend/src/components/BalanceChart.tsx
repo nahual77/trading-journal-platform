@@ -13,33 +13,56 @@ interface ChartPoint {
   label: string;
   date?: string;
   time?: string;
+  benefit?: number;
 }
 
 const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, journalName }) => {
   const chartData = useMemo(() => {
-    // Ordenar entradas por fecha y hora
+    console.log('📊 BalanceChart: Procesando entradas:', entries.length);
+    console.log('📋 Entradas originales (orden de la tabla):', entries.map(e => `${e.fecha} ${e.hora}`));
+    
+    // Ordenar entradas por fecha y hora (más antigua primero)
     const sortedEntries = [...entries].sort((a, b) => {
-      const dateA = new Date(`${a.fecha} ${a.hora}`);
-      const dateB = new Date(`${b.fecha} ${b.hora}`);
+      // Crear fechas completas con fecha y hora
+      const dateA = new Date(`${a.fecha}T${a.hora}`);
+      const dateB = new Date(`${b.fecha}T${b.hora}`);
+      
+      // Si las fechas son iguales, ordenar por ID para mantener consistencia
+      if (dateA.getTime() === dateB.getTime()) {
+        return a.id.localeCompare(b.id);
+      }
+      
       return dateA.getTime() - dateB.getTime();
     });
+
+    console.log('📅 Entradas ordenadas cronológicamente:', sortedEntries.map(e => `${e.fecha} ${e.hora}`));
+    console.log('🔄 Comparación:');
+    console.log('  - Primera entrada (más antigua):', sortedEntries[0] ? `${sortedEntries[0].fecha} ${sortedEntries[0].hora}` : 'N/A');
+    console.log('  - Última entrada (más reciente):', sortedEntries[sortedEntries.length - 1] ? `${sortedEntries[sortedEntries.length - 1].fecha} ${sortedEntries[sortedEntries.length - 1].hora}` : 'N/A');
 
     // Calcular balance acumulativo
     let runningBalance = initialBalance;
     const points: ChartPoint[] = [{ x: 0, y: initialBalance, label: 'Inicio' }];
 
+    // Agregar cada operación en orden cronológico (primera operación = x:1, última operación = x:último)
     sortedEntries.forEach((entry, index) => {
       const benefit = parseFloat(entry.beneficio) || 0;
       runningBalance += benefit;
       points.push({
-        x: index + 1,
+        x: index + 1, // x:1 para la primera operación, x:2 para la segunda, etc.
         y: runningBalance,
-        label: `Op${index + 1}`,
+        label: `${entry.fecha} ${entry.hora}`, // Mostrar fecha y hora en lugar de Op1, Op2
         date: entry.fecha,
-        time: entry.hora
+        time: entry.hora,
+        benefit: benefit // Agregar el beneficio para el tooltip
       });
     });
 
+    console.log('📈 Puntos del gráfico generados:', points.map(p => `x:${p.x}, y:${p.y}, label:${p.label}`));
+    console.log('🎯 Verificación del orden:');
+    console.log('  - Punto 0 (Inicio):', points[0] ? `x:${points[0].x}, y:${points[0].y}` : 'N/A');
+    console.log('  - Punto 1 (Primera op):', points[1] ? `x:${points[1].x}, y:${points[1].y}, fecha:${points[1].date} ${points[1].time}` : 'N/A');
+    console.log('  - Último punto:', points[points.length - 1] ? `x:${points[points.length - 1].x}, y:${points[points.length - 1].y}, fecha:${points[points.length - 1].date} ${points[points.length - 1].time}` : 'N/A');
     return points;
   }, [entries, initialBalance]);
 
@@ -108,7 +131,14 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
                 fill={profitColor}
                 stroke="#1F2937"
                 strokeWidth="2"
-              />
+              >
+                <title>
+                  {index === 0 
+                    ? `Inicio: $${point.y.toFixed(2)}` 
+                    : `Op${index}: $${point.y.toFixed(2)} - ${point.date} ${point.time}${point.benefit !== undefined ? ` (${point.benefit >= 0 ? '+' : ''}$${point.benefit.toFixed(2)})` : ''}`
+                  }
+                </title>
+              </circle>
               <text
                 x={getX(index)}
                 y={getY(point.y) - 8}
@@ -129,7 +159,7 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
               textAnchor="middle"
               className="text-xs fill-gray-400"
             >
-              {point.label}
+              {index === 0 ? 'Inicio' : `Op${index}`}
             </text>
           ))}
         </svg>

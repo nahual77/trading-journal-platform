@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { TradeEntry, ColumnDefinition, TradeImage } from '../types/trading';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Search, Calendar, RotateCcw } from 'lucide-react';
 import { ImageModal } from './ImageModal';
 import { ColumnManager } from './ColumnManager';
 
@@ -103,7 +103,7 @@ const SimpleImageField = ({
 };
 
 // Main TradingTable Component - COMPLETAMENTE NUEVO Y MINIMALISTA
-export function TradingTable({
+function TradingTable({
   entries,
   columns,
   onAddEntry,
@@ -120,6 +120,15 @@ export function TradingTable({
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
   const [modalImageName, setModalImageName] = useState<string | null>(null);
+
+  // Ordenar entradas por fecha y hora (más reciente primero)
+  const sortedEntries = useMemo(() => {
+    return [...entries].sort((a, b) => {
+      const dateA = new Date(`${a.fecha} ${a.hora}`);
+      const dateB = new Date(`${b.fecha} ${b.hora}`);
+      return dateB.getTime() - dateA.getTime(); // Más reciente primero
+    });
+  }, [entries]);
 
   // Simple add entry handler - NO useCallback, NO optimizations
   const handleAddNewOperation = () => {
@@ -308,6 +317,77 @@ export function TradingTable({
           <span>Nueva Operación</span>
         </button>
         
+        {/* Filtros centrados */}
+        <div className="flex items-center gap-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700">
+          {/* Búsqueda compacta */}
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
+            <input
+              type="text"
+              placeholder="Buscar..."
+              className="pl-6 pr-2 py-1 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs w-24"
+            />
+          </div>
+
+          {/* Filtros de fecha compactos */}
+          <div className="flex items-center gap-1">
+            <Calendar className="h-3 w-3 text-gray-400" />
+            <input
+              type="date"
+              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+              title="Fecha desde"
+            />
+            <span className="text-gray-400 text-xs">-</span>
+            <input
+              type="date"
+              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+              title="Fecha hasta"
+            />
+          </div>
+
+          {/* Ordenar compacto */}
+          <div className="flex items-center gap-1">
+            <select className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs">
+              <option value="fecha">Fecha</option>
+              <option value="beneficio">Beneficio</option>
+              <option value="simbolo">Símbolo</option>
+            </select>
+            <select className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs">
+              <option value="desc">↓</option>
+              <option value="asc">↑</option>
+            </select>
+          </div>
+
+          {/* Filtros rápidos compactos */}
+          <div className="flex items-center gap-1">
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-xs transition-colors" title="Hoy">
+              Hoy
+            </button>
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-xs transition-colors" title="7 días">
+              7d
+            </button>
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-xs transition-colors" title="30 días">
+              30d
+            </button>
+          </div>
+
+          {/* Cantidad por página compacta */}
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-gray-400">Mostrar:</span>
+            <select className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs">
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
+
+          {/* Limpiar filtros compacto */}
+          <button className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors" title="Limpiar filtros">
+            <RotateCcw className="h-3 w-3" />
+          </button>
+        </div>
+        
         <ColumnManager
           columns={columns}
           onToggleColumn={onToggleColumn}
@@ -349,14 +429,14 @@ export function TradingTable({
                 </td>
               </tr>
             ) : (
-              entries.map((entry, index) => (
+              sortedEntries.map((entry, index) => (
                 <tr 
                   key={entry.id} 
                   className="hover:bg-gray-800/50 transition-colors"
                   style={{ height: '100px', maxHeight: '100px' }} // ALTURA FIJA APLICADA DIRECTAMENTE
                 >
                   <td className="px-4 py-3 text-sm text-gray-300">
-                    {index + 1}
+                    {sortedEntries.length - index}
                   </td>
                   {visibleColumns.map((column) => (
                     <td 
@@ -424,3 +504,5 @@ export function TradingTable({
     </div>
   );
 }
+
+export default TradingTable;
