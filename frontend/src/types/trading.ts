@@ -4,6 +4,7 @@ export interface TradeEntry {
   id: string;
   fecha: string;
   hora: string;
+  activo: string;
   razonEntrada: string;
   antes: TradeImage[]; // Campo de imagen
   durante: TradeImage[]; // Campo de imagen
@@ -93,19 +94,20 @@ export interface AppState {
 export const DEFAULT_COLUMNS: ColumnDefinition[] = [
   { id: '1', key: 'fecha', name: 'Fecha', type: 'date', visible: true, order: 1 },
   { id: '2', key: 'hora', name: 'Hora', type: 'time', visible: true, order: 2 },
-  { id: '3', key: 'razonEntrada', name: 'Razón de entrada', type: 'text', visible: true, order: 3 },
-  { id: '4', key: 'antes', name: 'Antes', type: 'image', visible: true, order: 4 },
-  { id: '5', key: 'durante', name: 'Durante', type: 'image', visible: true, order: 5 },
-  { id: '6', key: 'ratio', name: 'Ratio', type: 'text', visible: true, order: 6 },
-  { id: '7', key: 'beneficio', name: 'Beneficio', type: 'text', visible: true, order: 7 },
-  { id: '8', key: 'seCumplioElPlan', name: 'Se cumplió el plan?', type: 'boolean', visible: true, order: 8 },
-  { id: '9', key: 'leccion', name: 'Lección', type: 'text', visible: true, order: 9 },
-  { id: '10', key: 'emocionesAntes', name: 'Emociones (antes)', type: 'text', visible: true, order: 10 },
-  { id: '11', key: 'emocionesDurante', name: 'Emociones (durante)', type: 'text', visible: true, order: 11 },
-  { id: '12', key: 'emocionesDespues', name: 'Emociones (después)', type: 'text', visible: true, order: 12 },
-  { id: '13', key: 'entradasNoTomadas', name: 'Entradas no tomadas', type: 'image', visible: true, order: 13 },
-  { id: '14', key: 'queSucedioConEntradasNoTomadas', name: 'Que sucedió con estas entradas', type: 'image', visible: true, order: 14 },
-  { id: '15', key: 'screenshots', name: 'Screenshots', type: 'image', visible: true, order: 15 },
+  { id: '3', key: 'activo', name: 'Activo', type: 'text', visible: true, order: 3 },
+  { id: '4', key: 'razonEntrada', name: 'Razón de entrada', type: 'text', visible: true, order: 4 },
+  { id: '5', key: 'antes', name: 'Antes', type: 'image', visible: true, order: 5 },
+  { id: '6', key: 'durante', name: 'Durante', type: 'image', visible: true, order: 6 },
+  { id: '7', key: 'ratio', name: 'Ratio', type: 'text', visible: true, order: 7 },
+  { id: '8', key: 'beneficio', name: 'Beneficio', type: 'text', visible: true, order: 8 },
+  { id: '9', key: 'seCumplioElPlan', name: 'Se cumplió el plan?', type: 'boolean', visible: true, order: 9 },
+  { id: '10', key: 'leccion', name: 'Lección', type: 'text', visible: true, order: 10 },
+  { id: '11', key: 'emocionesAntes', name: 'Emociones (antes)', type: 'text', visible: true, order: 11 },
+  { id: '12', key: 'emocionesDurante', name: 'Emociones (durante)', type: 'text', visible: true, order: 12 },
+  { id: '13', key: 'emocionesDespues', name: 'Emociones (después)', type: 'text', visible: true, order: 13 },
+  { id: '14', key: 'entradasNoTomadas', name: 'Entradas no tomadas', type: 'image', visible: true, order: 14 },
+  { id: '15', key: 'queSucedioConEntradasNoTomadas', name: 'Que sucedió con estas entradas', type: 'image', visible: true, order: 15 },
+  { id: '16', key: 'screenshots', name: 'Screenshots', type: 'image', visible: true, order: 16 },
 ];
 
 export const DEFAULT_TRADING_PLAN: TradingPlan = {
