@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TradingJournal } from '../types/trading';
 import { Plus, Edit3, Trash2, X, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { UserMenu } from './UserMenu';
 
 interface JournalTabsProps {
@@ -24,6 +25,7 @@ export function JournalTabs({
   user,
   onLogout,
 }: JournalTabsProps) {
+  const { t } = useTranslation();
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -214,7 +216,7 @@ export function JournalTabs({
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600/10 border border-blue-600/30 text-blue-400 rounded-lg hover:bg-blue-600/20 hover:border-blue-600/50 transition-colors"
               >
                 <Plus className="h-4 w-4" />
-                <span className="text-sm">Nuevo Diario</span>
+                <span className="text-sm">{t('journalTabs.newJournal')}</span>
               </button>
             )}
           </div>
@@ -241,9 +243,9 @@ export function JournalTabs({
           return (
             <div className="flex items-center justify-between text-sm text-gray-400">
               <div className="flex items-center space-x-4">
-                <span>Operaciones: <span className="text-white font-medium">{totalEntries}</span></span>
-                <span>Plan cumplido: <span className="text-green-400 font-medium">{completedPlans}</span></span>
-                <span>Con screenshots: <span className="text-blue-400 font-medium">{withScreenshots}</span></span>
+                <span>{t('journalTabs.operations')}: <span className="text-white font-medium">{totalEntries}</span></span>
+                <span>{t('journalTabs.planFollowed')}: <span className="text-green-400 font-medium">{completedPlans}</span></span>
+                <span>{t('journalTabs.withScreenshots')}: <span className="text-blue-400 font-medium">{withScreenshots}</span></span>
               </div>
               
               <div className="flex items-center space-x-2">

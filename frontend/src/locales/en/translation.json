@@ -123,14 +123,18 @@
     "totalOperations": "Total Operations",
     "successfulOperations": "Successful Operations",
     "failedOperations": "Failed Operations",
-    "planFollowed": "Plan Followed"
+    "planFollowed": "Plan Followed",
+    "operations": "Operations",
+    "withScreenshots": "With Screenshots"
   },
   "userMenu": {
     "profile": "Profile",
     "settings": "Settings",
     "help": "Help",
     "about": "About",
-    "version": "Version"
+    "version": "Version",
+    "tradingJournal": "Trading Journal",
+    "logout": "Logout"
   },
   "modals": {
     "deleteOperation": "Delete Operation",

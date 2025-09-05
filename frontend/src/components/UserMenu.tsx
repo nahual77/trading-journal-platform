@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, LogOut, Settings, ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../supabaseClient';
 
 interface UserMenuProps {
@@ -8,6 +9,7 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ user, onLogout }: UserMenuProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -66,7 +68,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
                           <div className="text-sm font-medium text-white truncate max-w-[120px]">
               {user?.email?.split('@')[0] || 'Usuario'}
             </div>
-            <div className="text-xs text-gray-400">Trading Journal</div>
+            <div className="text-xs text-gray-400">{t('userMenu.tradingJournal')}</div>
           </div>
         </div>
         <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -103,7 +105,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
               className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
             >
               <Settings className="h-4 w-4" />
-              <span>Perfil</span>
+              <span>{t('userMenu.profile')}</span>
             </button>
             
             <button
@@ -111,14 +113,14 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
               className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
             >
               <LogOut className="h-4 w-4" />
-              <span>Desloguearse</span>
+              <span>{t('userMenu.logout')}</span>
             </button>
           </div>
 
           {/* Footer del menú */}
           <div className="px-4 py-2 border-t border-gray-700 bg-gray-900/50">
             <div className="text-xs text-gray-500 text-center">
-              Nagual Trader Journal v1.0
+{t('userMenu.version')}
             </div>
           </div>
         </div>
