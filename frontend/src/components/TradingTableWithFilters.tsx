@@ -49,6 +49,11 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
 
   // Filtrar y ordenar entradas
   const filteredAndSortedEntries = useMemo(() => {
+    console.log('🔍 TradingTableWithFilters Debug:', {
+      propsEntries: props.entries.length,
+      propsEntriesArray: props.entries.map(e => ({ id: e.id, fecha: e.fecha, hora: e.hora }))
+    });
+    
     let result = [...props.entries];
 
     // Filtro por texto de búsqueda
