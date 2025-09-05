@@ -134,7 +134,11 @@
     "balance": "Balance",
     "profit": "Ganancia",
     "loss": "Pérdida",
-    "net": "Neto"
+    "net": "Neto",
+    "operations": "Operaciones",
+    "initialBalance": "Balance inicial",
+    "currentBalance": "Balance actual",
+    "totalProfit": "Beneficio total"
   },
   "journalTabs": {
     "newJournal": "Nuevo Diario",

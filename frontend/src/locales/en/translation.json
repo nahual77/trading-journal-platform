@@ -134,7 +134,11 @@
     "balance": "Balance",
     "profit": "Profit",
     "loss": "Loss",
-    "net": "Net"
+    "net": "Net",
+    "operations": "Operations",
+    "initialBalance": "Initial Balance",
+    "currentBalance": "Current Balance",
+    "totalProfit": "Total Profit"
   },
   "journalTabs": {
     "newJournal": "New Journal",

@@ -134,7 +134,11 @@
     "balance": "Saldo",
     "profit": "Lucro",
     "loss": "Perda",
-    "net": "Líquido"
+    "net": "Líquido",
+    "operations": "Operações",
+    "initialBalance": "Saldo inicial",
+    "currentBalance": "Saldo atual",
+    "totalProfit": "Lucro total"
   },
   "journalTabs": {
     "newJournal": "Novo Diário",
