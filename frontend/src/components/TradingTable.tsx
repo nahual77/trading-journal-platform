@@ -559,20 +559,20 @@ function TradingTable({
 
           {/* Filtros rápidos compactos */}
           <div className="flex items-center gap-1">
-            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title="Hoy">
-              Hoy
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title={t('filters.today')}>
+              {t('filters.today')}
             </button>
-            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title="7 días">
-              7d
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title={t('filters.7days')}>
+              {t('filters.7days')}
             </button>
-            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title="30 días">
-              30d
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title={t('filters.30days')}>
+              {t('filters.30days')}
             </button>
           </div>
 
           {/* Cantidad por página compacta */}
           <div className="flex items-center gap-1">
-            <span className="text-sm text-gray-400">Mostrar:</span>
+            <span className="text-sm text-gray-400">{t('filters.show')}:</span>
             <select 
               value={pageSize}
               onChange={(e) => {
@@ -646,7 +646,7 @@ function TradingTable({
                     column.key === 'hora' ? 'col-hora' : ''
                   }`}
                 >
-                  {column.name}
+{t(column.name)}
                 </th>
               ))}
               <th className="px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">
@@ -726,10 +726,10 @@ function TradingTable({
                   : 'bg-gray-700 text-white hover:bg-gray-600'
               }`}
             >
-              Anterior
+{t('table.previous')}
             </button>
             <span className="text-sm text-gray-400">
-              Página {currentPage} de {totalPages}
+{t('table.page')} {currentPage} {t('table.of')} {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
@@ -740,7 +740,7 @@ function TradingTable({
                   : 'bg-gray-700 text-white hover:bg-gray-600'
               }`}
             >
-              Siguiente
+{t('table.next')}
             </button>
             <button
               onClick={() => setCurrentPage(totalPages)}
@@ -751,11 +751,11 @@ function TradingTable({
                   : 'bg-gray-700 text-white hover:bg-gray-600'
               }`}
             >
-              Última
+{t('table.last')}
             </button>
           </div>
           <div className="text-sm text-gray-400">
-            Mostrando {displayEntries.length} de {entries.length} operaciones
+{t('table.showing')} {displayEntries.length} {t('table.of')} {entries.length} {t('table.operations')}
           </div>
         </div>
       )}
