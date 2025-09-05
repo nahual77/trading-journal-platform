@@ -49,11 +49,6 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
 
   // Filtrar y ordenar entradas
   const filteredAndSortedEntries = useMemo(() => {
-    console.log('🔍 TradingTableWithFilters Debug:', {
-      propsEntries: props.entries.length,
-      propsEntriesArray: props.entries.map(e => ({ id: e.id, fecha: e.fecha, hora: e.hora }))
-    });
-    
     let result = [...props.entries];
 
     // Filtro por texto de búsqueda
@@ -110,16 +105,6 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
   const startIndex = (filters.currentPage - 1) * filters.pageSize;
   const endIndex = startIndex + filters.pageSize;
   const paginatedEntries = filteredAndSortedEntries.slice(startIndex, endIndex);
-
-  // Debug: Verificar paginación
-  console.log('🔍 TradingTableWithFilters Paginación Debug:', {
-    filteredAndSortedEntries: filteredAndSortedEntries.length,
-    paginatedEntries: paginatedEntries.length,
-    startIndex,
-    endIndex,
-    pageSize: filters.pageSize,
-    currentPage: filters.currentPage
-  });
 
   // Funciones para actualizar filtros
   const updateFilter = <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
