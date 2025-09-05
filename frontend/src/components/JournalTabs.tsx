@@ -122,7 +122,7 @@ export function JournalTabs({
                     <button
                       onClick={() => onSelectJournal(journal.id)}
                       className={`
-                        px-4 py-3 text-lg font-medium transition-colors truncate max-w-[200px]
+                        px-4 py-3 text-xl font-medium transition-colors truncate max-w-[200px]
                         ${isActive 
                           ? 'text-gold-300' 
                           : 'text-gray-300 hover:text-white'
@@ -214,7 +214,7 @@ export function JournalTabs({
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600/10 border border-blue-600/30 text-blue-400 rounded-lg hover:bg-blue-600/20 hover:border-blue-600/50 transition-colors"
               >
                 <Plus className="h-4 w-4" />
-                <span className="text-lg">Nuevo Diario</span>
+                <span className="text-xl">Nuevo Diario</span>
               </button>
             )}
           </div>
@@ -239,7 +239,7 @@ export function JournalTabs({
           const withScreenshots = activeJournal.entries.filter(e => e.screenshots && e.screenshots.length > 0).length;
           
           return (
-            <div className="flex items-center justify-between text-base text-gray-400">
+            <div className="flex items-center justify-between text-xl text-gray-400">
               <div className="flex items-center space-x-4">
                 <span>Operaciones: <span className="text-white font-medium">{totalEntries}</span></span>
                 <span>Plan cumplido: <span className="text-green-400 font-medium">{completedPlans}</span></span>

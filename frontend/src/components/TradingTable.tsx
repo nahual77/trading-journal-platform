@@ -500,18 +500,18 @@ function TradingTable({
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 placeholder="Buscar..."
-                className="pl-6 pr-2 py-1 bg-gray-700 border border-gray-600 rounded-l text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 text-base w-32"
+                className="pl-6 pr-2 py-1 bg-gray-700 border border-gray-600 rounded-l text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xl w-32"
               />
             </div>
             <button
               onClick={handleSearch}
-              className="px-2 py-1 bg-blue-600 text-white rounded-r text-base hover:bg-blue-700 transition-colors flex items-center gap-1"
+              className="px-2 py-1 bg-blue-600 text-white rounded-r text-xl hover:bg-blue-700 transition-colors flex items-center gap-1"
             >
               <Search className="h-3 w-3" />
               Buscar
             </button>
             {isSearching && searchResults.length > 0 && (
-              <span className="text-base text-gray-400">
+              <span className="text-xl text-gray-400">
                 ({searchResults.length} resultados)
               </span>
             )}
@@ -524,15 +524,15 @@ function TradingTable({
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-base"
+              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xl"
               title="Fecha desde"
             />
-            <span className="text-gray-400 text-base">-</span>
+            <span className="text-gray-400 text-xl">-</span>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-base"
+              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xl"
               title="Fecha hasta"
             />
           </div>
@@ -540,7 +540,7 @@ function TradingTable({
           {/* Ordenar compacto */}
           <button
             onClick={() => setSortDirection(prev => prev === 'desc' ? 'asc' : 'desc')}
-            className="px-2 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-base transition-colors flex items-center gap-1"
+            className="px-2 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-xl transition-colors flex items-center gap-1"
             title={sortDirection === 'desc' ? 'Ordenar más antiguo primero' : 'Ordenar más reciente primero'}
           >
             {sortDirection === 'desc' ? '↓ Reciente' : '↑ Antiguo'}
@@ -548,27 +548,27 @@ function TradingTable({
 
           {/* Filtros rápidos compactos */}
           <div className="flex items-center gap-1">
-            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-base transition-colors" title="Hoy">
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-xl transition-colors" title="Hoy">
               Hoy
             </button>
-            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-base transition-colors" title="7 días">
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-xl transition-colors" title="7 días">
               7d
             </button>
-            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-base transition-colors" title="30 días">
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-xl transition-colors" title="30 días">
               30d
             </button>
           </div>
 
           {/* Cantidad por página compacta */}
           <div className="flex items-center gap-1">
-            <span className="text-base text-gray-400">Mostrar:</span>
+            <span className="text-xl text-gray-400">Mostrar:</span>
             <select 
               value={pageSize}
               onChange={(e) => {
                 setPageSize(Number(e.target.value));
                 setCurrentPage(1); // Reset a la primera página al cambiar el tamaño
               }}
-              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-base"
+              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xl"
             >
               <option value={10}>10</option>
               <option value={20}>20</option>
@@ -594,7 +594,7 @@ function TradingTable({
             title="Limpiar filtros"
           >
             <RotateCcw className="h-3 w-3" />
-            <span className="text-base">Limpiar</span>
+            <span className="text-xl">Limpiar</span>
           </button>
         </div>
         
@@ -615,13 +615,13 @@ function TradingTable({
         <table className="w-full bg-gray-900 rounded-lg">
           <thead>
             <tr className="border-b border-gray-700">
-              <th className="px-4 py-3 text-left text-lg font-medium text-gold-300 uppercase tracking-wider w-16">
+              <th className="px-4 py-3 text-left text-xl font-medium text-gold-300 uppercase tracking-wider w-16">
                 #
               </th>
               {visibleColumns.map((column) => (
                 <th
                   key={column.id}
-                  className={`px-4 py-3 text-left text-lg font-medium text-gold-300 uppercase tracking-wider ${
+                  className={`px-4 py-3 text-left text-xl font-medium text-gold-300 uppercase tracking-wider ${
                     column.key === 'fecha' ? 'col-fecha' : 
                     column.key === 'hora' ? 'col-hora' : ''
                   }`}
@@ -629,7 +629,7 @@ function TradingTable({
                   {column.name}
                 </th>
               ))}
-              <th className="px-4 py-3 text-left text-lg font-medium text-gold-300 uppercase tracking-wider w-16">
+              <th className="px-4 py-3 text-left text-xl font-medium text-gold-300 uppercase tracking-wider w-16">
                 Acciones
               </th>
             </tr>
@@ -689,7 +689,7 @@ function TradingTable({
             <button
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
-              className={`px-2 py-1 text-base rounded ${
+              className={`px-2 py-1 text-xl rounded ${
                 currentPage === 1
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
@@ -700,7 +700,7 @@ function TradingTable({
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              className={`px-2 py-1 text-base rounded ${
+              className={`px-2 py-1 text-xl rounded ${
                 currentPage === 1
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
@@ -708,13 +708,13 @@ function TradingTable({
             >
               Anterior
             </button>
-            <span className="text-base text-gray-400">
+            <span className="text-xl text-gray-400">
               Página {currentPage} de {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              className={`px-2 py-1 text-base rounded ${
+              className={`px-2 py-1 text-xl rounded ${
                 currentPage === totalPages
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
@@ -725,7 +725,7 @@ function TradingTable({
             <button
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
-              className={`px-2 py-1 text-base rounded ${
+              className={`px-2 py-1 text-xl rounded ${
                 currentPage === totalPages
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
@@ -734,7 +734,7 @@ function TradingTable({
               Última
             </button>
           </div>
-          <div className="text-base text-gray-400">
+          <div className="text-xl text-gray-400">
             Mostrando {displayEntries.length} de {entries.length} operaciones
           </div>
         </div>
@@ -744,33 +744,33 @@ function TradingTable({
       {entries.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           <div className="bg-gray-800/50 p-3 rounded-lg">
-            <div className="text-base text-gray-400 mb-1">Total Operaciones</div>
+            <div className="text-xl text-gray-400 mb-1">Total Operaciones</div>
             <div className="text-xl font-bold text-white">{entries.length}</div>
           </div>
           <div className="bg-gray-800/50 p-3 rounded-lg">
-            <div className="text-base text-gray-400 mb-1">Plan Cumplido</div>
+            <div className="text-xl text-gray-400 mb-1">Plan Cumplido</div>
             <div className="text-xl font-bold text-green-400">
               {entries.filter(e => e.seCumplioElPlan).length}
             </div>
           </div>
           <div className="bg-gray-800/50 p-3 rounded-lg">
-            <div className="text-base text-gray-400 mb-1">Plan No Cumplido</div>
+            <div className="text-xl text-gray-400 mb-1">Plan No Cumplido</div>
             <div className="text-xl font-bold text-red-400">
               {entries.filter(e => !e.seCumplioElPlan).length}
             </div>
           </div>
           <div className="bg-gray-800/50 p-3 rounded-lg">
-            <div className="text-base text-gray-400 mb-1">Compras vs Ventas</div>
+            <div className="text-xl text-gray-400 mb-1">Compras vs Ventas</div>
             <div className="flex gap-2 items-center">
               <div>
-                <div className="text-base text-green-400">Compras</div>
+                <div className="text-xl text-green-400">Compras</div>
                 <div className="text-lg font-bold text-green-400">
                   {entries.filter(e => e.tipoOperacion === 'compra').length}
                 </div>
               </div>
               <div className="text-gray-500">vs</div>
               <div>
-                <div className="text-base text-red-400">Ventas</div>
+                <div className="text-xl text-red-400">Ventas</div>
                 <div className="text-lg font-bold text-red-400">
                   {entries.filter(e => e.tipoOperacion === 'venta').length}
                 </div>
