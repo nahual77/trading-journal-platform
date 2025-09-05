@@ -468,18 +468,18 @@ function TradingTable({
     return (
       <div
         onClick={() => startEdit(entry.id, column.key, value)}
-        className="cursor-pointer hover:bg-gray-700/50 p-1 rounded min-h-[24px] text-xl"
+        className="cursor-pointer hover:bg-gray-700/50 p-1 rounded min-h-[20px] text-sm"
       >
         {value ? (
           textareaFields.includes(column.key) ? (
             // Para campos de texto con posibles saltos de línea, preservar formato
-            <span className="whitespace-pre-wrap">{value}</span>
+            <span className="whitespace-pre-wrap text-sm">{value}</span>
           ) : (
             // Para campos normales
-            value
+            <span className="text-sm">{value}</span>
           )
         ) : (
-          <span className="text-gray-500 italic">Clic para editar</span>
+          <span className="text-gray-500 italic text-sm">Clic para editar</span>
         )}
       </div>
     );
@@ -491,7 +491,7 @@ function TradingTable({
       <div className="flex items-center justify-between">
         <button
           onClick={handleAddNewOperation}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
         >
           <Plus className="h-4 w-4" />
           <span>Nueva Operación</span>
@@ -648,7 +648,7 @@ function TradingTable({
               <tr>
                 <td 
                   colSpan={visibleColumns.length + 2} 
-                  className="px-4 py-8 text-center text-gray-400"
+                  className="px-4 py-8 text-center text-sm text-gray-400"
                 >
                   No hay operaciones registradas. Haz clic en "Nueva Operación" para comenzar.
                 </td>
