@@ -127,16 +127,19 @@ function TradingTable({
   const [isSearching, setIsSearching] = useState(false);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  // Ordenar entradas por fecha y hora (más reciente primero)
+  // Ordenar entradas por fecha y hora
   const sortedEntries = useMemo(() => {
     const entriesToSort = isSearching ? searchResults : entries;
     return [...entriesToSort].sort((a, b) => {
       const dateA = new Date(`${a.fecha} ${a.hora}`);
       const dateB = new Date(`${b.fecha} ${b.hora}`);
-      return dateB.getTime() - dateA.getTime(); // Más reciente primero
+      return sortDirection === 'desc' 
+        ? dateB.getTime() - dateA.getTime() // Más reciente primero
+        : dateA.getTime() - dateB.getTime(); // Más antiguo primero
     });
-  }, [entries, searchResults, isSearching]);
+  }, [entries, searchResults, isSearching, sortDirection]);
 
   // Simple add entry handler - NO useCallback, NO optimizations
   const handleAddNewOperation = () => {
@@ -448,17 +451,13 @@ function TradingTable({
           </div>
 
           {/* Ordenar compacto */}
-          <div className="flex items-center gap-1">
-            <select className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs">
-              <option value="fecha">Fecha</option>
-              <option value="beneficio">Beneficio</option>
-              <option value="simbolo">Símbolo</option>
-            </select>
-            <select className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs">
-              <option value="desc">↓</option>
-              <option value="asc">↑</option>
-            </select>
-          </div>
+          <button
+            onClick={() => setSortDirection(prev => prev === 'desc' ? 'asc' : 'desc')}
+            className="px-2 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-xs transition-colors flex items-center gap-1"
+            title={sortDirection === 'desc' ? 'Ordenar más antiguo primero' : 'Ordenar más reciente primero'}
+          >
+            {sortDirection === 'desc' ? '↓ Reciente' : '↑ Antiguo'}
+          </button>
 
           {/* Filtros rápidos compactos */}
           <div className="flex items-center gap-1">
@@ -492,6 +491,7 @@ function TradingTable({
               setDateTo('');
               setSearchResults([]);
               setIsSearching(false);
+              setSortDirection('desc');
             }} 
             className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors flex items-center gap-1" 
             title="Limpiar filtros"
