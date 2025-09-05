@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { TradeEntry, ColumnDefinition, TradeImage } from '../types/trading';
 import { Plus, Trash2, Search, Calendar, RotateCcw } from 'lucide-react';
 import { ImageModal } from './ImageModal';
@@ -131,6 +131,14 @@ function TradingTable({
   const [pageSize, setPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
+  // Ajustar página actual cuando cambie el pageSize
+  useEffect(() => {
+    const totalPages = Math.ceil(entries.length / pageSize);
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [pageSize, entries.length, currentPage]);
+
   // Get visible columns
   const visibleColumns = useMemo(() => {
     return columns.filter(col => col.visible).sort((a, b) => a.order - b.order);
@@ -226,6 +234,17 @@ function TradingTable({
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = Math.min(startIndex + pageSize, numberedEntries.length);
     const displayEntries = numberedEntries.slice(startIndex, endIndex);
+    
+    // Debug logs
+    console.log('🔍 Paginación Debug:', {
+      totalEntries: numberedEntries.length,
+      pageSize,
+      currentPage,
+      totalPages,
+      startIndex,
+      endIndex,
+      displayEntriesCount: displayEntries.length
+    });
 
     // Calcular altura de la tabla basada en la cantidad de entradas
     const headerHeight = 60; // Altura del header
