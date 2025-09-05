@@ -227,11 +227,14 @@ function TradingTable({
     const endIndex = Math.min(startIndex + pageSize, numberedEntries.length);
     const displayEntries = numberedEntries.slice(startIndex, endIndex);
 
-    // Calcular altura de la tabla basada en la cantidad de entradas
+    // Calcular altura mínima de la tabla
+    const minRowHeight = 80; // Altura mínima por fila
     const headerHeight = 60; // Altura del header
-    const rowHeight = 120; // Altura de cada fila (aumentada para considerar padding y bordes)
-    const padding = 40; // Padding adicional para evitar cortes
-    const tableHeight = headerHeight + (displayEntries.length * rowHeight) + padding;
+    const padding = 20; // Padding adicional
+    const tableHeight = Math.max(
+      headerHeight + (displayEntries.length * minRowHeight) + padding,
+      400 // Altura mínima de la tabla
+    );
 
     return { displayEntries, totalPages, tableHeight };
   }, [entries, searchResults, isSearching, sortDirection, pageSize, currentPage]);
@@ -477,7 +480,7 @@ function TradingTable({
   };
 
   return (
-    <div className="space-y-4" style={{ overflow: 'hidden', height: '100vh' }}>
+    <div className="space-y-4" style={{ overflow: 'hidden' }}>
       {/* Simple controls */}
       <div className="flex items-center justify-between">
         <button
@@ -608,7 +611,7 @@ function TradingTable({
       <div 
         className="table-container"
         style={{ 
-          height: `${tableHeight}px`,
+          minHeight: `${tableHeight}px`,
           overflow: 'hidden'
         }}
       >
