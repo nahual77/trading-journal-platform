@@ -1,6 +1,10 @@
 {
-  "dependencies": {
-    "@supabase/supabase-js": "^2.57.0",
-    "dotenv": "^17.2.1"
+  "name": "trading-journal",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "cd frontend && pnpm run dev",
+    "build": "cd frontend && pnpm run build",
+    "preview": "cd frontend && pnpm run preview"
   }
 }
