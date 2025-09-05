@@ -476,7 +476,7 @@ function TradingTable({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" style={{ overflow: 'hidden' }}>
       {/* Simple controls */}
       <div className="flex items-center justify-between">
         <button
@@ -605,8 +605,11 @@ function TradingTable({
 
       {/* Simple table */}
       <div 
-        className="table-container overflow-x-auto overflow-y-hidden"
-        style={{ height: `${tableHeight}px` }}
+        className="table-container overflow-x-auto"
+        style={{ 
+          height: `${tableHeight}px`,
+          overflowY: 'hidden'
+        }}
       >
         <table className="w-full bg-gray-900 rounded-lg">
           <thead>
