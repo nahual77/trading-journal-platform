@@ -200,7 +200,7 @@ function TradingTable({
   };
 
   // Ordenar y paginar entradas
-  const { displayEntries, totalPages } = useMemo(() => {
+  const { displayEntries, totalPages, tableHeight } = useMemo(() => {
     const entriesToSort = isSearching ? searchResults : entries;
     const sorted = [...entriesToSort].sort((a, b) => {
       // Primero ordenar por fecha y hora
@@ -227,7 +227,12 @@ function TradingTable({
     const endIndex = Math.min(startIndex + pageSize, numberedEntries.length);
     const displayEntries = numberedEntries.slice(startIndex, endIndex);
 
-    return { displayEntries, totalPages };
+    // Calcular altura de la tabla basada en la cantidad de entradas
+    const headerHeight = 60; // Altura del header
+    const rowHeight = 100; // Altura de cada fila
+    const tableHeight = headerHeight + (displayEntries.length * rowHeight);
+
+    return { displayEntries, totalPages, tableHeight };
   }, [entries, searchResults, isSearching, sortDirection, pageSize, currentPage]);
 
   // Simple add entry handler - NO useCallback, NO optimizations
@@ -599,7 +604,10 @@ function TradingTable({
       </div>
 
       {/* Simple table */}
-      <div className="table-container overflow-x-auto overflow-y-auto">
+      <div 
+        className="table-container overflow-x-auto"
+        style={{ height: `${tableHeight}px` }}
+      >
         <table className="w-full bg-gray-900 rounded-lg">
           <thead>
             <tr className="border-b border-gray-700">
@@ -637,7 +645,7 @@ function TradingTable({
                 <tr 
                   key={entry.id} 
                   className="hover:bg-gray-800/50 transition-colors"
-                  style={{ height: '100px', maxHeight: '100px' }} // ALTURA FIJA APLICADA DIRECTAMENTE
+                  style={{ height: '100px' }}
                 >
                   <td className="px-4 py-3 text-sm text-gray-300">
                     {entry.operationNumber}
