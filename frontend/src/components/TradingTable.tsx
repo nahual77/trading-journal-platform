@@ -223,6 +223,23 @@ function TradingTable({
       );
     }
 
+    // Handle tipo operacion field
+    if (column.key === 'tipoOperacion') {
+      const isCompra = value === 'compra';
+      return (
+        <button
+          onClick={() => onUpdateEntry(entry.id, { [column.key]: isCompra ? 'venta' : 'compra' })}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 ${
+            isCompra 
+              ? 'bg-green-600 text-green-100 hover:bg-green-700' 
+              : 'bg-red-600 text-red-100 hover:bg-red-700'
+          }`}
+        >
+          {isCompra ? 'COMPRA' : 'VENTA'}
+        </button>
+      );
+    }
+
     // Handle boolean field
     if (column.type === 'boolean') {
       return (
@@ -486,9 +503,21 @@ function TradingTable({
             </div>
           </div>
           <div className="bg-gray-800/50 p-3 rounded-lg">
-            <div className="text-xs text-gray-400 mb-1">Con Screenshots</div>
-            <div className="text-xl font-bold text-blue-400">
-              {entries.filter(e => e.screenshots.length > 0).length}
+            <div className="text-xs text-gray-400 mb-1">Compras vs Ventas</div>
+            <div className="flex gap-2 items-center">
+              <div>
+                <div className="text-xs text-green-400">Compras</div>
+                <div className="text-lg font-bold text-green-400">
+                  {entries.filter(e => e.tipoOperacion === 'compra').length}
+                </div>
+              </div>
+              <div className="text-gray-500">vs</div>
+              <div>
+                <div className="text-xs text-red-400">Ventas</div>
+                <div className="text-lg font-bold text-red-400">
+                  {entries.filter(e => e.tipoOperacion === 'venta').length}
+                </div>
+              </div>
             </div>
           </div>
         </div>
