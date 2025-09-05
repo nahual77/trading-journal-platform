@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TradeEntry } from '../types/trading';
 
 interface BalanceChartProps {
@@ -17,6 +18,7 @@ interface ChartPoint {
 }
 
 const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, journalName }) => {
+  const { t } = useTranslation();
   const chartData = useMemo(() => {
     console.log('📊 BalanceChart: Procesando entradas:', entries.length);
     console.log('📋 Entradas originales (orden de la tabla):', entries.map(e => `${e.fecha} ${e.hora}`));
@@ -75,7 +77,7 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
     return (
       <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mt-4">
         <h3 className="text-lg font-semibold text-yellow-400 mb-2">
-          📈 Progresión de Balance - {journalName}
+          📈 {t('balanceChart.title')} - {journalName}
         </h3>
         <p className="text-gray-400 text-center py-8">
           Agrega operaciones para ver la curva de balance
@@ -98,7 +100,7 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
   return (
     <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mt-4">
                   <h3 className="text-base font-semibold text-yellow-400 mb-4">
-        📈 Progresión de Balance - {journalName}
+        📈 {t('balanceChart.title')} - {journalName}
       </h3>
       
       <div className="overflow-x-auto">
@@ -169,20 +171,20 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
       <div className="flex justify-between mt-4 text-sm">
         <div className="flex gap-4">
           <span className="text-gray-400">
-            Operaciones: <span className="text-white font-semibold">{entries.length}</span>
+            {t('balanceChart.operations')}: <span className="text-white font-semibold">{entries.length}</span>
           </span>
           <span className="text-gray-400">
-            Balance inicial: <span className="text-white font-semibold">${initialBalance.toFixed(2)}</span>
+            {t('balanceChart.initialBalance')}: <span className="text-white font-semibold">${initialBalance.toFixed(2)}</span>
           </span>
         </div>
         <div className="flex gap-4">
           <span className="text-gray-400">
-            Beneficio total: <span className={`font-semibold ${totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            {t('balanceChart.totalProfit')}: <span className={`font-semibold ${totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)}
             </span>
           </span>
           <span className="text-gray-400">
-            Balance actual: <span className="text-yellow-400 font-semibold">
+            {t('balanceChart.currentBalance')}: <span className="text-yellow-400 font-semibold">
               ${currentBalance.toFixed(2)}
             </span>
           </span>
