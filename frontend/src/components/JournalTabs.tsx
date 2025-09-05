@@ -235,8 +235,8 @@ export function JournalTabs({
           if (!activeJournal) return null;
           
           const totalEntries = activeJournal.entries.length;
-          const completedPlans = activeJournal.entries.filter(e => e.seCumplioElPlan).length;
-          const withScreenshots = activeJournal.entries.filter(e => e.screenshots.length > 0).length;
+          const completedPlans = activeJournal.entries.filter(e => e.seCumplioElPlan === true).length;
+          const withScreenshots = activeJournal.entries.filter(e => e.screenshots && e.screenshots.length > 0).length;
           
           return (
             <div className="flex items-center justify-between text-xs text-gray-400">
