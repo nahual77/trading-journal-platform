@@ -613,6 +613,15 @@ function TradingTable({
           columns={columns}
           onToggleColumn={onToggleColumn}
         />
+
+        {/* Botón Nueva Operación */}
+        <button
+          onClick={onAddEntry}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+        >
+          <Plus className="h-4 w-4" />
+          <span>{t('tradingJournal.newOperation')}</span>
+        </button>
       </div>
 
       {/* Simple table */}
@@ -693,16 +702,6 @@ function TradingTable({
         </table>
       </div>
 
-      {/* Botón Nueva Operación - Siempre visible */}
-      <div className="flex justify-start mt-4">
-        <button
-          onClick={onAddEntry}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-        >
-          <Plus className="h-4 w-4" />
-          <span>{t('tradingJournal.newOperation')}</span>
-        </button>
-      </div>
 
       {/* Paginación */}
       {totalPages > 1 && (
