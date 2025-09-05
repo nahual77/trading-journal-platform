@@ -200,25 +200,25 @@ function TradingTable({
   // Ordenar entradas por todas las columnas
   const sortedEntries = useMemo(() => {
     const entriesToSort = isSearching ? searchResults : entries;
-    return [...entriesToSort].sort((a, b) => {
+    const sorted = [...entriesToSort].sort((a, b) => {
       // Primero ordenar por fecha y hora
-      const dateTimeCompare = compareValues(
-        `${a.fecha} ${a.hora}`,
-        `${b.fecha} ${b.hora}`,
-        sortDirection,
-        'fecha'
-      );
-      if (dateTimeCompare !== 0) return dateTimeCompare;
-
-      // Si la fecha y hora son iguales, ordenar por el resto de campos
-      for (const column of visibleColumns) {
-        if (column.key === 'fecha' || column.key === 'hora') continue;
-        const compare = compareValues(a[column.key], b[column.key], sortDirection, column.key);
-        if (compare !== 0) return compare;
-      }
-      return 0;
+      const dateA = new Date(`${a.fecha} ${a.hora}`);
+      const dateB = new Date(`${b.fecha} ${b.hora}`);
+      const dateCompare = sortDirection === 'desc' 
+        ? dateB.getTime() - dateA.getTime()
+        : dateA.getTime() - dateB.getTime();
+      
+      return dateCompare;
     });
-  }, [entries, searchResults, isSearching, sortDirection, visibleColumns]);
+
+    // Asignar números de operación después del ordenamiento
+    return sorted.map((entry, index) => ({
+      ...entry,
+      operationNumber: sortDirection === 'desc' 
+        ? sorted.length - index 
+        : index + 1
+    }));
+  }, [entries, searchResults, isSearching, sortDirection]);
 
   // Simple add entry handler - NO useCallback, NO optimizations
   const handleAddNewOperation = () => {
@@ -620,7 +620,7 @@ function TradingTable({
                   style={{ height: '100px', maxHeight: '100px' }} // ALTURA FIJA APLICADA DIRECTAMENTE
                 >
                   <td className="px-4 py-3 text-sm text-gray-300">
-                    {sortedEntries.length - index}
+                    {entry.operationNumber}
                   </td>
                   {visibleColumns.map((column) => (
                     <td 
