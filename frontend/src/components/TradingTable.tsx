@@ -125,6 +125,8 @@ function TradingTable({
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<TradeEntry[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
 
   // Ordenar entradas por fecha y hora (más reciente primero)
   const sortedEntries = useMemo(() => {
@@ -201,28 +203,58 @@ function TradingTable({
     setModalImageName(null);
   };
 
-  // Función de búsqueda
+  // Función de búsqueda y filtrado
   const handleSearch = () => {
-    if (!searchTerm.trim()) {
+    // Si no hay término de búsqueda ni fechas, limpiar resultados
+    if (!searchTerm.trim() && !dateFrom && !dateTo) {
       setSearchResults([]);
       setIsSearching(false);
       return;
     }
 
     setIsSearching(true);
-    const term = searchTerm.toLowerCase();
-    const results = entries.filter(entry => {
-      // Buscar en todos los campos de texto
-      return Object.entries(entry).some(([key, value]) => {
-        if (typeof value === 'string') {
-          return value.toLowerCase().includes(term);
-        }
-        if (typeof value === 'number') {
-          return value.toString().includes(term);
-        }
-        return false;
+    let results = [...entries];
+
+    // Filtrar por texto si existe
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      results = results.filter(entry => {
+        return Object.entries(entry).some(([key, value]) => {
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(term);
+          }
+          if (typeof value === 'number') {
+            return value.toString().includes(term);
+          }
+          return false;
+        });
       });
-    });
+    }
+
+    // Filtrar por fecha si existe
+    if (dateFrom || dateTo) {
+      results = results.filter(entry => {
+        const entryDate = new Date(entry.fecha);
+        
+        if (dateFrom && dateTo) {
+          const from = new Date(dateFrom);
+          const to = new Date(dateTo);
+          return entryDate >= from && entryDate <= to;
+        }
+        
+        if (dateFrom) {
+          const from = new Date(dateFrom);
+          return entryDate >= from;
+        }
+        
+        if (dateTo) {
+          const to = new Date(dateTo);
+          return entryDate <= to;
+        }
+
+        return true;
+      });
+    }
     
     setSearchResults(results);
   };
@@ -400,12 +432,16 @@ function TradingTable({
             <Calendar className="h-3 w-3 text-gray-400" />
             <input
               type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
               className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
               title="Fecha desde"
             />
             <span className="text-gray-400 text-xs">-</span>
             <input
               type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
               className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
               title="Fecha hasta"
             />
@@ -452,13 +488,16 @@ function TradingTable({
           <button 
             onClick={() => {
               setSearchTerm('');
+              setDateFrom('');
+              setDateTo('');
               setSearchResults([]);
               setIsSearching(false);
             }} 
-            className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors" 
+            className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors flex items-center gap-1" 
             title="Limpiar filtros"
           >
             <RotateCcw className="h-3 w-3" />
+            <span className="text-xs">Limpiar</span>
           </button>
         </div>
         
