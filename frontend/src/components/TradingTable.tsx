@@ -135,10 +135,36 @@ function TradingTable({
   }, [columns]);
 
   // Función para comparar valores de cualquier tipo
-  const compareValues = (a: any, b: any, direction: 'asc' | 'desc'): number => {
+  const compareValues = (a: any, b: any, direction: 'asc' | 'desc', columnKey?: string): number => {
     // Si alguno de los valores es undefined o null, ponerlo al final
     if (a === undefined || a === null) return direction === 'desc' ? 1 : -1;
     if (b === undefined || b === null) return direction === 'desc' ? -1 : 1;
+
+    // Manejar campos especiales
+    if (columnKey) {
+      // Para campos de imágenes, comparar por cantidad de imágenes
+      if (Array.isArray(a) && Array.isArray(b) && isImageField(columnKey)) {
+        return direction === 'desc'
+          ? b.length - a.length
+          : a.length - b.length;
+      }
+
+      // Para el campo tipoOperacion
+      if (columnKey === 'tipoOperacion') {
+        const aValue = a === 'compra' ? 1 : 0;
+        const bValue = b === 'compra' ? 1 : 0;
+        return direction === 'desc'
+          ? bValue - aValue
+          : aValue - bValue;
+      }
+
+      // Para campos booleanos como seCumplioElPlan
+      if (typeof a === 'boolean' && typeof b === 'boolean') {
+        return direction === 'desc'
+          ? (a === b ? 0 : a ? -1 : 1)
+          : (a === b ? 0 : a ? 1 : -1);
+      }
+    }
 
     // Convertir fechas si los valores tienen formato de fecha
     if (typeof a === 'string' && a.match(/^\d{4}-\d{2}-\d{2}$/)) {
@@ -163,13 +189,6 @@ function TradingTable({
       return 0;
     }
 
-    // Comparar booleanos
-    if (typeof a === 'boolean' && typeof b === 'boolean') {
-      return direction === 'desc'
-        ? (a === b ? 0 : a ? -1 : 1)
-        : (a === b ? 0 : a ? 1 : -1);
-    }
-
     return 0;
   };
 
@@ -181,14 +200,15 @@ function TradingTable({
       const dateTimeCompare = compareValues(
         `${a.fecha} ${a.hora}`,
         `${b.fecha} ${b.hora}`,
-        sortDirection
+        sortDirection,
+        'fecha'
       );
       if (dateTimeCompare !== 0) return dateTimeCompare;
 
       // Si la fecha y hora son iguales, ordenar por el resto de campos
       for (const column of visibleColumns) {
         if (column.key === 'fecha' || column.key === 'hora') continue;
-        const compare = compareValues(a[column.key], b[column.key], sortDirection);
+        const compare = compareValues(a[column.key], b[column.key], sortDirection, column.key);
         if (compare !== 0) return compare;
       }
       return 0;
