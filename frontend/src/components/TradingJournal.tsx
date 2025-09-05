@@ -303,6 +303,14 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 </div>
               </div>
               
+              {(() => {
+                console.log('🔍 TradingJournal Debug - Pasando entradas a TradingTableWithFilters:', {
+                  activeJournalName: activeJournal?.name,
+                  activeJournalEntries: activeJournal?.entries?.length || 0,
+                  activeJournalEntriesArray: activeJournal?.entries?.map(e => ({ id: e.id, fecha: e.fecha, hora: e.hora })) || []
+                });
+                return null;
+              })()}
               <TradingTableWithFilters
                 entries={activeJournal.entries}
                 columns={activeJournal.customColumns}
