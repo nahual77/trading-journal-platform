@@ -605,7 +605,7 @@ function TradingTable({
 
       {/* Simple table */}
       <div 
-        className="table-container overflow-x-auto"
+        className="table-container overflow-x-auto overflow-y-hidden"
         style={{ height: `${tableHeight}px` }}
       >
         <table className="w-full bg-gray-900 rounded-lg">
