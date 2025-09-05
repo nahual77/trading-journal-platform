@@ -246,7 +246,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 </h3>
                 
                 {/* Calculadora de Balance Centrada */}
-                <div className="inline-block bg-gray-800 border border-gray-600 rounded-lg p-4 w-64">
+                <div className="inline-block bg-gray-800 border border-gray-600 rounded-lg p-6 w-80">
                   <h4 className="text-xl font-semibold text-yellow-400 mb-2 flex items-center justify-center">
                     💰 Balance - {activeJournal.name}
                   </h4>
@@ -263,7 +263,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                           console.log('📝 Input onChange ejecutado:', e.target.value);
                           updateInitialBalanceLocal(parseFloat(e.target.value) || 0);
                         }}
-                        className="w-20 px-2 py-1 bg-gray-700 border border-gray-600 rounded text-white text-xl text-right"
+                        className="w-24 px-2 py-1 bg-gray-700 border border-gray-600 rounded text-white text-xl text-right"
                         placeholder="0.00"
                       />
                     </div>
@@ -373,7 +373,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 <div className="bg-gradient-to-r from-blue-600 to-gold-400 p-2 rounded-lg">
                   <BookOpen className="h-6 w-6 text-white" />
                 </div>
-                <h1 className="text-xl font-bold text-gold-400">
+                <h1 className="text-3xl font-bold text-gold-400">
                   Nagual Trader Journal
                 </h1>
               </div>

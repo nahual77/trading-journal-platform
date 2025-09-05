@@ -67,8 +67,8 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
   }, [entries, initialBalance]);
 
   // Configuración del gráfico SVG
-  const chartWidth = 600;
-  const chartHeight = 200;
+  const chartWidth = 800;
+  const chartHeight = 350;
   const padding = 40;
 
   if (chartData.length <= 1) {
@@ -97,7 +97,7 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
 
   return (
     <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mt-4">
-      <h3 className="text-lg font-semibold text-yellow-400 mb-4">
+      <h3 className="text-2xl font-semibold text-yellow-400 mb-4">
         📈 Progresión de Balance - {journalName}
       </h3>
       
@@ -143,7 +143,7 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
                 x={getX(index)}
                 y={getY(point.y) - 8}
                 textAnchor="middle"
-                className="text-xs fill-gray-300"
+                className="text-sm fill-gray-300"
               >
                 ${point.y.toFixed(0)}
               </text>
@@ -157,7 +157,7 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
               x={getX(index)}
               y={chartHeight - 10}
               textAnchor="middle"
-              className="text-xs fill-gray-400"
+              className="text-sm fill-gray-400"
             >
               {index === 0 ? 'Inicio' : `Op${index}`}
             </text>
@@ -166,7 +166,7 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
       </div>
       
       {/* Estadísticas resumidas */}
-      <div className="flex justify-between mt-4 text-sm">
+      <div className="flex justify-between mt-4 text-xl">
         <div className="flex gap-4">
           <span className="text-gray-400">
             Operaciones: <span className="text-white font-semibold">{entries.length}</span>
