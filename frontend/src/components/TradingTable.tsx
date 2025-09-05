@@ -227,14 +227,11 @@ function TradingTable({
     const endIndex = Math.min(startIndex + pageSize, numberedEntries.length);
     const displayEntries = numberedEntries.slice(startIndex, endIndex);
 
-    // Calcular altura mínima de la tabla
-    const minRowHeight = 80; // Altura mínima por fila
+    // Calcular altura de la tabla basada en la cantidad de entradas
     const headerHeight = 60; // Altura del header
-    const padding = 20; // Padding adicional
-    const tableHeight = Math.max(
-      headerHeight + (displayEntries.length * minRowHeight) + padding,
-      400 // Altura mínima de la tabla
-    );
+    const rowHeight = 150; // Altura de cada fila (aumentada significativamente)
+    const padding = 50; // Padding adicional para evitar cortes
+    const tableHeight = headerHeight + (displayEntries.length * rowHeight) + padding;
 
     return { displayEntries, totalPages, tableHeight };
   }, [entries, searchResults, isSearching, sortDirection, pageSize, currentPage]);
@@ -611,7 +608,7 @@ function TradingTable({
       <div 
         className="table-container"
         style={{ 
-          minHeight: `${tableHeight}px`,
+          height: `${tableHeight}px`,
           overflow: 'hidden'
         }}
       >
