@@ -134,6 +134,11 @@ function TradingTable({
     return columns.filter(col => col.visible).sort((a, b) => a.order - b.order);
   }, [columns]);
 
+  // Check if field is one of the 4 specific image fields
+  const isImageField = (fieldKey: string) => {
+    return ['antes', 'durante', 'entradasNoTomadas', 'queSucedioConEntradasNoTomadas'].includes(fieldKey);
+  };
+
   // Función para comparar valores de cualquier tipo
   const compareValues = (a: any, b: any, direction: 'asc' | 'desc', columnKey?: string): number => {
     // Si alguno de los valores es undefined o null, ponerlo al final
@@ -334,11 +339,6 @@ function TradingTable({
     }
     
     setSearchResults(results);
-  };
-
-  // Check if field is one of the 4 specific image fields
-  const isImageField = (fieldKey: string) => {
-    return ['antes', 'durante', 'entradasNoTomadas', 'queSucedioConEntradasNoTomadas'].includes(fieldKey);
   };
 
   // Render cell content
