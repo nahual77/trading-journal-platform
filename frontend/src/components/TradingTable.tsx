@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TradeEntry, ColumnDefinition, TradeImage } from '../types/trading';
 import { Plus, Trash2, Search, Calendar, RotateCcw } from 'lucide-react';
 import { ImageModal } from './ImageModal';
@@ -113,6 +114,7 @@ function TradingTable({
   onRemoveImage,
   onToggleColumn,
 }: TradingTableProps) {
+  const { t } = useTranslation();
   const [editingCell, setEditingCell] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState<string>('');
   
@@ -650,7 +652,7 @@ function TradingTable({
                   colSpan={visibleColumns.length + 2} 
                   className="px-4 py-8 text-center text-sm text-gray-400"
                 >
-                  No hay operaciones registradas. Haz clic en "Nueva Operación" para comenzar.
+                  {t('table.noOperations')}
                 </td>
               </tr>
             ) : (

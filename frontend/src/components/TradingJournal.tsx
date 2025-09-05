@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTradingJournalState } from '../hooks/useTradingJournalState';
 import { JournalTabs } from './JournalTabs';
 import { TradingTableWithFilters } from './TradingTableWithFilters';
 import { TradingPlan } from './TradingPlan';
 import { MT5Panel } from './MT5Panel';
 import BalanceChart from './BalanceChart';
+import LanguageSelector from './LanguageSelector';
 import { supabase } from '../supabaseClient';
 import { 
   BookOpen, 
@@ -23,6 +25,7 @@ interface TradingJournalProps {
 }
 
 export default function TradingJournal({ isNewUser = false }: TradingJournalProps) {
+  const { t } = useTranslation();
   const [activeView, setActiveView] = useState<ActiveView>('journals');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -188,8 +191,8 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full mb-4">
             <BookOpen className="h-8 w-8 text-white animate-spin" />
           </div>
-          <h2 className="text-lg font-semibold text-white mb-2">Cargando...</h2>
-          <p className="text-gray-400">Inicializando tu diario de trading</p>
+          <h2 className="text-lg font-semibold text-white mb-2">{t('common.loading')}</h2>
+          <p className="text-gray-400">{t('tradingJournal.subtitle')}</p>
         </div>
       </div>
     );
@@ -203,21 +206,21 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
   const navigationItems = [
     {
       id: 'journals' as ActiveView,
-      name: 'Diarios',
+      name: t('navigation.tradingJournal'),
       icon: BookOpen,
-      description: 'Gestionar operaciones de trading',
+      description: t('tradingJournal.subtitle'),
     },
     {
       id: 'plan' as ActiveView,
-      name: 'Plan de Trading',
+      name: t('navigation.plan'),
       icon: Target,
-      description: 'Plan VOL 75 y checklist diario',
+      description: t('tradingJournal.planDescription'),
     },
     {
       id: 'mt5' as ActiveView,
-      name: 'Conexión MT5',
+      name: t('navigation.mt5'),
       icon: Activity,
-      description: 'Monitor de cuenta MT4/MT5',
+      description: t('tradingJournal.mt5Description'),
     },
   ];
 
@@ -243,19 +246,19 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               {/* Header centrado con título y calculadora */}
               <div className="text-center mb-4">
                 <h3 className="text-base font-semibold text-gold-300 mb-4">
-                  Operaciones - {activeJournal.name}
+                  {t('tradingJournal.operations')} - {activeJournal.name}
                 </h3>
                 
                 {/* Calculadora de Balance Centrada */}
                 <div className="inline-block bg-gray-800 border border-gray-600 rounded-lg p-6 w-80">
                                 <h4 className="text-base font-semibold text-yellow-400 mb-2 flex items-center justify-center">
-                💰 Balance - {activeJournal.name}
+                💰 {t('tradingJournal.balance')} - {activeJournal.name}
               </h4>
                   
                   <div className="space-y-2">
                     {/* Campo saldo inicial */}
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-400">Saldo inicial:</span>
+                      <span className="text-sm text-gray-400">{t('tradingJournal.initialBalance')}:</span>
                       <input
                         type="number"
                         step="0.01"
@@ -271,7 +274,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                     
                     {/* Total beneficios calculado */}
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-400">Total beneficios:</span>
+                      <span className="text-sm text-gray-400">{t('tradingJournal.profit')}:</span>
                       <span className={`text-sm font-semibold ${totalBenefits >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         {totalBenefits >= 0 ? '+' : ''}${totalBenefits.toFixed(2)}
                       </span>
@@ -279,7 +282,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                     
                     {/* Balance final */}
                     <div className="flex justify-between items-center border-t border-gray-600 pt-2">
-                      <span className="text-sm font-semibold text-gray-200">Balance actual:</span>
+                      <span className="text-sm font-semibold text-gray-200">{t('tradingJournal.currentBalance')}:</span>
                       <span className="text-sm font-bold text-yellow-400">
                         ${(currentInitialBalance + totalBenefits).toFixed(2)}
                       </span>
@@ -402,6 +405,8 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
 
             {/* Botones de acción */}
             <div className="flex items-center space-x-2">
+              {/* Selector de idioma */}
+              <LanguageSelector />
               {/* Botón exportar diario actual CSV */}
               <button
                 onClick={() => handleExportJournalCSV()}
