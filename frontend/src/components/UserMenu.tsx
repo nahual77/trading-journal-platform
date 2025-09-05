@@ -63,10 +63,10 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             <User className="h-4 w-4 text-white" />
           </div>
           <div className="hidden sm:block text-left">
-            <div className="text-sm font-medium text-white truncate max-w-[120px]">
+            <div className="text-xl font-medium text-white truncate max-w-[120px]">
               {user?.email?.split('@')[0] || 'Usuario'}
             </div>
-            <div className="text-xs text-gray-400">Trading Journal</div>
+            <div className="text-lg text-gray-400">Trading Journal</div>
           </div>
         </div>
         <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -86,10 +86,10 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
                 <User className="h-5 w-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-white truncate">
+                <div className="text-xl font-medium text-white truncate">
                   {user?.email?.split('@')[0] || 'Usuario'}
                 </div>
-                <div className="text-xs text-gray-400 truncate">
+                <div className="text-lg text-gray-400 truncate">
                   {user?.email || 'usuario@ejemplo.com'}
                 </div>
               </div>
@@ -100,7 +100,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
           <div className="py-2">
             <button
               onClick={handleProfile}
-              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+              className="w-full flex items-center space-x-3 px-4 py-2 text-xl text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
             >
               <Settings className="h-4 w-4" />
               <span>Perfil</span>
@@ -108,7 +108,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+              className="w-full flex items-center space-x-3 px-4 py-2 text-xl text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
             >
               <LogOut className="h-4 w-4" />
               <span>Desloguearse</span>
@@ -117,7 +117,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
 
           {/* Footer del menú */}
           <div className="px-4 py-2 border-t border-gray-700 bg-gray-900/50">
-            <div className="text-xs text-gray-500 text-center">
+            <div className="text-lg text-gray-500 text-center">
               Nagual Trader Journal v1.0
             </div>
           </div>
