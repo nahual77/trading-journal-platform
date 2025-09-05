@@ -229,8 +229,8 @@ function TradingTable({
 
     // Calcular altura de la tabla basada en la cantidad de entradas
     const headerHeight = 60; // Altura del header
-    const rowHeight = 150; // Altura de cada fila (aumentada significativamente)
-    const padding = 50; // Padding adicional para evitar cortes
+    const rowHeight = 100; // Altura de cada fila
+    const padding = 20; // Padding adicional para evitar cortes
     const tableHeight = headerHeight + (displayEntries.length * rowHeight) + padding;
 
     return { displayEntries, totalPages, tableHeight };
@@ -432,7 +432,7 @@ function TradingTable({
               }
             }}
             onBlur={() => saveEdit(entry.id, column.key)}
-            className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white resize-none"
+            className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-base text-white resize-none"
             rows={3}
             placeholder="Presiona Enter para nueva línea, Shift+Enter para guardar"
             autoFocus
@@ -446,7 +446,7 @@ function TradingTable({
             onChange={(e) => setEditingValue(e.target.value)}
             onKeyDown={(e) => handleKeyDown(e, entry.id, column.key)}
             onBlur={() => saveEdit(entry.id, column.key)}
-            className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
+            className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-base text-white"
             autoFocus
           />
         );
@@ -459,7 +459,7 @@ function TradingTable({
     return (
       <div
         onClick={() => startEdit(entry.id, column.key, value)}
-        className="cursor-pointer hover:bg-gray-700/50 p-1 rounded min-h-[24px] text-sm"
+        className="cursor-pointer hover:bg-gray-700/50 p-1 rounded min-h-[24px] text-base"
       >
         {value ? (
           textareaFields.includes(column.key) ? (
@@ -615,13 +615,13 @@ function TradingTable({
         <table className="w-full bg-gray-900 rounded-lg">
           <thead>
             <tr className="border-b border-gray-700">
-              <th className="px-4 py-3 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">
+              <th className="px-4 py-3 text-left text-sm font-medium text-gold-300 uppercase tracking-wider w-16">
                 #
               </th>
               {visibleColumns.map((column) => (
                 <th
                   key={column.id}
-                  className={`px-4 py-3 text-left text-xs font-medium text-gold-300 uppercase tracking-wider ${
+                  className={`px-4 py-3 text-left text-sm font-medium text-gold-300 uppercase tracking-wider ${
                     column.key === 'fecha' ? 'col-fecha' : 
                     column.key === 'hora' ? 'col-hora' : ''
                   }`}
@@ -629,7 +629,7 @@ function TradingTable({
                   {column.name}
                 </th>
               ))}
-              <th className="px-4 py-3 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">
+              <th className="px-4 py-3 text-left text-sm font-medium text-gold-300 uppercase tracking-wider w-16">
                 Acciones
               </th>
             </tr>
@@ -651,13 +651,13 @@ function TradingTable({
                   className="hover:bg-gray-800/50 transition-colors"
                   style={{ height: '100px' }}
                 >
-                  <td className="px-4 py-3 text-sm text-gray-300">
+                  <td className="px-4 py-3 text-base text-gray-300">
                     {entry.operationNumber}
                   </td>
                   {visibleColumns.map((column) => (
                     <td 
                       key={column.id} 
-                      className={`px-4 py-3 text-sm text-gray-300 ${
+                      className={`px-4 py-3 text-base text-gray-300 ${
                         column.key === 'fecha' ? 'col-fecha' : 
                         column.key === 'hora' ? 'col-hora' : ''
                       }`}
@@ -666,7 +666,7 @@ function TradingTable({
                       {renderCellContent(entry, column)}
                     </td>
                   ))}
-                  <td className="px-4 py-3 text-sm" style={{ height: '100px', maxHeight: '100px' }}>
+                  <td className="px-4 py-3 text-base" style={{ height: '100px', maxHeight: '100px' }}>
                     <button
                       onClick={() => onDeleteEntry(entry.id)}
                       className="p-1 text-red-400 hover:text-red-300 transition-colors"
