@@ -170,7 +170,7 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
       {/* Tabla */}
       <TradingTable 
         {...props}
-        entries={paginatedEntries}
+        entries={filteredAndSortedEntries}
       />
 
       {/* Paginación */}
