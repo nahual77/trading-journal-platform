@@ -129,17 +129,71 @@ function TradingTable({
   const [dateTo, setDateTo] = useState('');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  // Ordenar entradas por fecha y hora
+  // Get visible columns
+  const visibleColumns = useMemo(() => {
+    return columns.filter(col => col.visible).sort((a, b) => a.order - b.order);
+  }, [columns]);
+
+  // Función para comparar valores de cualquier tipo
+  const compareValues = (a: any, b: any, direction: 'asc' | 'desc'): number => {
+    // Si alguno de los valores es undefined o null, ponerlo al final
+    if (a === undefined || a === null) return direction === 'desc' ? 1 : -1;
+    if (b === undefined || b === null) return direction === 'desc' ? -1 : 1;
+
+    // Convertir fechas si los valores tienen formato de fecha
+    if (typeof a === 'string' && a.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const dateA = new Date(a);
+      const dateB = new Date(b);
+      return direction === 'desc' 
+        ? dateB.getTime() - dateA.getTime()
+        : dateA.getTime() - dateB.getTime();
+    }
+
+    // Comparar números
+    if (typeof a === 'number' && typeof b === 'number') {
+      return direction === 'desc' ? b - a : a - b;
+    }
+
+    // Comparar strings (case insensitive)
+    if (typeof a === 'string' && typeof b === 'string') {
+      const aStr = a.toLowerCase();
+      const bStr = b.toLowerCase();
+      if (aStr < bStr) return direction === 'desc' ? 1 : -1;
+      if (aStr > bStr) return direction === 'desc' ? -1 : 1;
+      return 0;
+    }
+
+    // Comparar booleanos
+    if (typeof a === 'boolean' && typeof b === 'boolean') {
+      return direction === 'desc'
+        ? (a === b ? 0 : a ? -1 : 1)
+        : (a === b ? 0 : a ? 1 : -1);
+    }
+
+    return 0;
+  };
+
+  // Ordenar entradas por todas las columnas
   const sortedEntries = useMemo(() => {
     const entriesToSort = isSearching ? searchResults : entries;
     return [...entriesToSort].sort((a, b) => {
-      const dateA = new Date(`${a.fecha} ${a.hora}`);
-      const dateB = new Date(`${b.fecha} ${b.hora}`);
-      return sortDirection === 'desc' 
-        ? dateB.getTime() - dateA.getTime() // Más reciente primero
-        : dateA.getTime() - dateB.getTime(); // Más antiguo primero
+      // Primero ordenar por fecha y hora
+      const dateTimeCompare = compareValues(
+        `${a.fecha} ${a.hora}`,
+        `${b.fecha} ${b.hora}`,
+        sortDirection
+      );
+      if (dateTimeCompare !== 0) return dateTimeCompare;
+
+      // Si la fecha y hora son iguales, ordenar por el resto de campos
+      for (const column of visibleColumns) {
+        if (column.key === 'fecha' || column.key === 'hora') continue;
+        const compare = compareValues(a[column.key], b[column.key], sortDirection);
+        if (compare !== 0) return compare;
+      }
+      return 0;
     });
-  }, [entries, searchResults, isSearching, sortDirection]);
+  }, [entries, searchResults, isSearching, sortDirection, visibleColumns]);
 
   // Simple add entry handler - NO useCallback, NO optimizations
   const handleAddNewOperation = () => {
@@ -261,9 +315,6 @@ function TradingTable({
     
     setSearchResults(results);
   };
-
-  // Get visible columns
-  const visibleColumns = columns.filter(col => col.visible).sort((a, b) => a.order - b.order);
 
   // Check if field is one of the 4 specific image fields
   const isImageField = (fieldKey: string) => {
