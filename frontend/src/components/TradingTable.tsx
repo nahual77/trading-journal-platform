@@ -209,13 +209,6 @@ function TradingTable({
 
   // Ordenar y paginar entradas
   const { displayEntries, totalPages, tableHeight } = useMemo(() => {
-    console.log('🔍 Debug completo:', {
-      entriesOriginal: entries.length,
-      isSearching,
-      searchResults: searchResults.length,
-      entriesToSort: isSearching ? searchResults.length : entries.length
-    });
-    
     const entriesToSort = isSearching ? searchResults : entries;
     const sorted = [...entriesToSort].sort((a, b) => {
       // Primero ordenar por fecha y hora
@@ -242,19 +235,6 @@ function TradingTable({
     const endIndex = Math.min(startIndex + pageSize, numberedEntries.length);
     const displayEntries = numberedEntries.slice(startIndex, endIndex);
     
-    // Debug logs
-    console.log('🔍 Paginación Debug:', {
-      totalEntries: numberedEntries.length,
-      pageSize,
-      currentPage,
-      totalPages,
-      startIndex,
-      endIndex,
-      displayEntriesCount: displayEntries.length,
-      dateFrom,
-      dateTo,
-      hasDateFilter: !!(dateFrom || dateTo)
-    });
 
     // Calcular altura de la tabla basada en la cantidad de entradas
     const headerHeight = 60; // Altura del header
