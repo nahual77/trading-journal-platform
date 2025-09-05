@@ -2,6 +2,7 @@
 
 export interface TradeEntry {
   id: string;
+  operationNumber?: number;
   fecha: string;
   hora: string;
   activo: string;
@@ -17,7 +18,7 @@ export interface TradeEntry {
   emocionesDespues: string;
   entradasNoTomadas: TradeImage[]; // Campo de imagen
   queSucedioConEntradasNoTomadas: TradeImage[]; // Campo de imagen
-  screenshots: TradeImage[];
+  tipoOperacion: 'compra' | 'venta';
   customFields?: { [key: string]: string };
 }
 
@@ -40,7 +41,8 @@ export interface ColumnDefinition {
   id: string;
   key: string;
   name: string;
-  type: 'text' | 'number' | 'boolean' | 'date' | 'time' | 'image';
+  type: 'text' | 'number' | 'boolean' | 'date' | 'time' | 'image' | 'select';
+  options?: string[];
   visible: boolean;
   order: number;
 }
@@ -107,7 +109,7 @@ export const DEFAULT_COLUMNS: ColumnDefinition[] = [
   { id: '13', key: 'emocionesDespues', name: 'Emociones (después)', type: 'text', visible: true, order: 13 },
   { id: '14', key: 'entradasNoTomadas', name: 'Entradas no tomadas', type: 'image', visible: true, order: 14 },
   { id: '15', key: 'queSucedioConEntradasNoTomadas', name: 'Que sucedió con estas entradas', type: 'image', visible: true, order: 15 },
-  { id: '16', key: 'screenshots', name: 'Screenshots', type: 'image', visible: true, order: 16 },
+  { id: '16', key: 'tipoOperacion', name: 'Tipo de Operación', type: 'select', options: ['compra', 'venta'], visible: true, order: 16 },
 ];
 
 export const DEFAULT_TRADING_PLAN: TradingPlan = {
