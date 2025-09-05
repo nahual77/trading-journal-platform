@@ -188,7 +188,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full mb-4">
             <BookOpen className="h-8 w-8 text-white animate-spin" />
           </div>
-          <h2 className="text-xl font-semibold text-white mb-2">Cargando...</h2>
+          <h2 className="text-lg font-semibold text-white mb-2">Cargando...</h2>
           <p className="text-gray-400">Inicializando tu diario de trading</p>
         </div>
       </div>
@@ -242,20 +242,20 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
             <div>
               {/* Header centrado con título y calculadora */}
               <div className="text-center mb-4">
-                <h3 className="text-xl font-semibold text-gold-300 mb-4">
+                <h3 className="text-lg font-semibold text-gold-300 mb-4">
                   Operaciones - {activeJournal.name}
                 </h3>
                 
                 {/* Calculadora de Balance Centrada */}
                 <div className="inline-block bg-gray-800 border border-gray-600 rounded-lg p-6 w-80">
-                  <h4 className="text-xl font-semibold text-yellow-400 mb-2 flex items-center justify-center">
-                    💰 Balance - {activeJournal.name}
-                  </h4>
+                                <h4 className="text-lg font-semibold text-yellow-400 mb-2 flex items-center justify-center">
+                💰 Balance - {activeJournal.name}
+              </h4>
                   
                   <div className="space-y-2">
                     {/* Campo saldo inicial */}
                     <div className="flex justify-between items-center">
-                      <span className="text-xl text-gray-400">Saldo inicial:</span>
+                      <span className="text-base text-gray-400">Saldo inicial:</span>
                       <input
                         type="number"
                         step="0.01"
@@ -264,23 +264,23 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                           console.log('📝 Input onChange ejecutado:', e.target.value);
                           updateInitialBalanceLocal(parseFloat(e.target.value) || 0);
                         }}
-                        className="w-24 px-2 py-1 bg-gray-700 border border-gray-600 rounded text-white text-xl text-right"
+                        className="w-24 px-2 py-1 bg-gray-700 border border-gray-600 rounded text-white text-base text-right"
                         placeholder="0.00"
                       />
                     </div>
                     
                     {/* Total beneficios calculado */}
                     <div className="flex justify-between items-center">
-                      <span className="text-xl text-gray-400">Total beneficios:</span>
-                      <span className={`text-xl font-semibold ${totalBenefits >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <span className="text-base text-gray-400">Total beneficios:</span>
+                      <span className={`text-base font-semibold ${totalBenefits >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         {totalBenefits >= 0 ? '+' : ''}${totalBenefits.toFixed(2)}
                       </span>
                     </div>
                     
                     {/* Balance final */}
                     <div className="flex justify-between items-center border-t border-gray-600 pt-2">
-                      <span className="text-xl font-semibold text-gray-200">Balance actual:</span>
-                      <span className="text-xl font-bold text-yellow-400">
+                      <span className="text-base font-semibold text-gray-200">Balance actual:</span>
+                      <span className="text-base font-bold text-yellow-400">
                         ${(currentInitialBalance + totalBenefits).toFixed(2)}
                       </span>
                     </div>
@@ -374,9 +374,9 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 <div className="bg-gradient-to-r from-blue-600 to-gold-400 p-2 rounded-lg">
                   <BookOpen className="h-6 w-6 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold text-gold-400">
-                  Nagual Trader Journal
-                </h1>
+                            <h1 className="text-2xl font-bold text-gold-400">
+              Nagual Trader Journal
+            </h1>
               </div>
             </div>
 
@@ -387,7 +387,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                   key={item.id}
                   onClick={() => setActiveView(item.id)}
                   className={`
-                    flex items-center space-x-2 px-4 py-2 rounded-lg text-xl font-medium transition-colors
+                    flex items-center space-x-2 px-4 py-2 rounded-lg text-base font-medium transition-colors
                     ${activeView === item.id
                       ? 'bg-blue-600 text-white'
                       : 'text-gray-300 hover:text-white hover:bg-gray-800'
@@ -405,7 +405,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               {/* Botón exportar diario actual CSV */}
               <button
                 onClick={() => handleExportJournalCSV()}
-                className="flex items-center space-x-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-xl"
+                className="flex items-center space-x-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-base"
                 title={`Exportar ${activeJournal.name} a CSV`}
               >
                 <Download className="h-4 w-4" />
@@ -415,7 +415,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               {/* Botón exportar todos los diarios CSV */}
               <button
                 onClick={handleExportAllJournalsCSV}
-                className="flex items-center space-x-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-xl"
+                className="flex items-center space-x-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-base"
                 title="Exportar todos los diarios a CSV"
               >
                 <Download className="h-4 w-4" />
@@ -425,7 +425,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               {/* Botón exportar JSON (backup completo) */}
               <button
                 onClick={handleExportData}
-                className="flex items-center space-x-1 px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors text-xl"
+                className="flex items-center space-x-1 px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors text-base"
                 title="Exportar backup completo JSON"
               >
                 <Download className="h-4 w-4" />
@@ -457,7 +457,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                   <item.icon className="h-5 w-5" />
                   <div>
                     <div className="font-medium">{item.name}</div>
-                    <div className="text-xl text-gray-400">{item.description}</div>
+                    <div className="text-base text-gray-400">{item.description}</div>
                   </div>
                 </button>
               ))}
@@ -476,10 +476,10 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
       <footer className="footer bg-gray-900/50 border-t border-gray-700 mt-4">
         <div className="full-width-container py-3">
           <div className="flex items-center justify-between">
-            <div className="text-xl text-gray-400">
+            <div className="text-base text-gray-400">
               © 2024 Nagual Trader Journal. Diseñado para traders profesionales.
             </div>
-            <div className="flex items-center space-x-4 text-xl text-gray-500">
+            <div className="flex items-center space-x-4 text-base text-gray-500">
               <span>Versión 1.0</span>
               <span>•</span>
               <span>Última sincronización: {new Date().toLocaleTimeString()}</span>
