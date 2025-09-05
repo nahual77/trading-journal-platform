@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TradeEntry, ColumnDefinition, TradeImage } from '../types/trading';
 import { Search, Calendar, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 import TradingTable from './TradingTable';
@@ -36,6 +37,7 @@ interface FilterState {
 }
 
 export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState<FilterState>({
     searchText: '',
     dateFrom: '',
@@ -145,9 +147,9 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
       {/* Información de resultados */}
       <div className="text-sm text-gray-400">
         <span>
-          Mostrando {startIndex + 1}-{Math.min(endIndex, filteredAndSortedEntries.length)} de {filteredAndSortedEntries.length} operaciones
+          {t('table.showing')} {startIndex + 1}-{Math.min(endIndex, filteredAndSortedEntries.length)} {t('table.of')} {filteredAndSortedEntries.length} {t('table.operations')}
           {props.entries.length !== filteredAndSortedEntries.length && (
-            <span className="text-blue-400"> (filtradas de {props.entries.length} total)</span>
+            <span className="text-blue-400"> ({t('table.filtered')} {t('table.of')} {props.entries.length} {t('table.total')})</span>
           )}
         </span>
       </div>
