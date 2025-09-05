@@ -97,7 +97,7 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
 
   return (
     <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mt-4">
-                  <h3 className="text-lg font-semibold text-yellow-400 mb-4">
+                  <h3 className="text-base font-semibold text-yellow-400 mb-4">
         📈 Progresión de Balance - {journalName}
       </h3>
       
@@ -166,7 +166,7 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
       </div>
       
       {/* Estadísticas resumidas */}
-      <div className="flex justify-between mt-4 text-base">
+      <div className="flex justify-between mt-4 text-sm">
         <div className="flex gap-4">
           <span className="text-gray-400">
             Operaciones: <span className="text-white font-semibold">{entries.length}</span>
