@@ -67,6 +67,22 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
     handleExportAllJournalsCSV,
   } = useTradingJournalState();
 
+  // Debug: Verificar cuántas entradas hay en total
+  useEffect(() => {
+    if (appState?.journals) {
+      const totalEntries = appState.journals.reduce((total, journal) => total + journal.entries.length, 0);
+      console.log('🔍 Debug Total Entradas:', {
+        totalJournals: appState.journals.length,
+        totalEntries,
+        activeJournalEntries: activeJournal?.entries?.length || 0,
+        journalsBreakdown: appState.journals.map(j => ({
+          name: j.name,
+          entries: j.entries.length
+        }))
+      });
+    }
+  }, [appState, activeJournal]);
+
 
 
 
