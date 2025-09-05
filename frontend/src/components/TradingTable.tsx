@@ -400,7 +400,7 @@ function TradingTable({
               : 'bg-red-600 text-red-100 hover:bg-red-700'
           }`}
         >
-          {isCompra ? 'COMPRA' : 'VENTA'}
+          {isCompra ? t('table.buy').toUpperCase() : t('table.sell').toUpperCase()}
         </button>
       );
     }
@@ -416,7 +416,7 @@ function TradingTable({
               : 'bg-red-600 text-white'
           }`}
         >
-          {value ? 'SÍ' : 'NO'}
+          {value ? t('common.yes') : t('common.no')}
         </button>
       );
     }
@@ -481,7 +481,7 @@ function TradingTable({
             <span className="text-sm">{value}</span>
           )
         ) : (
-          <span className="text-gray-500 italic text-sm">Clic para editar</span>
+          <span className="text-gray-500 italic text-sm">{t('table.clickToEdit')}</span>
         )}
       </div>
     );
@@ -613,15 +613,6 @@ function TradingTable({
           columns={columns}
           onToggleColumn={onToggleColumn}
         />
-
-        {/* Botón Nueva Operación */}
-        <button
-          onClick={onAddEntry}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-        >
-          <Plus className="h-4 w-4" />
-          <span>{t('tradingJournal.newOperation')}</span>
-        </button>
       </div>
 
       {/* Simple table */}
@@ -702,6 +693,17 @@ function TradingTable({
         </table>
       </div>
 
+      {/* Botón Nueva Operación - Siempre visible */}
+      <div className="flex justify-start mt-4">
+        <button
+          onClick={onAddEntry}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+        >
+          <Plus className="h-4 w-4" />
+          <span>{t('tradingJournal.newOperation')}</span>
+        </button>
+      </div>
+
       {/* Paginación */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4">
@@ -715,7 +717,7 @@ function TradingTable({
                   : 'bg-gray-700 text-white hover:bg-gray-600'
               }`}
             >
-              Primera
+              {t('table.first')}
             </button>
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
