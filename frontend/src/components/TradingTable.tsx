@@ -128,6 +128,8 @@ function TradingTable({
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   // Get visible columns
   const visibleColumns = useMemo(() => {
@@ -197,8 +199,8 @@ function TradingTable({
     return 0;
   };
 
-  // Ordenar entradas por todas las columnas
-  const sortedEntries = useMemo(() => {
+  // Ordenar y paginar entradas
+  const { displayEntries, totalPages } = useMemo(() => {
     const entriesToSort = isSearching ? searchResults : entries;
     const sorted = [...entriesToSort].sort((a, b) => {
       // Primero ordenar por fecha y hora
@@ -212,13 +214,21 @@ function TradingTable({
     });
 
     // Asignar números de operación después del ordenamiento
-    return sorted.map((entry, index) => ({
+    const numberedEntries = sorted.map((entry, index) => ({
       ...entry,
       operationNumber: sortDirection === 'desc' 
         ? sorted.length - index 
         : index + 1
     }));
-  }, [entries, searchResults, isSearching, sortDirection]);
+
+    // Calcular paginación
+    const totalPages = Math.ceil(numberedEntries.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = Math.min(startIndex + pageSize, numberedEntries.length);
+    const displayEntries = numberedEntries.slice(startIndex, endIndex);
+
+    return { displayEntries, totalPages };
+  }, [entries, searchResults, isSearching, sortDirection, pageSize, currentPage]);
 
   // Simple add entry handler - NO useCallback, NO optimizations
   const handleAddNewOperation = () => {
@@ -546,11 +556,19 @@ function TradingTable({
           {/* Cantidad por página compacta */}
           <div className="flex items-center gap-1">
             <span className="text-xs text-gray-400">Mostrar:</span>
-            <select className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs">
+            <select 
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setCurrentPage(1); // Reset a la primera página al cambiar el tamaño
+              }}
+              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+            >
               <option value={10}>10</option>
               <option value={20}>20</option>
               <option value={50}>50</option>
               <option value={100}>100</option>
+              <option value={9999}>Todas</option>
             </select>
           </div>
 
@@ -563,6 +581,8 @@ function TradingTable({
               setSearchResults([]);
               setIsSearching(false);
               setSortDirection('desc');
+              setCurrentPage(1);
+              setPageSize(10);
             }} 
             className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors flex items-center gap-1" 
             title="Limpiar filtros"
@@ -613,7 +633,7 @@ function TradingTable({
                 </td>
               </tr>
             ) : (
-              sortedEntries.map((entry, index) => (
+              displayEntries.map((entry) => (
                 <tr 
                   key={entry.id} 
                   className="hover:bg-gray-800/50 transition-colors"
@@ -649,6 +669,64 @@ function TradingTable({
           </tbody>
         </table>
       </div>
+
+      {/* Paginación */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className={`px-2 py-1 text-xs rounded ${
+                currentPage === 1
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-700 text-white hover:bg-gray-600'
+              }`}
+            >
+              Primera
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className={`px-2 py-1 text-xs rounded ${
+                currentPage === 1
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-700 text-white hover:bg-gray-600'
+              }`}
+            >
+              Anterior
+            </button>
+            <span className="text-xs text-gray-400">
+              Página {currentPage} de {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className={`px-2 py-1 text-xs rounded ${
+                currentPage === totalPages
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-700 text-white hover:bg-gray-600'
+              }`}
+            >
+              Siguiente
+            </button>
+            <button
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+              className={`px-2 py-1 text-xs rounded ${
+                currentPage === totalPages
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-700 text-white hover:bg-gray-600'
+              }`}
+            >
+              Última
+            </button>
+          </div>
+          <div className="text-xs text-gray-400">
+            Mostrando {displayEntries.length} de {entries.length} operaciones
+          </div>
+        </div>
+      )}
 
       {/* Simple statistics */}
       {entries.length > 0 && (
