@@ -22,6 +22,8 @@
   },
   "navigation": {
     "tradingJournal": "Trading Journal",
+    "plan": "Trading Plan",
+    "mt5": "MT5 Connection",
     "dashboard": "Dashboard",
     "operations": "Operations",
     "analytics": "Analytics",
@@ -89,7 +91,9 @@
     "entries": "entries",
     "perPage": "per page",
     "filtered": "filtered",
-    "total": "total"
+    "total": "total",
+    "planNotFollowed": "Plan Not Followed",
+    "buysVsSells": "Buys vs Sells"
   },
   "filters": {
     "searchPlaceholder": "Search...",

@@ -22,6 +22,8 @@
   },
   "navigation": {
     "tradingJournal": "Diario de Trading",
+    "plan": "Plan de Trading",
+    "mt5": "Conexión MT5",
     "dashboard": "Panel Principal",
     "operations": "Operaciones",
     "analytics": "Análisis",
@@ -89,7 +91,9 @@
     "entries": "entradas",
     "perPage": "por página",
     "filtered": "filtradas",
-    "total": "total"
+    "total": "total",
+    "planNotFollowed": "Plan No Cumplido",
+    "buysVsSells": "Compras vs Ventas"
   },
   "filters": {
     "searchPlaceholder": "Buscar...",

@@ -605,7 +605,7 @@ function TradingTable({
             title="Limpiar filtros"
           >
             <RotateCcw className="h-3 w-3" />
-            <span className="text-sm">Limpiar</span>
+            <span className="text-sm">{t('filters.clearFilters')}</span>
           </button>
         </div>
         
@@ -613,6 +613,15 @@ function TradingTable({
           columns={columns}
           onToggleColumn={onToggleColumn}
         />
+
+        {/* Botón Nueva Operación */}
+        <button
+          onClick={onAddEntry}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+        >
+          <Plus className="h-4 w-4" />
+          <span>{t('tradingJournal.newOperation')}</span>
+        </button>
       </div>
 
       {/* Simple table */}
@@ -641,7 +650,7 @@ function TradingTable({
                 </th>
               ))}
               <th className="px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">
-                Acciones
+{t('table.actions')}
               </th>
             </tr>
           </thead>
@@ -755,33 +764,33 @@ function TradingTable({
       {entries.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           <div className="bg-gray-800/50 p-3 rounded-lg">
-            <div className="text-sm text-gray-400 mb-1">Total Operaciones</div>
+            <div className="text-sm text-gray-400 mb-1">{t('tradingJournal.totalOperations')}</div>
             <div className="text-sm font-bold text-white">{entries.length}</div>
           </div>
           <div className="bg-gray-800/50 p-3 rounded-lg">
-            <div className="text-sm text-gray-400 mb-1">Plan Cumplido</div>
+            <div className="text-sm text-gray-400 mb-1">{t('table.planFollowed')}</div>
             <div className="text-sm font-bold text-green-400">
               {entries.filter(e => e.seCumplioElPlan).length}
             </div>
           </div>
           <div className="bg-gray-800/50 p-3 rounded-lg">
-            <div className="text-sm text-gray-400 mb-1">Plan No Cumplido</div>
+            <div className="text-sm text-gray-400 mb-1">{t('table.planNotFollowed')}</div>
             <div className="text-sm font-bold text-red-400">
               {entries.filter(e => !e.seCumplioElPlan).length}
             </div>
           </div>
           <div className="bg-gray-800/50 p-3 rounded-lg">
-            <div className="text-sm text-gray-400 mb-1">Compras vs Ventas</div>
+            <div className="text-sm text-gray-400 mb-1">{t('table.buysVsSells')}</div>
             <div className="flex gap-2 items-center">
               <div>
-                <div className="text-sm text-green-400">Compras</div>
+                <div className="text-sm text-green-400">{t('table.buy')}</div>
                 <div className="text-sm font-bold text-green-400">
                   {entries.filter(e => e.tipoOperacion === 'compra').length}
                 </div>
               </div>
               <div className="text-gray-500">vs</div>
               <div>
-                <div className="text-sm text-red-400">Ventas</div>
+                <div className="text-sm text-red-400">{t('table.sell')}</div>
                 <div className="text-sm font-bold text-red-400">
                   {entries.filter(e => e.tipoOperacion === 'venta').length}
                 </div>
