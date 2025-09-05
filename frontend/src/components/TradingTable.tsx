@@ -120,15 +120,21 @@ function TradingTable({
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
   const [modalImageName, setModalImageName] = useState<string | null>(null);
+  
+  // Estados para filtros
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState<TradeEntry[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Ordenar entradas por fecha y hora (más reciente primero)
   const sortedEntries = useMemo(() => {
-    return [...entries].sort((a, b) => {
+    const entriesToSort = isSearching ? searchResults : entries;
+    return [...entriesToSort].sort((a, b) => {
       const dateA = new Date(`${a.fecha} ${a.hora}`);
       const dateB = new Date(`${b.fecha} ${b.hora}`);
       return dateB.getTime() - dateA.getTime(); // Más reciente primero
     });
-  }, [entries]);
+  }, [entries, searchResults, isSearching]);
 
   // Simple add entry handler - NO useCallback, NO optimizations
   const handleAddNewOperation = () => {
@@ -193,6 +199,32 @@ function TradingTable({
     setIsImageModalOpen(false);
     setModalImageUrl(null);
     setModalImageName(null);
+  };
+
+  // Función de búsqueda
+  const handleSearch = () => {
+    if (!searchTerm.trim()) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const term = searchTerm.toLowerCase();
+    const results = entries.filter(entry => {
+      // Buscar en todos los campos de texto
+      return Object.entries(entry).some(([key, value]) => {
+        if (typeof value === 'string') {
+          return value.toLowerCase().includes(term);
+        }
+        if (typeof value === 'number') {
+          return value.toString().includes(term);
+        }
+        return false;
+      });
+    });
+    
+    setSearchResults(results);
   };
 
   // Get visible columns
@@ -337,13 +369,30 @@ function TradingTable({
         {/* Filtros centrados */}
         <div className="flex items-center gap-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700">
           {/* Búsqueda compacta */}
-          <div className="relative">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="pl-6 pr-2 py-1 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs w-24"
-            />
+          <div className="flex items-center gap-1">
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder="Buscar..."
+                className="pl-6 pr-2 py-1 bg-gray-700 border border-gray-600 rounded-l text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs w-32"
+              />
+            </div>
+            <button
+              onClick={handleSearch}
+              className="px-2 py-1 bg-blue-600 text-white rounded-r text-xs hover:bg-blue-700 transition-colors flex items-center gap-1"
+            >
+              <Search className="h-3 w-3" />
+              Buscar
+            </button>
+            {isSearching && searchResults.length > 0 && (
+              <span className="text-xs text-gray-400">
+                ({searchResults.length} resultados)
+              </span>
+            )}
           </div>
 
           {/* Filtros de fecha compactos */}
@@ -400,7 +449,15 @@ function TradingTable({
           </div>
 
           {/* Limpiar filtros compacto */}
-          <button className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors" title="Limpiar filtros">
+          <button 
+            onClick={() => {
+              setSearchTerm('');
+              setSearchResults([]);
+              setIsSearching(false);
+            }} 
+            className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors" 
+            title="Limpiar filtros"
+          >
             <RotateCcw className="h-3 w-3" />
           </button>
         </div>
