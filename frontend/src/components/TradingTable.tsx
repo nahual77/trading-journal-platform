@@ -229,8 +229,8 @@ function TradingTable({
 
     // Calcular altura de la tabla basada en la cantidad de entradas
     const headerHeight = 60; // Altura del header
-    const rowHeight = 100; // Altura de cada fila
-    const padding = 20; // Padding adicional para evitar cortes
+    const rowHeight = 120; // Altura de cada fila (aumentada para considerar padding y bordes)
+    const padding = 40; // Padding adicional para evitar cortes
     const tableHeight = headerHeight + (displayEntries.length * rowHeight) + padding;
 
     return { displayEntries, totalPages, tableHeight };
