@@ -143,7 +143,7 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
     <div className="space-y-4">
 
       {/* Información de resultados */}
-      <div className="text-sm text-gray-400">
+      <div className="text-xl text-gray-400">
         <span>
           Mostrando {startIndex + 1}-{Math.min(endIndex, filteredAndSortedEntries.length)} de {filteredAndSortedEntries.length} operaciones
           {props.entries.length !== filteredAndSortedEntries.length && (
