@@ -107,22 +107,6 @@ export function useTradingJournalState() {
   // Obtener journal activo
   const activeJournal = validAppState.journals.find(j => j.id === validAppState.activeJournalId) || validAppState.journals[0];
 
-  // Si el estado no era válido, actualizarlo
-  React.useEffect(() => {
-    if (appState !== validAppState) {
-      setAppState(validAppState);
-    }
-  }, [appState, validAppState, setAppState]);
-
-  // Ejecutar actualización de columnas una sola vez al cargar
-  React.useEffect(() => {
-    const hasUpdatedColumns = localStorage.getItem('columns-translation-updated');
-    if (!hasUpdatedColumns) {
-      updateColumnsWithTranslationKeys();
-      localStorage.setItem('columns-translation-updated', 'true');
-    }
-  }, [updateColumnsWithTranslationKeys]);
-
   // Función para generar IDs únicos
   const generateId = () => Date.now().toString() + Math.random().toString(36).substr(2, 9);
 
@@ -158,6 +142,22 @@ export function useTradingJournalState() {
       }))
     }));
   }, [setAppState]);
+
+  // Si el estado no era válido, actualizarlo
+  React.useEffect(() => {
+    if (appState !== validAppState) {
+      setAppState(validAppState);
+    }
+  }, [appState, validAppState, setAppState]);
+
+  // Ejecutar actualización de columnas una sola vez al cargar
+  React.useEffect(() => {
+    const hasUpdatedColumns = localStorage.getItem('columns-translation-updated');
+    if (!hasUpdatedColumns) {
+      updateColumnsWithTranslationKeys();
+      localStorage.setItem('columns-translation-updated', 'true');
+    }
+  }, [updateColumnsWithTranslationKeys]);
 
   // === GESTIÓN DE JOURNALS ===
   
