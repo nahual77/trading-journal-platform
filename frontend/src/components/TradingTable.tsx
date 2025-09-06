@@ -4,6 +4,11 @@ import { TradeEntry, ColumnDefinition, TradeImage } from '../types/trading';
 import { Plus, Trash2, Search, Calendar, RotateCcw } from 'lucide-react';
 import { ImageModal } from './ImageModal';
 import { ColumnManager } from './ColumnManager';
+import { Calendar as CalendarComponent } from './ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Button } from './ui/button';
+import { format } from 'date-fns';
+import { es, pt } from 'date-fns/locale';
 
 interface TradingTableProps {
   entries: TradeEntry[];
@@ -114,7 +119,17 @@ function TradingTable({
   onRemoveImage,
   onToggleColumn,
 }: TradingTableProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  
+  // Obtener localización para date-fns
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'es': return es;
+      case 'pt': return pt;
+      case 'en': 
+      default: return undefined; // Usar localización por defecto del navegador
+    }
+  };
   const [editingCell, setEditingCell] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState<string>('');
   
@@ -129,6 +144,8 @@ function TradingTable({
   const [isSearching, setIsSearching] = useState(false);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [showDateFromCalendar, setShowDateFromCalendar] = useState(false);
+  const [showDateToCalendar, setShowDateToCalendar] = useState(false);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [pageSize, setPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -532,21 +549,60 @@ function TradingTable({
           {/* Filtros de fecha compactos */}
           <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3 text-gray-400" />
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-              title={t('filters.dateFrom')}
-            />
+            
+            {/* Fecha desde */}
+            <Popover open={showDateFromCalendar} onOpenChange={setShowDateFromCalendar}>
+              <PopoverTrigger asChild>
+                <button
+                  className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white hover:bg-gray-600 text-sm h-8 min-w-[120px] text-left"
+                  title={t('filters.dateFrom')}
+                >
+                  {dateFrom ? format(new Date(dateFrom), 'dd/MM/yyyy', { locale: getDateLocale() }) : t('filters.dateFrom')}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-600" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={dateFrom ? new Date(dateFrom) : undefined}
+                  onSelect={(date) => {
+                    if (date) {
+                      setDateFrom(format(date, 'yyyy-MM-dd'));
+                      setShowDateFromCalendar(false);
+                    }
+                  }}
+                  locale={getDateLocale()}
+                  className="bg-gray-800"
+                />
+              </PopoverContent>
+            </Popover>
+            
             <span className="text-gray-400 text-sm">-</span>
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-              title={t('filters.dateTo')}
-            />
+            
+            {/* Fecha hasta */}
+            <Popover open={showDateToCalendar} onOpenChange={setShowDateToCalendar}>
+              <PopoverTrigger asChild>
+                <button
+                  className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white hover:bg-gray-600 text-sm h-8 min-w-[120px] text-left"
+                  title={t('filters.dateTo')}
+                >
+                  {dateTo ? format(new Date(dateTo), 'dd/MM/yyyy', { locale: getDateLocale() }) : t('filters.dateTo')}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-600" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={dateTo ? new Date(dateTo) : undefined}
+                  onSelect={(date) => {
+                    if (date) {
+                      setDateTo(format(date, 'yyyy-MM-dd'));
+                      setShowDateToCalendar(false);
+                    }
+                  }}
+                  locale={getDateLocale()}
+                  className="bg-gray-800"
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           {/* Ordenar compacto */}
