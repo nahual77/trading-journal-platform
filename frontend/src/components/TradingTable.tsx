@@ -605,10 +605,8 @@ function TradingTable({
           columns={columns}
           onToggleColumn={onToggleColumn}
         />
-      </div>
 
-      {/* Botón Nueva Operación - A la izquierda */}
-      <div className="flex justify-start">
+        {/* Botón Nueva Operación */}
         <button
           onClick={onAddEntry}
           className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
