@@ -122,13 +122,18 @@ export function useTradingJournalState() {
       'Ratio': 'table.ratio',
       'Beneficio': 'table.profit',
       'Plan Seguido': 'table.planFollowed',
+      'Se cumplió el plan?': 'table.planFollowed',
       'Lección': 'table.lesson',
       'Emociones Antes': 'table.emotionsBefore',
+      'Emociones (antes)': 'table.emotionsBefore',
       'Emociones Durante': 'table.emotionsDuring',
+      'Emociones (durante)': 'table.emotionsDuring',
       'Emociones Después': 'table.emotionsAfter',
+      'Emociones (después)': 'table.emotionsAfter',
       'Entradas no tomadas': 'table.entriesNotTaken',
       'Que sucedió con estas entradas': 'table.whatHappenedWithEntries',
       'Tipo Operación': 'table.operationType',
+      'Tipo de Operación': 'table.operationType',
     };
 
     setAppState(prev => ({
@@ -157,6 +162,11 @@ export function useTradingJournalState() {
       updateColumnsWithTranslationKeys();
       localStorage.setItem('columns-translation-updated', 'true');
     }
+  }, [updateColumnsWithTranslationKeys]);
+
+  // Forzar actualización de columnas (temporal para arreglar las 4 columnas faltantes)
+  React.useEffect(() => {
+    updateColumnsWithTranslationKeys();
   }, [updateColumnsWithTranslationKeys]);
 
   // === GESTIÓN DE JOURNALS ===
