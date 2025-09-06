@@ -491,14 +491,6 @@ function TradingTable({
     <div className="space-y-4" style={{ overflow: 'hidden' }}>
       {/* Simple controls */}
       <div className="flex items-center justify-between">
-        <button
-          onClick={handleAddNewOperation}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Nueva Operación</span>
-        </button>
-        
         {/* Filtros centrados */}
         <div className="flex items-center gap-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700">
           {/* Búsqueda compacta */}
