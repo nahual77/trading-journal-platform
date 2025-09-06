@@ -374,12 +374,29 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               </button>
               
               <div className="flex items-center space-x-3">
-                <div className="bg-gradient-to-r from-blue-600 to-gold-400 p-2 rounded-lg">
-                  <BookOpen className="h-6 w-6 text-white" />
+                {/* Logo GrowJou */}
+                <div className="flex items-center space-x-2">
+                  <div className="bg-yellow-400 p-2 rounded-lg">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {/* Icono de gráfico con barras y línea ascendente */}
+                      <rect x="3" y="12" width="2" height="4" fill="white" rx="1"/>
+                      <rect x="6" y="8" width="2" height="8" fill="white" rx="1"/>
+                      <rect x="9" y="4" width="2" height="12" fill="white" rx="1"/>
+                      {/* Línea ascendente */}
+                      <path d="M3 16 L6 12 L9 8 L12 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      {/* Flecha hacia arriba */}
+                      <path d="M10 6 L12 4 L14 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className="flex flex-col">
+                    <h1 className="text-xl font-bold text-yellow-400 leading-tight">
+                      GrowJou
+                    </h1>
+                    <p className="text-xs text-gray-400 uppercase tracking-wide">
+                      MY TRADING JOURNAL
+                    </p>
+                  </div>
                 </div>
-                            <h1 className="text-xl font-bold text-gold-400">
-              Nagual Trader Journal
-            </h1>
               </div>
             </div>
 
@@ -482,7 +499,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
         <div className="full-width-container py-3">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-400">
-              © 2024 Nagual Trader Journal. Diseñado para traders profesionales.
+              © 2024 GrowJou. Diseñado para traders profesionales.
             </div>
             <div className="flex items-center space-x-4 text-sm text-gray-500">
               <span>Versión 1.0</span>

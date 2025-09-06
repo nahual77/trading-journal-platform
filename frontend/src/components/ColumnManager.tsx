@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ColumnDefinition } from '../types/trading';
 import { Settings } from 'lucide-react';
 
@@ -11,6 +12,7 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({
   columns, 
   onToggleColumn 
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   // Cerrar dropdown al hacer clic fuera
@@ -46,7 +48,7 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({
         title={`Gestionar columnas (${visibleCount}/${totalCount} visibles)`}
       >
         <Settings className="h-4 w-4" />
-        <span>Columnas</span>
+        <span>{t('table.columns')}</span>
         <span className="text-xs bg-gray-600 px-2 py-1 rounded">
           {visibleCount}/{totalCount}
         </span>
@@ -55,9 +57,9 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({
       {isOpen && (
         <div className="absolute top-full right-0 mt-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-40 min-w-[280px]">
           <div className="p-3 border-b border-gray-600">
-            <h3 className="text-sm font-medium text-white">Gestionar Columnas</h3>
+            <h3 className="text-sm font-medium text-white">{t('table.manageColumns')}</h3>
             <p className="text-xs text-gray-400 mt-1">
-              Selecciona qué columnas mostrar en la tabla
+              {t('table.selectColumnsToShow')}
             </p>
           </div>
           
@@ -74,9 +76,9 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({
                   className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
                 />
                 <div className="flex-1">
-                  <div className="text-sm text-white">{column.name}</div>
+                  <div className="text-sm text-white">{t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`)}</div>
                   <div className="text-xs text-gray-400">
-                    {column.key} • {column.type}
+                    {t(`table.columnType.${column.type}`)}
                   </div>
                 </div>
                 {column.type === 'image' && (
@@ -90,8 +92,8 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({
 
           <div className="p-3 border-t border-gray-600 bg-gray-750">
             <div className="flex items-center justify-between text-xs text-gray-400">
-              <span>Total: {totalCount} columnas</span>
-              <span>Visibles: {visibleCount}</span>
+              <span>{t('table.total')}: {totalCount} {t('table.columns')}</span>
+              <span>{t('table.visible')}: {visibleCount}</span>
             </div>
           </div>
         </div>

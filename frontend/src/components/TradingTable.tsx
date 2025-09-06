@@ -4,6 +4,7 @@ import { TradeEntry, ColumnDefinition, TradeImage } from '../types/trading';
 import { Plus, Trash2, Search, Calendar, RotateCcw } from 'lucide-react';
 import { ImageModal } from './ImageModal';
 import { ColumnManager } from './ColumnManager';
+import { TranslatableDatePicker } from './TranslatableDatePicker';
 
 interface TradingTableProps {
   entries: TradeEntry[];
@@ -25,33 +26,60 @@ const SimpleImageField = ({
   onAdd, 
   onRemove, 
   onImageClick,
-  fieldName 
+  fieldName,
+  entryId,
+  onActivateField,
+  activeImageField
 }: { 
   images: TradeImage[] | undefined; 
   onAdd: (image: TradeImage) => void; 
   onRemove: (imageId: string) => void;
   onImageClick: (imageUrl: string, imageName: string) => void;
   fieldName: string;
+  entryId: string;
+  onActivateField: (entryId: string, fieldKey: string) => void;
+  activeImageField: {entryId: string, fieldKey: string} | null;
 }) => {
   // SAFE ARRAY - garantizar que siempre sea un array
   const safeImages = Array.isArray(images) ? images : [];
+  
   const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('🖼️ Paste event detected in SimpleImageField');
+    
     const items = e.clipboardData.items;
+    console.log('📋 Clipboard items:', items.length);
+    
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
+      console.log('📄 Item type:', item.type);
+      
       if (item.type.startsWith('image/')) {
+        console.log('✅ Image detected, processing...');
         const blob = item.getAsFile();
         if (blob) {
+          console.log('📁 Blob size:', blob.size);
           const reader = new FileReader();
           reader.onload = (event) => {
             const result = event.target?.result as string;
             if (result) {
+              console.log('✅ Image converted to base64, length:', result.length);
               const newImage: TradeImage = {
                 id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
                 name: `${fieldName}-${Date.now()}.png`,
                 url: result,
                 thumbnail: result, // Simplified - same as original
               };
+              console.log('🖼️ Replacing image:', newImage.name);
+              
+              // Si ya hay una imagen, removerla primero
+              if (safeImages.length > 0) {
+                onRemove(safeImages[0].id);
+              }
+              
+              // Agregar la nueva imagen
               onAdd(newImage);
             }
           };
@@ -63,38 +91,51 @@ const SimpleImageField = ({
   };
 
   return (
-    <div className="simple-image-field h-20 overflow-hidden" onPaste={handlePaste}>
+    <div 
+      className={`simple-image-field h-20 overflow-hidden cursor-pointer border-2 rounded ${
+        activeImageField?.entryId === entryId && activeImageField?.fieldKey === fieldName
+          ? 'border-blue-500 bg-blue-500/10'
+          : 'border-transparent hover:border-gray-500'
+      }`}
+      onPaste={handlePaste}
+      onClick={() => {
+        console.log('🎯 Activating image field:', entryId, fieldName);
+        onActivateField(entryId, fieldName);
+      }}
+      tabIndex={0}
+      onFocus={(e) => e.target.focus()}
+      style={{ outline: 'none' }}
+    >
       <div className="flex flex-wrap gap-1 h-full">
-        {safeImages.slice(0, 3).map((image) => (
-          <div key={image.id} className="relative">
+        {safeImages.length > 0 ? (
+          <div className="relative">
             <img
-              src={image.thumbnail}
-              alt={image.name}
-              className="w-14 h-14 object-cover rounded border border-gray-600 cursor-pointer hover:border-blue-500 transition-colors"
-              onClick={() => onImageClick(image.url, image.name)}
+              src={safeImages[0].thumbnail}
+              alt={safeImages[0].name}
+              className="w-16 h-16 object-cover rounded border border-gray-600 cursor-pointer hover:border-blue-500 transition-colors"
+              onClick={() => onImageClick(safeImages[0].url, safeImages[0].name)}
               title="Clic para ver en tamaño completo"
             />
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onRemove(image.id);
+                onRemove(safeImages[0].id);
               }}
-              className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-700 transition-colors"
+              className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-700 transition-colors"
             >
               ×
             </button>
           </div>
-        ))}
-        {safeImages.length < 3 && (
+        ) : (
           <div 
-            className="w-14 h-14 border-2 border-dashed border-gray-600 rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer"
+            className="w-16 h-16 border-2 border-dashed border-gray-600 rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer hover:border-gray-500 transition-colors"
             title="Pegar imagen con Ctrl+V"
           >
-            <Plus className="h-3 w-3" />
+            <Plus className="h-4 w-4" />
           </div>
         )}
         {safeImages.length === 0 && (
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-gray-500 mt-1 ml-2">
             Ctrl+V para pegar
           </div>
         )}
@@ -127,11 +168,14 @@ function TradingTable({
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<TradeEntry[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [pageSize, setPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  
+  // Estado para el campo de imagen activo
+  const [activeImageField, setActiveImageField] = useState<{entryId: string, fieldKey: string} | null>(null);
 
   // Ajustar página actual cuando cambie el pageSize
   useEffect(() => {
@@ -140,6 +184,60 @@ function TradingTable({
       setCurrentPage(totalPages);
     }
   }, [pageSize, entries.length, currentPage]);
+
+  // Listener global para pegado de imágenes
+  useEffect(() => {
+    const handleGlobalPaste = (e: ClipboardEvent) => {
+      console.log('🌍 Global paste event detected');
+      
+      if (activeImageField) {
+        console.log('🎯 Active image field found:', activeImageField);
+        
+        const items = e.clipboardData?.items;
+        if (items) {
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.type.startsWith('image/')) {
+              console.log('✅ Image detected in global paste');
+              e.preventDefault();
+              e.stopPropagation();
+              
+              const blob = item.getAsFile();
+              if (blob) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                  const result = event.target?.result as string;
+                  if (result) {
+                    const newImage: TradeImage = {
+                      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                      name: `${activeImageField.fieldKey}-${Date.now()}.png`,
+                      url: result,
+                      thumbnail: result,
+                    };
+                    console.log('🖼️ Replacing image in field:', activeImageField.fieldKey);
+                    // Usar onUpdateEntry directamente - REEMPLAZAR en lugar de agregar
+                    const entry = entries.find(e => e.id === activeImageField.entryId);
+                    if (entry) {
+                      // Solo mantener una imagen (reemplazar la existente)
+                      onUpdateEntry(activeImageField.entryId, { 
+                        [activeImageField.fieldKey]: [newImage] 
+                      });
+                    }
+                  }
+                };
+                reader.readAsDataURL(blob);
+              }
+              break;
+            }
+          }
+        }
+      }
+    };
+
+    // Agregar listener con capture: true para capturar antes que otros elementos
+    document.addEventListener('paste', handleGlobalPaste, true);
+    return () => document.removeEventListener('paste', handleGlobalPaste, true);
+  }, [activeImageField, entries, onUpdateEntry]);
 
   // Get visible columns
   const visibleColumns = useMemo(() => {
@@ -346,21 +444,17 @@ function TradingTable({
         const entryDate = new Date(entry.fecha);
         
         if (dateFrom && dateTo) {
-          const from = new Date(dateFrom);
-          const to = new Date(dateTo);
-          return entryDate >= from && entryDate <= to;
+          return entryDate >= dateFrom && entryDate <= dateTo;
         }
         
         if (dateFrom) {
-          const from = new Date(dateFrom);
-          return entryDate >= from;
+          return entryDate >= dateFrom;
         }
         
         if (dateTo) {
-          const to = new Date(dateTo);
-          return entryDate <= to;
+          return entryDate <= dateTo;
         }
-
+        
         return true;
       });
     }
@@ -384,23 +478,54 @@ function TradingTable({
           onRemove={(imageId) => handleImageRemove(entry.id, column.key, imageId)}
           onImageClick={handleImageClick}
           fieldName={column.key}
+          entryId={entry.id}
+          onActivateField={(entryId, fieldKey) => setActiveImageField({entryId, fieldKey})}
+          activeImageField={activeImageField}
         />
       );
     }
 
-    // Handle tipo operacion field
+    // Handle tipo operacion field - 3 estados: neutro, compra, venta
     if (column.key === 'tipoOperacion') {
-      const isCompra = value === 'compra';
+      const getNextState = (currentValue: string) => {
+        if (!currentValue || currentValue === '') return 'compra';
+        if (currentValue === 'compra') return 'venta';
+        if (currentValue === 'venta') return '';
+        return 'compra';
+      };
+
+      const getButtonStyles = (currentValue: string) => {
+        if (!currentValue || currentValue === '') {
+          return 'bg-blue-900 text-blue-200 border border-blue-500/30 hover:bg-blue-800 hover:border-blue-400/50 shadow-lg shadow-blue-500/20';
+        }
+        if (currentValue === 'compra') {
+          return 'bg-green-600 text-green-100 hover:bg-green-700 border border-green-500/30 shadow-lg shadow-green-500/20';
+        }
+        if (currentValue === 'venta') {
+          return 'bg-red-600 text-red-100 hover:bg-red-700 border border-red-500/30 shadow-lg shadow-red-500/20';
+        }
+        return 'bg-blue-900 text-blue-200 border border-blue-500/30 hover:bg-blue-800 hover:border-blue-400/50 shadow-lg shadow-blue-500/20';
+      };
+
+      const getButtonText = (currentValue: string) => {
+        if (!currentValue || currentValue === '') {
+          return t('table.buyOrSell');
+        }
+        if (currentValue === 'compra') {
+          return t('table.buy').toUpperCase();
+        }
+        if (currentValue === 'venta') {
+          return t('table.sell').toUpperCase();
+        }
+        return t('table.buyOrSell');
+      };
+
       return (
         <button
-          onClick={() => onUpdateEntry(entry.id, { [column.key]: isCompra ? 'venta' : 'compra' })}
-                            className={`px-3 py-1 rounded text-xs font-medium transition-all transform hover:scale-105 ${
-            isCompra 
-              ? 'bg-green-600 text-green-100 hover:bg-green-700' 
-              : 'bg-red-600 text-red-100 hover:bg-red-700'
-          }`}
+          onClick={() => onUpdateEntry(entry.id, { [column.key]: getNextState(value) })}
+          className={`px-3 py-1.5 rounded text-xs font-medium transition-all transform hover:scale-105 ${getButtonStyles(value)}`}
         >
-          {isCompra ? t('table.buy').toUpperCase() : t('table.sell').toUpperCase()}
+          {getButtonText(value)}
         </button>
       );
     }
@@ -532,20 +657,18 @@ function TradingTable({
           {/* Filtros de fecha compactos */}
           <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3 text-gray-400" />
-            <input
-              type="date"
+            <TranslatableDatePicker
               value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-              title={t('filters.dateFrom')}
+              onChange={setDateFrom}
+              placeholder={t('filters.dateFrom')}
+              className="h-8 text-sm"
             />
             <span className="text-gray-400 text-sm">-</span>
-            <input
-              type="date"
+            <TranslatableDatePicker
               value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-              title={t('filters.dateTo')}
+              onChange={setDateTo}
+              placeholder={t('filters.dateTo')}
+              className="h-8 text-sm"
             />
           </div>
 
@@ -594,8 +717,8 @@ function TradingTable({
           <button 
             onClick={() => {
               setSearchTerm('');
-              setDateFrom('');
-              setDateTo('');
+              setDateFrom(undefined);
+              setDateTo(undefined);
               setSearchResults([]);
               setIsSearching(false);
               setSortDirection('desc');
@@ -635,10 +758,11 @@ function TradingTable({
                   key={column.id}
                   className={`px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider ${
                     column.key === 'fecha' ? 'col-fecha' : 
-                    column.key === 'hora' ? 'col-hora' : ''
+                    column.key === 'hora' ? 'col-hora' : 
+                    isImageField(column.key) ? 'col-image' : ''
                   }`}
                 >
-{t(column.name)}
+{t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`)}
                 </th>
               ))}
               <th className="px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">
@@ -671,7 +795,8 @@ function TradingTable({
                       key={column.id} 
                       className={`px-3 py-2 text-xs text-gray-300 ${
                         column.key === 'fecha' ? 'col-fecha' : 
-                        column.key === 'hora' ? 'col-hora' : ''
+                        column.key === 'hora' ? 'col-hora' : 
+                        isImageField(column.key) ? 'col-image' : ''
                       }`}
                       style={{ height: '100px', maxHeight: '100px', overflow: 'hidden' }}
                     >
@@ -788,6 +913,9 @@ function TradingTable({
                   {entries.filter(e => e.tipoOperacion === 'venta').length}
                 </div>
               </div>
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              {t('table.neutralOperations')}: {entries.filter(e => !e.tipoOperacion || (e.tipoOperacion as string) === '').length}
             </div>
           </div>
         </div>

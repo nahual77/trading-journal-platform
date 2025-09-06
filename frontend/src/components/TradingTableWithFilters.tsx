@@ -1,16 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TradeEntry, ColumnDefinition, TradeImage } from '../types/trading';
-import { Search, Calendar, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 import TradingTable from './TradingTable';
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
-} from './ui/pagination';
 
 interface TradingTableWithFiltersProps {
   entries: TradeEntry[];
@@ -160,54 +151,6 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
         entries={filteredAndSortedEntries}
       />
 
-      {/* Paginación */}
-      {totalPages > 1 && (
-        <div className="flex justify-center">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious 
-                  onClick={() => updateFilter('currentPage', Math.max(1, filters.currentPage - 1))}
-                  className={filters.currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                />
-              </PaginationItem>
-              
-              {/* Páginas */}
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                let pageNumber;
-                if (totalPages <= 5) {
-                  pageNumber = i + 1;
-                } else if (filters.currentPage <= 3) {
-                  pageNumber = i + 1;
-                } else if (filters.currentPage >= totalPages - 2) {
-                  pageNumber = totalPages - 4 + i;
-                } else {
-                  pageNumber = filters.currentPage - 2 + i;
-                }
-
-                return (
-                  <PaginationItem key={pageNumber}>
-                    <PaginationLink
-                      onClick={() => updateFilter('currentPage', pageNumber)}
-                      isActive={filters.currentPage === pageNumber}
-                      className="cursor-pointer"
-                    >
-                      {pageNumber}
-                    </PaginationLink>
-                  </PaginationItem>
-                );
-              })}
-
-              <PaginationItem>
-                <PaginationNext 
-                  onClick={() => updateFilter('currentPage', Math.min(totalPages, filters.currentPage + 1))}
-                  className={filters.currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      )}
     </div>
   );
 }

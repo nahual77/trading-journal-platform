@@ -56,10 +56,20 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       <div className="max-w-md w-full mx-4">
         {/* Logo y título */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full mb-4">
-            <LogIn className="h-8 w-8 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-400 rounded-full mb-4">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Icono de gráfico con barras y línea ascendente */}
+              <rect x="3" y="12" width="2" height="4" fill="white" rx="1"/>
+              <rect x="6" y="8" width="2" height="8" fill="white" rx="1"/>
+              <rect x="9" y="4" width="2" height="12" fill="white" rx="1"/>
+              {/* Línea ascendente */}
+              <path d="M3 16 L6 12 L9 8 L12 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              {/* Flecha hacia arriba */}
+              <path d="M10 6 L12 4 L14 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gold-300 mb-2">Nagual Trader</h1>
+          <h1 className="text-3xl font-bold text-yellow-400 mb-2">GrowJou</h1>
+          <p className="text-sm text-gray-400 uppercase tracking-wide mb-2">MY TRADING JOURNAL</p>
           <p className="text-gray-400">Inicia sesión en tu diario de trading</p>
         </div>
 
@@ -166,7 +176,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-sm text-gray-500">
-            © 2024 Nagual Trader Journal. Diseñado para traders profesionales.
+            © 2024 GrowJou. Diseñado para traders profesionales.
           </p>
         </div>
       </div>
