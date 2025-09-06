@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { 
   AppState, 
@@ -87,25 +87,27 @@ export function useTradingJournalState() {
   const [appState, setAppState] = useLocalStorage<AppState>('nagual-trader-journal-state', createNewUserState);
 
   // Crear un estado válido siempre
-  const getValidState = (): AppState => {
+  const validAppState = useMemo((): AppState => {
     if (appState && appState.journals && appState.journals.length > 0) {
       return appState;
     }
     return createNewUserState();
-  };
-
-  const validAppState = getValidState();
+  }, [appState]);
   
-  // Debug: ver qué está pasando
-  console.log('useTradingJournalState Debug:', {
-    appState,
-    validAppState,
-    hasJournals: validAppState.journals?.length,
-    activeJournalId: validAppState.activeJournalId
-  });
+  // Debug: ver qué está pasando - SOLO cuando cambie validAppState
+  useEffect(() => {
+    console.log('useTradingJournalState Debug:', {
+      appState,
+      validAppState,
+      hasJournals: validAppState.journals?.length,
+      activeJournalId: validAppState.activeJournalId
+    });
+  }, [validAppState, appState]);
   
-  // Obtener journal activo
-  const activeJournal = validAppState.journals.find(j => j.id === validAppState.activeJournalId) || validAppState.journals[0];
+  // Obtener journal activo - MEMOIZADO
+  const activeJournal = useMemo(() => {
+    return validAppState.journals.find(j => j.id === validAppState.activeJournalId) || validAppState.journals[0];
+  }, [validAppState.journals, validAppState.activeJournalId]);
 
   // Función para generar IDs únicos
   const generateId = () => Date.now().toString() + Math.random().toString(36).substr(2, 9);
@@ -113,27 +115,27 @@ export function useTradingJournalState() {
   // Función para actualizar columnas existentes con claves de traducción
   const updateColumnsWithTranslationKeys = useCallback(() => {
     const columnTranslationMap: { [key: string]: string } = {
-      'Fecha': 'table.date',
-      'Hora': 'table.time',
-      'Activo': 'table.asset',
-      'Razón de entrada': 'table.entryReason',
-      'Antes': 'table.before',
-      'Durante': 'table.during',
-      'Ratio': 'table.ratio',
-      'Beneficio': 'table.profit',
-      'Plan Seguido': 'table.planFollowed',
-      'Se cumplió el plan?': 'table.planFollowed',
-      'Lección': 'table.lesson',
-      'Emociones Antes': 'table.emotionsBefore',
-      'Emociones (antes)': 'table.emotionsBefore',
-      'Emociones Durante': 'table.emotionsDuring',
-      'Emociones (durante)': 'table.emotionsDuring',
-      'Emociones Después': 'table.emotionsAfter',
-      'Emociones (después)': 'table.emotionsAfter',
-      'Entradas no tomadas': 'table.entriesNotTaken',
-      'Que sucedió con estas entradas': 'table.whatHappenedWithEntries',
-      'Tipo Operación': 'table.operationType',
-      'Tipo de Operación': 'table.operationType',
+      'Fecha': 'date',
+      'Hora': 'time',
+      'Activo': 'asset',
+      'Razón de entrada': 'entryReason',
+      'Antes': 'before',
+      'Durante': 'during',
+      'Ratio': 'ratio',
+      'Beneficio': 'profit',
+      'Plan Seguido': 'planFollowed',
+      'Se cumplió el plan?': 'planFollowed',
+      'Lección': 'lesson',
+      'Emociones Antes': 'emotionsBefore',
+      'Emociones (antes)': 'emotionsBefore',
+      'Emociones Durante': 'emotionsDuring',
+      'Emociones (durante)': 'emotionsDuring',
+      'Emociones Después': 'emotionsAfter',
+      'Emociones (después)': 'emotionsAfter',
+      'Entradas no tomadas': 'entriesNotTaken',
+      'Que sucedió con estas entradas': 'whatHappenedWithEntries',
+      'Tipo Operación': 'operationType',
+      'Tipo de Operación': 'operationType',
     };
 
     setAppState(prev => ({
@@ -164,10 +166,32 @@ export function useTradingJournalState() {
     }
   }, [updateColumnsWithTranslationKeys]);
 
-  // Forzar actualización de columnas (temporal para arreglar las 4 columnas faltantes)
+  // Función para limpiar y resetear las columnas (temporal)
+  const resetColumns = useCallback(() => {
+    // Limpiar el flag de actualización
+    localStorage.removeItem('columns-translation-updated');
+    
+    // Resetear las columnas a sus valores originales
+    setAppState(prev => ({
+      ...prev,
+      journals: prev.journals.map(journal => ({
+        ...journal,
+        customColumns: journal.customColumns.map(column => ({
+          ...column,
+          name: column.name.replace(/^table\./, '').replace(/^TABLE\./, '')
+        }))
+      }))
+    }));
+  }, [setAppState]);
+
+  // Ejecutar reset de columnas una vez - SOLO UNA VEZ
   React.useEffect(() => {
-    updateColumnsWithTranslationKeys();
-  }, [updateColumnsWithTranslationKeys]);
+    // Solo ejecutar si no se ha ejecutado antes
+    if (!localStorage.getItem('columns-reset-executed')) {
+      resetColumns();
+      localStorage.setItem('columns-reset-executed', 'true');
+    }
+  }, []); // Array vacío para ejecutar solo una vez
 
   // === GESTIÓN DE JOURNALS ===
   
@@ -209,11 +233,19 @@ export function useTradingJournalState() {
   }, [setAppState]);
 
   const deleteJournal = useCallback((journalId: string) => {
+    console.log('🗑️ deleteJournal llamado con ID:', journalId);
+    console.log('📊 Journals actuales:', appState.journals.map(j => ({ id: j.id, name: j.name })));
+    
     setAppState(prev => {
+      console.log('🔄 Estado anterior:', prev.journals.map(j => ({ id: j.id, name: j.name })));
+      
       const remainingJournals = prev.journals.filter(j => j.id !== journalId);
+      console.log('📋 Journals restantes:', remainingJournals.map(j => ({ id: j.id, name: j.name })));
+      
       if (remainingJournals.length === 0) {
         // Si no hay journals, crear uno por defecto
         const defaultJournal = { ...initialAppState.journals[0], id: generateId() };
+        console.log('➕ Creando journal por defecto:', defaultJournal);
         return {
           ...prev,
           journals: [defaultJournal],
@@ -221,12 +253,16 @@ export function useTradingJournalState() {
         };
       }
       
+      const newActiveJournalId = prev.activeJournalId === journalId 
+        ? remainingJournals[0].id 
+        : prev.activeJournalId;
+      
+      console.log('✅ Nuevo activeJournalId:', newActiveJournalId);
+      
       return {
         ...prev,
         journals: remainingJournals,
-        activeJournalId: prev.activeJournalId === journalId 
-          ? remainingJournals[0].id 
-          : prev.activeJournalId,
+        activeJournalId: newActiveJournalId,
       };
     });
   }, [setAppState]);

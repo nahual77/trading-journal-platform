@@ -18,7 +18,7 @@ export interface TradeEntry {
   emocionesDespues: string;
   entradasNoTomadas: TradeImage[]; // Campo de imagen
   queSucedioConEntradasNoTomadas: TradeImage[]; // Campo de imagen
-  tipoOperacion: 'compra' | 'venta';
+  tipoOperacion: 'compra' | 'venta' | '';
   customFields?: { [key: string]: string };
 }
 

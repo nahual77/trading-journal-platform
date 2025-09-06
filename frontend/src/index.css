@@ -32,35 +32,46 @@
     overflow-x: hidden;
   }
 
-  /* Scrollbar personalizado */
+  /* Scrollbar personalizado - OCULTAR */
   .scrollbar-thin {
-    scrollbar-width: thin;
+    scrollbar-width: none;
   }
   
   .scrollbar-thumb-gray-600 {
-    scrollbar-color: #4b5563 transparent;
+    scrollbar-color: transparent transparent;
   }
   
   .scrollbar-track-gray-800 {
-    scrollbar-color: #1f2937 transparent;
+    scrollbar-color: transparent transparent;
   }
   
-  /* Webkit scrollbars */
+  /* Webkit scrollbars - OCULTAR COMPLETAMENTE */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 0px;
+    height: 0px;
+    background: transparent;
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-gray-800;
+    background: transparent;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-600 rounded-full;
+    background: transparent;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-500;
+    background: transparent;
+  }
+  
+  /* Firefox - Ocultar scrollbar */
+  * {
+    scrollbar-width: none;
+  }
+  
+  /* IE/Edge - Ocultar scrollbar */
+  * {
+    -ms-overflow-style: none;
   }
 }
 
@@ -193,17 +204,18 @@
     padding-right: 4px;
   }
 
-  /* Scrollbar para celdas con overflow */
+  /* Scrollbar para celdas con overflow - OCULTAR */
   .table-cell-fixed::-webkit-scrollbar {
-    width: 4px;
+    width: 0px;
+    background: transparent;
   }
   
   .table-cell-fixed::-webkit-scrollbar-track {
-    @apply bg-gray-800;
+    background: transparent;
   }
   
   .table-cell-fixed::-webkit-scrollbar-thumb {
-    @apply bg-gray-600 rounded-full;
+    background: transparent;
   }
 }
 
@@ -404,5 +416,11 @@
   width: 80px !important;
   min-width: 80px !important;
   max-width: 80px !important;
+}
+
+.col-image {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
 }
 

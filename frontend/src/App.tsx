@@ -9,12 +9,19 @@ function App() {
   const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    console.log('App: Iniciando useEffect');
+    
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log('App: getSession result', { session, error });
       setUser(session?.user ?? null);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('App: Error en getSession', error);
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('App: Auth state change', { event, session });
       setUser(session?.user ?? null);
       setLoading(false);
       
@@ -33,6 +40,8 @@ function App() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  console.log('App: Render state', { loading, user, isNewUser });
 
   if (loading) {
     return <div>Cargando...</div>;
