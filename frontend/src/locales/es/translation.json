@@ -116,6 +116,7 @@
   },
   "filters": {
     "searchPlaceholder": "Buscar...",
+    "search": "Buscar",
     "dateFrom": "Fecha desde",
     "dateTo": "Fecha hasta",
     "today": "Hoy",
@@ -128,6 +129,10 @@
     "descending": "Descendente",
     "newestFirst": "Más reciente primero",
     "oldestFirst": "Más antiguo primero",
+    "recent": "↓ Reciente",
+    "oldest": "↑ Antiguo",
+    "sortNewestFirst": "Ordenar más reciente primero",
+    "sortOldestFirst": "Ordenar más antiguo primero",
     "clearFilters": "Limpiar filtros"
   },
   "balanceChart": {
