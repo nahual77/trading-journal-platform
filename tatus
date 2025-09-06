@@ -1,0 +1,5 @@
+[33mb1e042b3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m feat: Merge feature/multilenguaje to main - implementación completa de soporte multilenguaje con español, inglés y portugués
+[33me2dd0094[m[33m ([m[1;32mfeature/multilenguaje[m[33m)[m docs: Actualizar documentación de desarrollo - incluir progreso de implementación multilenguaje
+[33mef157521[m fix: Revertir a campos de fecha nativos - simplificar para resolver error de pantalla en blanco
+[33m0a518ed4[m feat: Implementar calendarios traducibles - usar botones simples con Popover y CalendarComponent para fechas localizadas
+[33m8ee26051[m fix: Simplificar campos de fecha - volver a inputs nativos temporalmente para resolver error de pantalla en blanco
