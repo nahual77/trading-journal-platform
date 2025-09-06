@@ -48,3 +48,4 @@ D:\Diario\Trading-Journal\          <- Directorio raíz
     ├── package.json               <- Scripts de desarrollo
     └── src\                       <- Código fuente
 ```
+

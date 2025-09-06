@@ -12,3 +12,4 @@ Write-Host "✅ Procesos anteriores limpiados" -ForegroundColor Green
 # 3. Iniciar el servidor
 Write-Host "🚀 Iniciando servidor de desarrollo..." -ForegroundColor Cyan
 pnpm run dev
+
