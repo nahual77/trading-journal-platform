@@ -8,7 +8,7 @@ import { Calendar as CalendarComponent } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Button } from './ui/button';
 import { format } from 'date-fns';
-import { es, en, pt } from 'date-fns/locale';
+import { es, pt } from 'date-fns/locale';
 
 interface TradingTableProps {
   entries: TradeEntry[];
@@ -127,7 +127,7 @@ function TradingTable({
       case 'es': return es;
       case 'pt': return pt;
       case 'en': 
-      default: return en;
+      default: return undefined; // Usar localización por defecto del navegador
     }
   };
   const [editingCell, setEditingCell] = useState<string | null>(null);
