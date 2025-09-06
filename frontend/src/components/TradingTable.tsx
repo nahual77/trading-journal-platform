@@ -511,7 +511,7 @@ function TradingTable({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                placeholder={t('filters.searchPlaceholder')}
+                placeholder=""
                 className="pl-6 pr-2 py-1 bg-gray-700 border border-gray-600 rounded-l text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm w-32"
               />
             </div>
@@ -520,7 +520,7 @@ function TradingTable({
               className="px-2 py-1 bg-blue-600 text-white rounded-r text-sm hover:bg-blue-700 transition-colors flex items-center gap-1"
             >
               <Search className="h-3 w-3" />
-              Buscar
+              {t('filters.search')}
             </button>
             {isSearching && searchResults.length > 0 && (
               <span className="text-sm text-gray-400">
@@ -537,7 +537,7 @@ function TradingTable({
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
               className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-              title="Fecha desde"
+              title={t('filters.dateFrom')}
             />
             <span className="text-gray-400 text-sm">-</span>
             <input
@@ -545,7 +545,7 @@ function TradingTable({
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
               className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-              title="Fecha hasta"
+              title={t('filters.dateTo')}
             />
           </div>
 
@@ -553,9 +553,9 @@ function TradingTable({
           <button
             onClick={() => setSortDirection(prev => prev === 'desc' ? 'asc' : 'desc')}
             className="px-2 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors flex items-center gap-1"
-            title={sortDirection === 'desc' ? 'Ordenar más antiguo primero' : 'Ordenar más reciente primero'}
+            title={sortDirection === 'desc' ? t('filters.sortOldestFirst') : t('filters.sortNewestFirst')}
           >
-            {sortDirection === 'desc' ? '↓ Reciente' : '↑ Antiguo'}
+            {sortDirection === 'desc' ? t('filters.recent') : t('filters.oldest')}
           </button>
 
           {/* Filtros rápidos compactos */}
