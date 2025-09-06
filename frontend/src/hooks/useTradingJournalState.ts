@@ -114,8 +114,50 @@ export function useTradingJournalState() {
     }
   }, [appState, validAppState, setAppState]);
 
+  // Ejecutar actualización de columnas una sola vez al cargar
+  React.useEffect(() => {
+    const hasUpdatedColumns = localStorage.getItem('columns-translation-updated');
+    if (!hasUpdatedColumns) {
+      updateColumnsWithTranslationKeys();
+      localStorage.setItem('columns-translation-updated', 'true');
+    }
+  }, [updateColumnsWithTranslationKeys]);
+
   // Función para generar IDs únicos
   const generateId = () => Date.now().toString() + Math.random().toString(36).substr(2, 9);
+
+  // Función para actualizar columnas existentes con claves de traducción
+  const updateColumnsWithTranslationKeys = useCallback(() => {
+    const columnTranslationMap: { [key: string]: string } = {
+      'Fecha': 'table.date',
+      'Hora': 'table.time',
+      'Activo': 'table.asset',
+      'Razón de entrada': 'table.entryReason',
+      'Antes': 'table.before',
+      'Durante': 'table.during',
+      'Ratio': 'table.ratio',
+      'Beneficio': 'table.profit',
+      'Plan Seguido': 'table.planFollowed',
+      'Lección': 'table.lesson',
+      'Emociones Antes': 'table.emotionsBefore',
+      'Emociones Durante': 'table.emotionsDuring',
+      'Emociones Después': 'table.emotionsAfter',
+      'Entradas no tomadas': 'table.entriesNotTaken',
+      'Que sucedió con estas entradas': 'table.whatHappenedWithEntries',
+      'Tipo Operación': 'table.operationType',
+    };
+
+    setAppState(prev => ({
+      ...prev,
+      journals: prev.journals.map(journal => ({
+        ...journal,
+        customColumns: journal.customColumns.map(column => ({
+          ...column,
+          name: columnTranslationMap[column.name] || column.name
+        }))
+      }))
+    }));
+  }, [setAppState]);
 
   // === GESTIÓN DE JOURNALS ===
   
@@ -652,6 +694,7 @@ export function useTradingJournalState() {
     // Utilidades
     exportData,
     importData,
+    updateColumnsWithTranslationKeys,
     
     // Exportación CSV mejorada
     exportToCSV,
