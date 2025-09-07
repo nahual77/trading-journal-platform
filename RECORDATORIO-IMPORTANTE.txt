@@ -1,0 +1,24 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           🚨 RECORDATORIO IMPORTANTE 🚨                      ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║  📁 SIEMPRE ejecutar comandos desde: D:\Diario\Trading-Journal              ║
+║  🚀 COMANDO CORRECTO: npm run dev                                           ║
+║  🌐 URL: http://localhost:5173/                                             ║
+║                                                                              ║
+║  ❌ NO ejecutar desde: D:\Diario\Trading-Journal\frontend                    ║
+║  ❌ NO usar: pnpm run dev directamente                                       ║
+║                                                                              ║
+║  📋 El package.json del directorio raíz tiene los scripts configurados       ║
+║  🔧 Script: "dev": "cd frontend && pnpm run dev"                            ║
+║                                                                              ║
+║  🎨 Logo GrowJou ya integrado en: frontend/public/logo-growjou.png          ║
+║  📍 Ubicación en app: Header superior izquierdo                             ║
+║                                                                              ║
+║  ⚡ Si el sitio no carga:                                                    ║
+║     1. Verificar directorio actual                                           ║
+║     2. Detener procesos: taskkill /f /im node.exe                           ║
+║     3. Ejecutar: npm run dev                                                 ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+

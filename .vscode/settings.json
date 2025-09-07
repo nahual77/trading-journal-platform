@@ -1,3 +1,29 @@
 {
-    "window.autoDetectColorScheme": true
+  "terminal.integrated.cwd": "D:\\Diario\\Trading-Journal",
+  "files.defaultLanguage": "typescript",
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "emmet.includeLanguages": {
+    "typescript": "html",
+    "typescriptreact": "html"
+  },
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#1f2937",
+    "titleBar.activeForeground": "#ffffff"
+  },
+  "workbench.colorTheme": "Dark+ (default dark)",
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "path": "powershell.exe",
+      "args": ["-NoExit", "-Command", "cd 'D:\\Diario\\Trading-Journal'"]
+    }
+  }
 }

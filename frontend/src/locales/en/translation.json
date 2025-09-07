@@ -23,6 +23,7 @@
   "navigation": {
     "tradingJournal": "Trading Journal",
     "plan": "Trading Plan",
+    "statistics": "Statistics",
     "mt5": "MT5 Connection",
     "dashboard": "Dashboard",
     "operations": "Operations",
@@ -53,6 +54,30 @@
     "recoveryFactor": "Recovery Factor",
     "planDescription": "VOL 75 plan and daily checklist",
     "mt5Description": "MT4/MT5 account monitor"
+  },
+  "statistics": {
+    "subtitle": "Complete performance and analysis dashboard",
+    "totalBalance": "Total Balance",
+    "totalProfit": "Total Profit",
+    "totalOperations": "Total Operations",
+    "winRate": "Win Rate",
+    "initial": "Initial",
+    "averagePerOp": "Average per Op",
+    "winning": "Winning",
+    "losing": "Losing",
+    "successRate": "Success Rate",
+    "byJournal": "Performance by Journal",
+    "profitable": "Profitable",
+    "unprofitable": "Unprofitable",
+    "currentBalance": "Current Balance",
+    "profitLoss": "Profit/Loss",
+    "operations": "Operations",
+    "performance": "Performance",
+    "detailedAnalysis": "Detailed Analysis",
+    "bestOperation": "Best Operation",
+    "worstOperation": "Worst Operation",
+    "overallWinRate": "Overall Win Rate",
+    "balanceProgression": "Balance Progression"
   },
   "table": {
     "operationNumber": "#",

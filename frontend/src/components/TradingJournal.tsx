@@ -4,21 +4,23 @@ import { useTradingJournalState } from '../hooks/useTradingJournalState';
 import { JournalTabs } from './JournalTabs';
 import { TradingTableWithFilters } from './TradingTableWithFilters';
 import { TradingPlan } from './TradingPlan';
+import StatisticsNew from './StatisticsNew';
 import { MT5Panel } from './MT5Panel';
 import BalanceChart from './BalanceChart';
 import LanguageSelector from './LanguageSelector';
 import { supabase } from '../supabaseClient';
-import { 
-  BookOpen, 
-  Target, 
-  Activity, 
-  Download, 
+import {
+  BookOpen,
+  Target,
+  BarChart3,
+  Activity,
+  Download,
   Upload,
   Menu,
   X
 } from 'lucide-react';
 
-type ActiveView = 'journals' | 'plan' | 'mt5';
+type ActiveView = 'journals' | 'plan' | 'statistics' | 'mt5';
 
 interface TradingJournalProps {
   isNewUser?: boolean;
@@ -29,10 +31,10 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
   const [activeView, setActiveView] = useState<ActiveView>('journals');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
-  
+
   // Estados para calculadora independiente por diario
-  const [initialBalances, setInitialBalances] = useState<{[key: string]: number}>({});
-  
+  const [initialBalances, setInitialBalances] = useState<{ [key: string]: number }>({});
+
   // Estado para puntos editables del plan de trading
   const [planPoints, setPlanPoints] = useState<string[]>([
     "Operar únicamente los días que mi estrategia marque setups",
@@ -44,7 +46,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
     "Mantener un diario de trading actualizado",
     "No operar bajo emociones fuertes (estrés, euforia)"
   ]);
-  
+
   const {
     appState,
     activeJournal,
@@ -90,21 +92,42 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
   };
 
   // Obtener balance del diario activo (solo localStorage)
-  const currentInitialBalance = activeJournal ? 
+  const currentInitialBalance = activeJournal ?
     (initialBalances[activeJournal.id] || 0) : 0;
+
+  // Debug: verificar balance actual
+  console.log('🔍 Balance actual del diario:', {
+    activeJournalId: activeJournal?.id,
+    initialBalances,
+    currentInitialBalance,
+    localStorageCheck: localStorage.getItem('nagual_initial_balances')
+  });
 
   // Actualizar balance específico del diario activo
   const updateInitialBalanceLocal = (value: number) => {
     console.log('🚀 updateInitialBalanceLocal llamada con valor:', value);
     console.log('💰 Actualizando saldo inicial:', { journalId: activeJournal?.id, value });
-    
-    setInitialBalances(prev => ({
-      ...prev,
-      [activeJournal?.id || '']: value
-    }));
-    
-    // Solo guardar en localStorage (base de datos desactivada temporalmente)
-    console.log('💾 Guardando en localStorage...');
+
+    if (!activeJournal?.id) {
+      console.error('❌ No hay journal activo, no se puede actualizar balance');
+      return;
+    }
+
+    const newBalances = {
+      ...initialBalances,
+      [activeJournal.id]: value
+    };
+
+    console.log('📊 Nuevos balances:', newBalances);
+    setInitialBalances(newBalances);
+
+    // Guardar inmediatamente en localStorage
+    console.log('💾 Guardando inmediatamente en localStorage...');
+    localStorage.setItem('nagual_initial_balances', JSON.stringify(newBalances));
+
+    // Verificar que se guardó correctamente
+    const saved = localStorage.getItem('nagual_initial_balances');
+    console.log('✅ Verificación de guardado:', saved);
   };
 
   // Funciones para manejar puntos del plan de trading
@@ -126,27 +149,61 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
   // Calcular total de beneficios del diario activo
   const totalBenefits = useMemo(() => {
     if (!activeJournal) return 0;
-    return activeJournal.entries.reduce((total, entry) => {
+    const benefits = activeJournal.entries.reduce((total, entry) => {
       const benefit = parseFloat(entry.beneficio) || 0;
       return total + benefit;
     }, 0);
+    console.log('💰 Cálculo de beneficios:', {
+      entries: activeJournal.entries.length,
+      benefits,
+      entriesData: activeJournal.entries.map(e => ({ beneficio: e.beneficio }))
+    });
+    return benefits;
   }, [activeJournal?.entries]);
 
   // Persistencia separada por diario
   useEffect(() => {
-    const saved = localStorage.getItem('nagual_initial_balances');
-    if (saved) {
+    const loadInitialBalances = () => {
       try {
-        const parsedBalances = JSON.parse(saved);
-        setInitialBalances(parsedBalances);
+        const saved = localStorage.getItem('nagual_initial_balances');
+        console.log('🔍 Cargando balances desde localStorage:', saved);
+
+        if (saved && saved !== 'null' && saved !== 'undefined') {
+          const parsedBalances = JSON.parse(saved);
+          console.log('✅ Balances parseados:', parsedBalances);
+
+          // Verificar que sea un objeto válido
+          if (typeof parsedBalances === 'object' && parsedBalances !== null) {
+            setInitialBalances(parsedBalances);
+            console.log('✅ Balances cargados exitosamente');
+          } else {
+            console.warn('⚠️ Datos inválidos, inicializando con objeto vacío');
+            setInitialBalances({});
+          }
+        } else {
+          console.log('📝 No hay balances guardados, inicializando con objeto vacío');
+          setInitialBalances({});
+        }
       } catch (error) {
-        console.warn('Error parsing saved balances:', error);
+        console.error('❌ Error cargando balances:', error);
+        setInitialBalances({});
       }
-    }
+    };
+
+    // Cargar inmediatamente
+    loadInitialBalances();
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('nagual_initial_balances', JSON.stringify(initialBalances));
+    // Solo guardar si hay balances válidos
+    if (Object.keys(initialBalances).length > 0) {
+      console.log('💾 Guardando balances en localStorage:', initialBalances);
+      localStorage.setItem('nagual_initial_balances', JSON.stringify(initialBalances));
+
+      // Verificar que se guardó correctamente
+      const saved = localStorage.getItem('nagual_initial_balances');
+      console.log('✅ Verificación de guardado automático:', saved);
+    }
   }, [initialBalances]);
 
   // Persistencia para puntos del plan de trading
@@ -217,6 +274,12 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
       description: t('tradingJournal.planDescription'),
     },
     {
+      id: 'statistics' as ActiveView,
+      name: t('navigation.statistics'),
+      icon: BarChart3,
+      description: t('statistics.subtitle'),
+    },
+    {
       id: 'mt5' as ActiveView,
       name: t('navigation.mt5'),
       icon: Activity,
@@ -248,13 +311,13 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 <h3 className="text-base font-semibold text-gold-300 mb-4">
                   {t('tradingJournal.operations')} - {activeJournal.name}
                 </h3>
-                
+
                 {/* Calculadora de Balance Centrada */}
                 <div className="inline-block bg-gray-800 border border-gray-600 rounded-lg p-6 w-80">
-                                <h4 className="text-base font-semibold text-yellow-400 mb-2 flex items-center justify-center">
-                💰 {t('tradingJournal.balance')} - {activeJournal.name}
-              </h4>
-                  
+                  <h4 className="text-base font-semibold text-yellow-400 mb-2 flex items-center justify-center">
+                    💰 {t('tradingJournal.balance')} - {activeJournal.name}
+                  </h4>
+
                   <div className="space-y-2">
                     {/* Campo saldo inicial */}
                     <div className="flex justify-between items-center">
@@ -271,7 +334,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                         placeholder="0.00"
                       />
                     </div>
-                    
+
                     {/* Total beneficios calculado */}
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-400">{t('tradingJournal.profit')}:</span>
@@ -279,7 +342,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                         {totalBenefits >= 0 ? '+' : ''}${totalBenefits.toFixed(2)}
                       </span>
                     </div>
-                    
+
                     {/* Balance final */}
                     <div className="flex justify-between items-center border-t border-gray-600 pt-2">
                       <span className="text-sm font-semibold text-gray-200">{t('tradingJournal.currentBalance')}:</span>
@@ -287,10 +350,14 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                         ${(currentInitialBalance + totalBenefits).toFixed(2)}
                       </span>
                     </div>
+                    {/* Debug info */}
+                    <div className="text-xs text-gray-500 mt-1">
+                      Debug: Inicial: ${currentInitialBalance.toFixed(2)} + Beneficios: ${totalBenefits.toFixed(2)} = ${(currentInitialBalance + totalBenefits).toFixed(2)}
+                    </div>
                   </div>
                 </div>
               </div>
-              
+
               <TradingTableWithFilters
                 entries={activeJournal.entries}
                 columns={activeJournal.customColumns}
@@ -306,7 +373,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               />
 
               {/* Gráfico de Progresión de Balance */}
-              <BalanceChart 
+              <BalanceChart
                 entries={activeJournal.entries}
                 initialBalance={currentInitialBalance}
                 journalName={activeJournal.name}
@@ -325,6 +392,15 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
             onAddPlanPoint={addPlanPoint}
             onUpdatePlanPoint={updatePlanPoint}
             onDeletePlanPoint={deletePlanPoint}
+          />
+        );
+
+      case 'statistics':
+        return (
+          <StatisticsNew
+            journals={appState.journals}
+            activeJournalId={appState.activeJournalId}
+            initialBalances={initialBalances}
           />
         );
 
@@ -363,130 +439,110 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
         {/* Header */}
         <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-40">
           <div className="full-width-container">
-            <div className="flex items-center justify-between h-16">
-            {/* Logo y título */}
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors"
-              >
-                {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
-              
-              <div className="flex items-center space-x-3">
+            <div className="flex items-center h-20 relative">
+              {/* Logo y título - Posición absoluta a la izquierda */}
+              <div className="absolute left-0 flex items-center space-x-4">
                 {/* Logo GrowJou */}
-                <div className="flex items-center space-x-2">
-                  <div className="bg-yellow-400 p-2 rounded-lg">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      {/* Icono de gráfico con barras y línea ascendente */}
-                      <rect x="3" y="12" width="2" height="4" fill="white" rx="1"/>
-                      <rect x="6" y="8" width="2" height="8" fill="white" rx="1"/>
-                      <rect x="9" y="4" width="2" height="12" fill="white" rx="1"/>
-                      {/* Línea ascendente */}
-                      <path d="M3 16 L6 12 L9 8 L12 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      {/* Flecha hacia arriba */}
-                      <path d="M10 6 L12 4 L14 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <div className="flex flex-col">
-                    <h1 className="text-xl font-bold text-yellow-400 leading-tight">
-                      GrowJou
-                    </h1>
-                    <p className="text-xs text-gray-400 uppercase tracking-wide">
-                      MY TRADING JOURNAL
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Navegación desktop */}
-            <nav className="hidden lg:flex items-center space-x-1">
-              {navigationItems.map((item) => (
+                <img
+                  src="/logo-growjou.png"
+                  alt="GrowJou - My Trading Journal"
+                  className="h-16 w-auto"
+                />
                 <button
-                  key={item.id}
-                  onClick={() => setActiveView(item.id)}
-                  className={`
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors"
+                >
+                  {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                </button>
+              </div>
+
+              {/* Navegación desktop - Centrada absolutamente */}
+              <nav className="hidden lg:flex items-center justify-center space-x-1 w-full">
+                {navigationItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveView(item.id)}
+                    className={`
                     flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
                     ${activeView === item.id
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                    }
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                      }
                   `}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.name}</span>
+                  </button>
+                ))}
+              </nav>
+
+              {/* Botones de acción - Posición absoluta a la derecha */}
+              <div className="absolute right-0 flex items-center space-x-2">
+                {/* Selector de idioma */}
+                <LanguageSelector />
+                {/* Botón exportar diario actual CSV */}
+                <button
+                  onClick={() => handleExportJournalCSV()}
+                  className="flex items-center space-x-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
+                  title={`Exportar ${activeJournal.name} a CSV`}
                 >
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.name}</span>
+                  <Download className="h-4 w-4" />
+                  <span className="hidden sm:inline">CSV</span>
                 </button>
-              ))}
-            </nav>
 
-            {/* Botones de acción */}
-            <div className="flex items-center space-x-2">
-              {/* Selector de idioma */}
-              <LanguageSelector />
-              {/* Botón exportar diario actual CSV */}
-              <button
-                onClick={() => handleExportJournalCSV()}
-                className="flex items-center space-x-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
-                title={`Exportar ${activeJournal.name} a CSV`}
-              >
-                <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">CSV</span>
-              </button>
-              
-              {/* Botón exportar todos los diarios CSV */}
-              <button
-                onClick={handleExportAllJournalsCSV}
-                className="flex items-center space-x-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
-                title="Exportar todos los diarios a CSV"
-              >
-                <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">Todo</span>
-              </button>
+                {/* Botón exportar todos los diarios CSV */}
+                <button
+                  onClick={handleExportAllJournalsCSV}
+                  className="flex items-center space-x-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
+                  title="Exportar todos los diarios a CSV"
+                >
+                  <Download className="h-4 w-4" />
+                  <span className="hidden sm:inline">Todo</span>
+                </button>
 
-              {/* Botón exportar JSON (backup completo) */}
-              <button
-                onClick={handleExportData}
-                className="flex items-center space-x-1 px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
-                title="Exportar backup completo JSON"
-              >
-                <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">JSON</span>
-              </button>
+                {/* Botón exportar JSON (backup completo) */}
+                <button
+                  onClick={handleExportData}
+                  className="flex items-center space-x-1 px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
+                  title="Exportar backup completo JSON"
+                >
+                  <Download className="h-4 w-4" />
+                  <span className="hidden sm:inline">JSON</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Navegación móvil */}
-        {sidebarOpen && (
-          <div className="lg:hidden bg-gray-800 border-t border-gray-700">
-            <nav className="px-4 py-4 space-y-2">
-              {navigationItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveView(item.id);
-                    setSidebarOpen(false);
-                  }}
-                  className={`
+          {/* Navegación móvil */}
+          {sidebarOpen && (
+            <div className="lg:hidden bg-gray-800 border-t border-gray-700">
+              <nav className="px-4 py-4 space-y-2">
+                {navigationItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveView(item.id);
+                      setSidebarOpen(false);
+                    }}
+                    className={`
                     w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors
                     ${activeView === item.id
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                    }
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                      }
                   `}
-                >
-                  <item.icon className="h-5 w-5" />
-                  <div>
-                    <div className="font-medium">{item.name}</div>
-                    <div className="text-sm text-gray-400">{item.description}</div>
-                  </div>
-                </button>
-              ))}
-            </nav>
-          </div>
-        )}
-      </header>
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <div>
+                      <div className="font-medium">{item.name}</div>
+                      <div className="text-sm text-gray-400">{item.description}</div>
+                    </div>
+                  </button>
+                ))}
+              </nav>
+            </div>
+          )}
+        </header>
 
         {/* Contenido principal */}
         <main className="main-content">
