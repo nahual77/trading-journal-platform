@@ -287,6 +287,11 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
     },
   ];
 
+  // Función simple para cambiar de vista
+  const handleViewChange = (viewId: ActiveView) => {
+    setActiveView(viewId);
+  };
+
   const renderActiveView = () => {
     switch (activeView) {
       case 'journals':
@@ -384,24 +389,28 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
 
       case 'plan':
         return (
-          <TradingPlan
-            tradingPlan={appState.tradingPlan}
-            onToggleItem={toggleChecklistItem}
-            onResetChecklist={resetChecklist}
-            planPoints={planPoints}
-            onAddPlanPoint={addPlanPoint}
-            onUpdatePlanPoint={updatePlanPoint}
-            onDeletePlanPoint={deletePlanPoint}
-          />
+          <div>
+            <TradingPlan
+              tradingPlan={appState.tradingPlan}
+              onToggleItem={toggleChecklistItem}
+              onResetChecklist={resetChecklist}
+              planPoints={planPoints}
+              onAddPlanPoint={addPlanPoint}
+              onUpdatePlanPoint={updatePlanPoint}
+              onDeletePlanPoint={deletePlanPoint}
+            />
+          </div>
         );
 
       case 'statistics':
         return (
-          <StatisticsNew
-            journals={appState.journals}
-            activeJournalId={appState.activeJournalId}
-            initialBalances={initialBalances}
-          />
+          <div>
+            <StatisticsNew
+              journals={appState.journals}
+              activeJournalId={appState.activeJournalId}
+              initialBalances={initialBalances}
+            />
+          </div>
         );
 
       case 'mt5':
@@ -461,9 +470,9 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 {navigationItems.map((item) => (
                   <button
                     key={item.id}
-                    onClick={() => setActiveView(item.id)}
+                    onClick={() => handleViewChange(item.id)}
                     className={`
-                    flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                    flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium
                     ${activeView === item.id
                         ? 'bg-blue-600 text-white'
                         : 'text-gray-300 hover:text-white hover:bg-gray-800'
@@ -521,11 +530,11 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                   <button
                     key={item.id}
                     onClick={() => {
-                      setActiveView(item.id);
+                      handleViewChange(item.id);
                       setSidebarOpen(false);
                     }}
                     className={`
-                    w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors
+                    w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left
                     ${activeView === item.id
                         ? 'bg-blue-600 text-white'
                         : 'text-gray-300 hover:text-white hover:bg-gray-700'
