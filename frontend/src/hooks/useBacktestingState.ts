@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { BacktestingJournal, BacktestingColumn, BacktestingEntry } from '../components/BacktestingTable';
 
 // Función para crear columnas por defecto
@@ -65,67 +65,53 @@ const createDefaultColumns = (): BacktestingColumn[] => [
   },
 ];
 
-export function useBacktestingState() {
-  const [backtestingJournals, setBacktestingJournals] = useState<BacktestingJournal[]>([]);
-  const [activeBacktestingId, setActiveBacktestingId] = useState<string>('');
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // Cargar datos del localStorage al montar (solo una vez)
-  useEffect(() => {
-    if (isInitialized) return;
-
+// Función para cargar datos del localStorage
+const loadFromStorage = (): { journals: BacktestingJournal[], activeId: string } => {
+  try {
     const savedBacktesting = localStorage.getItem('backtesting-journals');
     const savedActiveId = localStorage.getItem('active-backtesting-id');
     
     if (savedBacktesting) {
-      try {
-        const journals = JSON.parse(savedBacktesting);
-        setBacktestingJournals(journals);
-        
-        if (savedActiveId && journals.find((j: BacktestingJournal) => j.id === savedActiveId)) {
-          setActiveBacktestingId(savedActiveId);
-        } else if (journals.length > 0) {
-          setActiveBacktestingId(journals[0].id);
-        }
-      } catch (error) {
-        console.error('Error parsing backtesting data:', error);
-        // Crear backtesting por defecto si hay error
-        const defaultBacktesting = createDefaultBacktesting();
-        setBacktestingJournals([defaultBacktesting]);
-        setActiveBacktestingId(defaultBacktesting.id);
-      }
-    } else {
-      // Crear backtesting inicial si no existe ninguno
-      const defaultBacktesting = createDefaultBacktesting();
-      setBacktestingJournals([defaultBacktesting]);
-      setActiveBacktestingId(defaultBacktesting.id);
+      const journals = JSON.parse(savedBacktesting);
+      const activeId = savedActiveId && journals.find((j: BacktestingJournal) => j.id === savedActiveId) 
+        ? savedActiveId 
+        : journals.length > 0 ? journals[0].id : '';
+      
+      return { journals, activeId };
     }
-    
-    setIsInitialized(true);
-  }, [isInitialized]);
-
-  // Función para crear backtesting por defecto
-  const createDefaultBacktesting = (): BacktestingJournal => ({
+  } catch (error) {
+    console.error('Error loading backtesting data:', error);
+  }
+  
+  // Crear backtesting por defecto
+  const defaultBacktesting: BacktestingJournal = {
     id: Date.now().toString(),
     name: 'Mi Primer Backtesting',
     entries: [],
     columns: createDefaultColumns(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-  });
+  };
+  
+  return { journals: [defaultBacktesting], activeId: defaultBacktesting.id };
+};
 
-  // Guardar en localStorage cuando cambien los datos (solo después de inicializar)
-  useEffect(() => {
-    if (isInitialized && backtestingJournals.length > 0) {
-      localStorage.setItem('backtesting-journals', JSON.stringify(backtestingJournals));
-    }
-  }, [backtestingJournals, isInitialized]);
+// Función para guardar en localStorage
+const saveToStorage = (journals: BacktestingJournal[], activeId: string) => {
+  try {
+    localStorage.setItem('backtesting-journals', JSON.stringify(journals));
+    localStorage.setItem('active-backtesting-id', activeId);
+  } catch (error) {
+    console.error('Error saving backtesting data:', error);
+  }
+};
 
-  useEffect(() => {
-    if (isInitialized && activeBacktestingId) {
-      localStorage.setItem('active-backtesting-id', activeBacktestingId);
-    }
-  }, [activeBacktestingId, isInitialized]);
+export function useBacktestingState() {
+  // Inicializar con datos del localStorage
+  const { journals: initialJournals, activeId: initialActiveId } = loadFromStorage();
+  
+  const [backtestingJournals, setBacktestingJournals] = useState<BacktestingJournal[]>(initialJournals);
+  const [activeBacktestingId, setActiveBacktestingId] = useState<string>(initialActiveId);
 
   const createBacktesting = useCallback((name: string) => {
     const newBacktesting: BacktestingJournal = {
@@ -137,132 +123,141 @@ export function useBacktestingState() {
       updatedAt: new Date().toISOString(),
     };
 
-    setBacktestingJournals(prev => [...prev, newBacktesting]);
+    const newJournals = [...backtestingJournals, newBacktesting];
+    setBacktestingJournals(newJournals);
     setActiveBacktestingId(newBacktesting.id);
+    saveToStorage(newJournals, newBacktesting.id);
     return newBacktesting;
-  }, []);
+  }, [backtestingJournals]);
 
-  const updateBacktestingName = (id: string, name: string) => {
-    setBacktestingJournals(prev => 
-      prev.map(journal => 
-        journal.id === id 
-          ? { ...journal, name, updatedAt: new Date().toISOString() }
-          : journal
-      )
+  const updateBacktestingName = useCallback((id: string, name: string) => {
+    const newJournals = backtestingJournals.map(journal => 
+      journal.id === id 
+        ? { ...journal, name, updatedAt: new Date().toISOString() }
+        : journal
     );
-  };
+    setBacktestingJournals(newJournals);
+    saveToStorage(newJournals, activeBacktestingId);
+  }, [backtestingJournals, activeBacktestingId]);
 
-  const deleteBacktesting = (id: string) => {
-    setBacktestingJournals(prev => {
-      const filtered = prev.filter(journal => journal.id !== id);
-      if (activeBacktestingId === id && filtered.length > 0) {
-        setActiveBacktestingId(filtered[0].id);
-      } else if (filtered.length === 0) {
-        setActiveBacktestingId('');
-      }
-      return filtered;
-    });
-  };
+  const deleteBacktesting = useCallback((id: string) => {
+    const filtered = backtestingJournals.filter(journal => journal.id !== id);
+    let newActiveId = activeBacktestingId;
+    
+    if (activeBacktestingId === id) {
+      newActiveId = filtered.length > 0 ? filtered[0].id : '';
+      setActiveBacktestingId(newActiveId);
+    }
+    
+    setBacktestingJournals(filtered);
+    saveToStorage(filtered, newActiveId);
+  }, [backtestingJournals, activeBacktestingId]);
 
-  const addEntry = (backtestingId: string, entry: Omit<BacktestingEntry, 'id'>) => {
+  const addEntry = useCallback((backtestingId: string, entry: Omit<BacktestingEntry, 'id'>) => {
     const newEntry: BacktestingEntry = {
       id: Date.now().toString(),
       ...entry,
     };
 
-    setBacktestingJournals(prev =>
-      prev.map(journal =>
-        journal.id === backtestingId
-          ? {
-              ...journal,
-              entries: [...journal.entries, newEntry],
-              updatedAt: new Date().toISOString(),
-            }
-          : journal
-      )
+    const newJournals = backtestingJournals.map(journal =>
+      journal.id === backtestingId
+        ? {
+            ...journal,
+            entries: [...journal.entries, newEntry],
+            updatedAt: new Date().toISOString(),
+          }
+        : journal
     );
-  };
+    
+    setBacktestingJournals(newJournals);
+    saveToStorage(newJournals, activeBacktestingId);
+  }, [backtestingJournals, activeBacktestingId]);
 
-  const updateEntry = (backtestingId: string, entryId: string, updates: Partial<BacktestingEntry>) => {
-    setBacktestingJournals(prev =>
-      prev.map(journal =>
-        journal.id === backtestingId
-          ? {
-              ...journal,
-              entries: journal.entries.map(entry =>
-                entry.id === entryId ? { ...entry, ...updates } : entry
-              ),
-              updatedAt: new Date().toISOString(),
-            }
-          : journal
-      )
+  const updateEntry = useCallback((backtestingId: string, entryId: string, updates: Partial<BacktestingEntry>) => {
+    const newJournals = backtestingJournals.map(journal =>
+      journal.id === backtestingId
+        ? {
+            ...journal,
+            entries: journal.entries.map(entry =>
+              entry.id === entryId ? { ...entry, ...updates } : entry
+            ),
+            updatedAt: new Date().toISOString(),
+          }
+        : journal
     );
-  };
+    
+    setBacktestingJournals(newJournals);
+    saveToStorage(newJournals, activeBacktestingId);
+  }, [backtestingJournals, activeBacktestingId]);
 
-  const deleteEntry = (backtestingId: string, entryId: string) => {
-    setBacktestingJournals(prev =>
-      prev.map(journal =>
-        journal.id === backtestingId
-          ? {
-              ...journal,
-              entries: journal.entries.filter(entry => entry.id !== entryId),
-              updatedAt: new Date().toISOString(),
-            }
-          : journal
-      )
+  const deleteEntry = useCallback((backtestingId: string, entryId: string) => {
+    const newJournals = backtestingJournals.map(journal =>
+      journal.id === backtestingId
+        ? {
+            ...journal,
+            entries: journal.entries.filter(entry => entry.id !== entryId),
+            updatedAt: new Date().toISOString(),
+          }
+        : journal
     );
-  };
+    
+    setBacktestingJournals(newJournals);
+    saveToStorage(newJournals, activeBacktestingId);
+  }, [backtestingJournals, activeBacktestingId]);
 
-  const addColumn = (backtestingId: string, column: Omit<BacktestingColumn, 'id'>) => {
+  const addColumn = useCallback((backtestingId: string, column: Omit<BacktestingColumn, 'id'>) => {
     const newColumn: BacktestingColumn = {
       id: Date.now().toString(),
       ...column,
     };
 
-    setBacktestingJournals(prev =>
-      prev.map(journal =>
-        journal.id === backtestingId
-          ? {
-              ...journal,
-              columns: [...journal.columns, newColumn],
-              updatedAt: new Date().toISOString(),
-            }
-          : journal
-      )
+    const newJournals = backtestingJournals.map(journal =>
+      journal.id === backtestingId
+        ? {
+            ...journal,
+            columns: [...journal.columns, newColumn],
+            updatedAt: new Date().toISOString(),
+          }
+        : journal
     );
-  };
+    
+    setBacktestingJournals(newJournals);
+    saveToStorage(newJournals, activeBacktestingId);
+  }, [backtestingJournals, activeBacktestingId]);
 
-  const updateColumn = (backtestingId: string, columnId: string, updates: Partial<BacktestingColumn>) => {
-    setBacktestingJournals(prev =>
-      prev.map(journal =>
-        journal.id === backtestingId
-          ? {
-              ...journal,
-              columns: journal.columns.map(column =>
-                column.id === columnId ? { ...column, ...updates } : column
-              ),
-              updatedAt: new Date().toISOString(),
-            }
-          : journal
-      )
+  const updateColumn = useCallback((backtestingId: string, columnId: string, updates: Partial<BacktestingColumn>) => {
+    const newJournals = backtestingJournals.map(journal =>
+      journal.id === backtestingId
+        ? {
+            ...journal,
+            columns: journal.columns.map(column =>
+              column.id === columnId ? { ...column, ...updates } : column
+            ),
+            updatedAt: new Date().toISOString(),
+          }
+        : journal
     );
-  };
+    
+    setBacktestingJournals(newJournals);
+    saveToStorage(newJournals, activeBacktestingId);
+  }, [backtestingJournals, activeBacktestingId]);
 
-  const deleteColumn = (backtestingId: string, columnId: string) => {
-    setBacktestingJournals(prev =>
-      prev.map(journal =>
-        journal.id === backtestingId
-          ? {
-              ...journal,
-              columns: journal.columns.filter(column => column.id !== columnId),
-              updatedAt: new Date().toISOString(),
-            }
-          : journal
-      )
+  const deleteColumn = useCallback((backtestingId: string, columnId: string) => {
+    const newJournals = backtestingJournals.map(journal =>
+      journal.id === backtestingId
+        ? {
+            ...journal,
+            columns: journal.columns.filter(column => column.id !== columnId),
+            updatedAt: new Date().toISOString(),
+          }
+        : journal
     );
-  };
+    
+    setBacktestingJournals(newJournals);
+    saveToStorage(newJournals, activeBacktestingId);
+  }, [backtestingJournals, activeBacktestingId]);
 
-  const addImage = (backtestingId: string, entryId: string, imageUrl: string) => {
+  const addImage = useCallback((backtestingId: string, entryId: string, imageUrl: string) => {
     const journal = backtestingJournals.find(j => j.id === backtestingId);
     if (journal) {
       const imageColumn = journal.columns.find(col => col.type === 'image');
@@ -270,9 +265,9 @@ export function useBacktestingState() {
         updateEntry(backtestingId, entryId, { [imageColumn.id]: imageUrl });
       }
     }
-  };
+  }, [backtestingJournals, updateEntry]);
 
-  const removeImage = (backtestingId: string, entryId: string, imageUrl: string) => {
+  const removeImage = useCallback((backtestingId: string, entryId: string, imageUrl: string) => {
     const journal = backtestingJournals.find(j => j.id === backtestingId);
     if (journal) {
       const imageColumn = journal.columns.find(col => col.type === 'image');
@@ -280,7 +275,7 @@ export function useBacktestingState() {
         updateEntry(backtestingId, entryId, { [imageColumn.id]: '' });
       }
     }
-  };
+  }, [backtestingJournals, updateEntry]);
 
   const activeBacktesting = backtestingJournals.find(j => j.id === activeBacktestingId);
 
