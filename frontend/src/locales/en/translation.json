@@ -275,6 +275,8 @@
       "boolean": "Yes/No",
       "number": "Number",
       "date": "Date"
-    }
+    },
+    "deleteBacktesting": "Delete Backtesting",
+    "deleteBacktestingConfirm": "Are you sure you want to delete this backtesting? This action cannot be undone."
   }
 }

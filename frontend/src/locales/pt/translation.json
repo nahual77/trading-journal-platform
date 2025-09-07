@@ -275,6 +275,8 @@
       "boolean": "Sim/Não",
       "number": "Número",
       "date": "Data"
-    }
+    },
+    "deleteBacktesting": "Excluir Backtesting",
+    "deleteBacktestingConfirm": "Tem certeza de que deseja excluir este backtesting? Esta ação não pode ser desfeita."
   }
 }
