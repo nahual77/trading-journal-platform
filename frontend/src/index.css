@@ -405,7 +405,7 @@
   overflow: hidden;
 }
 
-/* NUEVAS CLASES PARA COLUMNAS MÁS ANGOSTAS */
+  /* NUEVAS CLASES PARA COLUMNAS MÁS ANGOSTAS */
 .col-fecha {
   width: 90px !important;
   min-width: 90px !important;
@@ -422,5 +422,10 @@
   width: 120px !important;
   min-width: 120px !important;
   max-width: 120px !important;
+}
+
+/* Estilos básicos para secciones - sin transiciones */
+.section-basic {
+  /* Sin efectos especiales */
 }
 
