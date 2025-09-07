@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BacktestingJournal } from './BacktestingTable';
 import { Plus, Edit3, Trash2, X, Check, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import DownloadDropdown from './DownloadDropdown';
+import DownloadBacktestingDropdown from './DownloadBacktestingDropdown';
 
 interface BacktestingTabsProps {
   backtestingJournals: BacktestingJournal[];
@@ -245,11 +245,11 @@ export function BacktestingTabs({
         {/* Botón de descarga */}
         {onExportBacktestingCSV && onExportAllBacktestingCSV && onExportBacktestingData && (
           <div className="flex-shrink-0 px-2 my-2">
-            <DownloadDropdown
-              onExportJournalCSV={onExportBacktestingCSV}
-              onExportAllJournalsCSV={onExportAllBacktestingCSV}
-              onExportData={onExportBacktestingData}
-              activeJournalName={backtestingJournals.find(j => j.id === activeBacktestingId)?.name || 'Backtesting'}
+            <DownloadBacktestingDropdown
+              onExportBacktestingCSV={onExportBacktestingCSV}
+              onExportAllBacktestingCSV={onExportAllBacktestingCSV}
+              onExportBacktestingData={onExportBacktestingData}
+              activeBacktestingName={backtestingJournals.find(j => j.id === activeBacktestingId)?.name || 'Backtesting'}
             />
           </div>
         )}
