@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TestTube, BarChart3, TrendingUp, TrendingDown, Target } from 'lucide-react';
 import BacktestingTable, { BacktestingColumn, BacktestingEntry, ColumnType } from './BacktestingTable';
