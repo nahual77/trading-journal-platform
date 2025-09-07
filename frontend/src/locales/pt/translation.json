@@ -24,6 +24,7 @@
     "tradingJournal": "Diário de Trading",
     "plan": "Plano de Trading",
     "statistics": "Estatísticas",
+    "backtesting": "Backtesting",
     "mt5": "Conexão MT5",
     "dashboard": "Painel Principal",
     "operations": "Operações",
@@ -244,5 +245,36 @@
     "currentJournal": "Diário atual: {{name}}",
     "allJournals": "Todos os diários",
     "fullBackup": "Backup completo"
+  },
+  "backtesting": {
+    "title": "Backtesting",
+    "subtitle": "Teste sua estratégia com dados históricos",
+    "newTest": "Nova Prova",
+    "tests": "Provas",
+    "testName": "Nome da Prova",
+    "strategy": "Estratégia",
+    "period": "Período",
+    "results": "Resultados",
+    "winRate": "Taxa de Sucesso",
+    "profit": "Lucro",
+    "maxDrawdown": "Máxima Perda",
+    "sharpeRatio": "Ratio de Sharpe",
+    "addColumn": "Adicionar Coluna",
+    "columnName": "Nome da Coluna",
+    "columnType": "Tipo de Coluna",
+    "text": "Texto",
+    "image": "Imagem",
+    "boolean": "Booleano",
+    "number": "Número",
+    "date": "Data",
+    "renameColumn": "Renomear Coluna",
+    "deleteColumn": "Excluir Coluna",
+    "columnTypes": {
+      "text": "Texto",
+      "image": "Imagem",
+      "boolean": "Sim/Não",
+      "number": "Número",
+      "date": "Data"
+    }
   }
 }

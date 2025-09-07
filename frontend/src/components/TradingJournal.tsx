@@ -5,6 +5,7 @@ import { JournalTabs } from './JournalTabs';
 import { TradingTableWithFilters } from './TradingTableWithFilters';
 import { TradingPlan } from './TradingPlan';
 import StatisticsNew from './StatisticsNew';
+import Backtesting from './Backtesting';
 import { MT5Panel } from './MT5Panel';
 import BalanceChart from './BalanceChart';
 import LanguageSelector from './LanguageSelector';
@@ -19,10 +20,11 @@ import {
   Download,
   Upload,
   Menu,
-  X
+  X,
+  TestTube
 } from 'lucide-react';
 
-type ActiveView = 'journals' | 'plan' | 'statistics' | 'mt5';
+type ActiveView = 'journals' | 'plan' | 'statistics' | 'backtesting' | 'mt5';
 
 interface TradingJournalProps {
   isNewUser?: boolean;
@@ -282,6 +284,12 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
       description: t('statistics.subtitle'),
     },
     {
+      id: 'backtesting' as ActiveView,
+      name: t('navigation.backtesting'),
+      icon: TestTube,
+      description: t('backtesting.subtitle'),
+    },
+    {
       id: 'mt5' as ActiveView,
       name: t('navigation.mt5'),
       icon: Activity,
@@ -415,6 +423,13 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               activeJournalId={appState.activeJournalId}
               initialBalances={initialBalances}
             />
+          </div>
+        );
+
+      case 'backtesting':
+        return (
+          <div>
+            <Backtesting />
           </div>
         );
 
