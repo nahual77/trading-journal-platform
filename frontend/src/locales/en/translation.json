@@ -238,18 +238,18 @@
     "errorUploading": "Error uploading image"
   },
   "downloadDropdown": {
-    "title": "Download Journal",
+    "title": "Download Backtesting",
     "exportCSV": "Export CSV",
     "exportAllCSV": "Export All CSV",
     "exportJSON": "JSON Backup",
-    "currentJournal": "Current journal: {{name}}",
-    "allJournals": "All journals",
+    "currentJournal": "Current backtesting: {{name}}",
+    "allJournals": "All backtesting",
     "fullBackup": "Full backup"
   },
   "backtesting": {
     "title": "Backtesting",
     "subtitle": "Test your strategy with historical data",
-    "newTest": "New Test",
+    "newTest": "New Backtesting",
     "tests": "Tests",
     "testName": "Test Name",
     "strategy": "Strategy",

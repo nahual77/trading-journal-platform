@@ -238,18 +238,18 @@
     "errorUploading": "Error al subir imagen"
   },
   "downloadDropdown": {
-    "title": "Descargar Diario",
+    "title": "Descargar Backtesting",
     "exportCSV": "Exportar CSV",
     "exportAllCSV": "Exportar Todo CSV",
     "exportJSON": "Backup JSON",
-    "currentJournal": "Diario actual: {{name}}",
-    "allJournals": "Todos los diarios",
+    "currentJournal": "Backtesting actual: {{name}}",
+    "allJournals": "Todos los backtesting",
     "fullBackup": "Respaldo completo"
   },
   "backtesting": {
     "title": "Backtesting",
     "subtitle": "Prueba tu estrategia con datos históricos",
-    "newTest": "Nueva Prueba",
+    "newTest": "Nuevo Backtesting",
     "tests": "Pruebas",
     "testName": "Nombre de la Prueba",
     "strategy": "Estrategia",
