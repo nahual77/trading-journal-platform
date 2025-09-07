@@ -21,7 +21,78 @@ export function useBacktestingState() {
       }
     } else {
       // Crear backtesting inicial si no existe ninguno
-      createBacktesting('Mi Primer Backtesting');
+      const newBacktesting: BacktestingJournal = {
+        id: Date.now().toString(),
+        name: 'Mi Primer Backtesting',
+        entries: [],
+        columns: [
+          {
+            id: 'testName',
+            name: 'Nombre de la Prueba',
+            type: 'text',
+            visible: true,
+          },
+          {
+            id: 'strategy',
+            name: 'Estrategia',
+            type: 'text',
+            visible: true,
+          },
+          {
+            id: 'period',
+            name: 'Período',
+            type: 'text',
+            visible: true,
+          },
+          {
+            id: 'winRate',
+            name: 'Tasa de Éxito',
+            type: 'number',
+            visible: true,
+          },
+          {
+            id: 'profit',
+            name: 'Ganancia',
+            type: 'number',
+            visible: true,
+          },
+          {
+            id: 'maxDrawdown',
+            name: 'Máxima Pérdida',
+            type: 'number',
+            visible: true,
+          },
+          {
+            id: 'sharpeRatio',
+            name: 'Ratio de Sharpe',
+            type: 'number',
+            visible: true,
+          },
+          {
+            id: 'notes',
+            name: 'Notas',
+            type: 'text',
+            visible: true,
+          },
+          {
+            id: 'chart',
+            name: 'Gráfico',
+            type: 'image',
+            visible: true,
+          },
+          {
+            id: 'isProfitable',
+            name: 'Rentable',
+            type: 'boolean',
+            visible: true,
+          },
+        ],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      setBacktestingJournals([newBacktesting]);
+      setActiveBacktestingId(newBacktesting.id);
     }
   }, []);
 
