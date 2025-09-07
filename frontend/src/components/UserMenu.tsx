@@ -54,15 +54,6 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
 
   return (
     <div className="relative">
-      {/* Logo GrowJou */}
-      <div className="mb-4 flex justify-center">
-        <img 
-          src="/logo-growjou.svg" 
-          alt="GrowJou - My Trading Journal" 
-          className="h-12 w-auto"
-        />
-      </div>
-      
       {/* Botón principal del menú */}
       <button
         onMouseEnter={handleMouseEnter}

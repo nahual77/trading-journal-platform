@@ -109,7 +109,7 @@ export const DEFAULT_COLUMNS: ColumnDefinition[] = [
   { id: '13', key: 'emocionesDespues', name: 'table.emotionsAfter', type: 'text', visible: true, order: 13 },
   { id: '14', key: 'entradasNoTomadas', name: 'table.entriesNotTaken', type: 'image', visible: true, order: 14 },
   { id: '15', key: 'queSucedioConEntradasNoTomadas', name: 'table.whatHappenedWithEntries', type: 'image', visible: true, order: 15 },
-  { id: '16', key: 'tipoOperacion', name: 'table.operationType', type: 'select', options: ['compra', 'venta'], visible: true, order: 16 },
+  { id: '16', key: 'tipoOperacion', name: 'table.operationType', type: 'text', visible: true, order: 16 }, // Updated: 2024-01-15
 ];
 
 export const DEFAULT_TRADING_PLAN: TradingPlan = {
@@ -117,14 +117,14 @@ export const DEFAULT_TRADING_PLAN: TradingPlan = {
     // Paso 1: Preparación Física
     { id: '1', text: 'Ejercicio 15 minutos', completed: false, category: 'Preparación Física' },
     { id: '2', text: 'Baño y desayuno', completed: false, category: 'Preparación Física' },
-    
+
     // Paso 2: Preparación Mental
     { id: '3', text: 'Meditación 10 minutos antes de prender computadora', completed: false, category: 'Preparación Mental' },
     { id: '4', text: 'Verificar que frases y mantra estén visibles y leerlos', completed: false, category: 'Preparación Mental' },
     { id: '5', text: 'Revisar estado emocional (NO OPERAR si mal genio/distraído)', completed: false, category: 'Preparación Mental' },
     { id: '6', text: 'No redes sociales, ni distractores hasta hacer la entrada', completed: false, category: 'Preparación Mental' },
     { id: '7', text: 'Música relajante', completed: false, category: 'Preparación Mental' },
-    
+
     // Paso 3: Análisis
     { id: '8', text: 'Revisar entradas del día anterior con reflexión', completed: false, category: 'Análisis' },
     { id: '9', text: 'Identificar último ciclo del mercado (D y 4H)', completed: false, category: 'Análisis General' },
@@ -139,19 +139,19 @@ export const DEFAULT_TRADING_PLAN: TradingPlan = {
     { id: '18', text: 'Definir zonas de retrocesos', completed: false, category: 'Análisis Micro' },
     { id: '19', text: 'Marcar todo en gráfico', completed: false, category: 'Análisis Micro' },
     { id: '20', text: 'Poner alertas en las zonas', completed: false, category: 'Análisis Micro' },
-    
+
     // Paso 4: Ejecución
     { id: '21', text: 'Laptop con gráfico 1m ampliado', completed: false, category: 'Ejecución' },
     { id: '22', text: 'TV con gráficos 5m y 15m', completed: false, category: 'Ejecución' },
     { id: '23', text: 'Total concentración cuando suene alerta', completed: false, category: 'Ejecución' },
     { id: '24', text: 'Repetir: "Asumo el riesgo, me desapego del resultado"', completed: false, category: 'Ejecución' },
-    
+
     // Checklist de Parámetros
     { id: '25', text: '¿Alerta en zona predefinida?', completed: false, category: 'Parámetros de Entrada' },
     { id: '26', text: '¿Divergencia X confirmada?', completed: false, category: 'Parámetros de Entrada' },
     { id: '27', text: '¿Patrón de vela Y presente?', completed: false, category: 'Parámetros de Entrada' },
     { id: '28', text: '¿Condición Z del histograma MACD cumplida?', completed: false, category: 'Parámetros de Entrada' },
-    
+
     // Paso 5: Registro
     { id: '29', text: 'Hacer registro de operaciones', completed: false, category: 'Registro' },
   ],

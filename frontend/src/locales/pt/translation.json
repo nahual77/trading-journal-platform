@@ -23,6 +23,7 @@
   "navigation": {
     "tradingJournal": "Diário de Trading",
     "plan": "Plano de Trading",
+    "statistics": "Estatísticas",
     "mt5": "Conexão MT5",
     "dashboard": "Painel Principal",
     "operations": "Operações",
@@ -53,6 +54,30 @@
     "recoveryFactor": "Fator de Recuperação",
     "planDescription": "Plano VOL 75 e checklist diário",
     "mt5Description": "Monitor de conta MT4/MT5"
+  },
+  "statistics": {
+    "subtitle": "Dashboard completo de performance e análise",
+    "totalBalance": "Saldo Total",
+    "totalProfit": "Lucro Total",
+    "totalOperations": "Total de Operações",
+    "winRate": "Taxa de Sucesso",
+    "initial": "Inicial",
+    "averagePerOp": "Média por Op",
+    "winning": "Vencedoras",
+    "losing": "Perdedoras",
+    "successRate": "Taxa de Sucesso",
+    "byJournal": "Performance por Diário",
+    "profitable": "Lucrativo",
+    "unprofitable": "Não Lucrativo",
+    "currentBalance": "Saldo Atual",
+    "profitLoss": "Lucro/Perda",
+    "operations": "Operações",
+    "performance": "Performance",
+    "detailedAnalysis": "Análise Detalhada",
+    "bestOperation": "Melhor Operação",
+    "worstOperation": "Pior Operação",
+    "overallWinRate": "Taxa de Sucesso Geral",
+    "balanceProgression": "Progressão do Saldo"
   },
   "table": {
     "operationNumber": "#",

@@ -21,41 +21,41 @@ interface TradingTableProps {
 }
 
 // Simple Image Field Component - MINIMALISTA
-const SimpleImageField = ({ 
-  images, 
-  onAdd, 
-  onRemove, 
+const SimpleImageField = ({
+  images,
+  onAdd,
+  onRemove,
   onImageClick,
   fieldName,
   entryId,
   onActivateField,
   activeImageField
-}: { 
-  images: TradeImage[] | undefined; 
-  onAdd: (image: TradeImage) => void; 
+}: {
+  images: TradeImage[] | undefined;
+  onAdd: (image: TradeImage) => void;
   onRemove: (imageId: string) => void;
   onImageClick: (imageUrl: string, imageName: string) => void;
   fieldName: string;
   entryId: string;
   onActivateField: (entryId: string, fieldKey: string) => void;
-  activeImageField: {entryId: string, fieldKey: string} | null;
+  activeImageField: { entryId: string, fieldKey: string } | null;
 }) => {
   // SAFE ARRAY - garantizar que siempre sea un array
   const safeImages = Array.isArray(images) ? images : [];
-  
+
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     console.log('🖼️ Paste event detected in SimpleImageField');
-    
+
     const items = e.clipboardData.items;
     console.log('📋 Clipboard items:', items.length);
-    
+
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       console.log('📄 Item type:', item.type);
-      
+
       if (item.type.startsWith('image/')) {
         console.log('✅ Image detected, processing...');
         const blob = item.getAsFile();
@@ -73,12 +73,12 @@ const SimpleImageField = ({
                 thumbnail: result, // Simplified - same as original
               };
               console.log('🖼️ Replacing image:', newImage.name);
-              
+
               // Si ya hay una imagen, removerla primero
               if (safeImages.length > 0) {
                 onRemove(safeImages[0].id);
               }
-              
+
               // Agregar la nueva imagen
               onAdd(newImage);
             }
@@ -91,12 +91,11 @@ const SimpleImageField = ({
   };
 
   return (
-    <div 
-      className={`simple-image-field h-20 overflow-hidden cursor-pointer border-2 rounded ${
-        activeImageField?.entryId === entryId && activeImageField?.fieldKey === fieldName
+    <div
+      className={`simple-image-field h-20 overflow-hidden cursor-pointer border-2 rounded ${activeImageField?.entryId === entryId && activeImageField?.fieldKey === fieldName
           ? 'border-blue-500 bg-blue-500/10'
           : 'border-transparent hover:border-gray-500'
-      }`}
+        }`}
       onPaste={handlePaste}
       onClick={() => {
         console.log('🎯 Activating image field:', entryId, fieldName);
@@ -127,16 +126,12 @@ const SimpleImageField = ({
             </button>
           </div>
         ) : (
-          <div 
-            className="w-16 h-16 border-2 border-dashed border-gray-600 rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer hover:border-gray-500 transition-colors"
+          <div
+            className="w-16 h-16 border-2 border-dashed border-gray-600 rounded flex flex-col items-center justify-center text-gray-400 text-xs cursor-pointer hover:border-gray-500 transition-colors"
             title="Pegar imagen con Ctrl+V"
           >
-            <Plus className="h-4 w-4" />
-          </div>
-        )}
-        {safeImages.length === 0 && (
-          <div className="text-xs text-gray-500 mt-1 ml-2">
-            Ctrl+V para pegar
+            <Plus className="h-4 w-4 mb-1" />
+            <span className="text-xs text-gray-500">Ctrl+V</span>
           </div>
         )}
       </div>
@@ -158,12 +153,12 @@ function TradingTable({
   const { t } = useTranslation();
   const [editingCell, setEditingCell] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState<string>('');
-  
+
   // Estados para el modal de imágenes
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
   const [modalImageName, setModalImageName] = useState<string | null>(null);
-  
+
   // Estados para filtros
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<TradeEntry[]>([]);
@@ -173,9 +168,9 @@ function TradingTable({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [pageSize, setPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  
+
   // Estado para el campo de imagen activo
-  const [activeImageField, setActiveImageField] = useState<{entryId: string, fieldKey: string} | null>(null);
+  const [activeImageField, setActiveImageField] = useState<{ entryId: string, fieldKey: string } | null>(null);
 
   // Ajustar página actual cuando cambie el pageSize
   useEffect(() => {
@@ -189,10 +184,10 @@ function TradingTable({
   useEffect(() => {
     const handleGlobalPaste = (e: ClipboardEvent) => {
       console.log('🌍 Global paste event detected');
-      
+
       if (activeImageField) {
         console.log('🎯 Active image field found:', activeImageField);
-        
+
         const items = e.clipboardData?.items;
         if (items) {
           for (let i = 0; i < items.length; i++) {
@@ -201,7 +196,7 @@ function TradingTable({
               console.log('✅ Image detected in global paste');
               e.preventDefault();
               e.stopPropagation();
-              
+
               const blob = item.getAsFile();
               if (blob) {
                 const reader = new FileReader();
@@ -219,8 +214,8 @@ function TradingTable({
                     const entry = entries.find(e => e.id === activeImageField.entryId);
                     if (entry) {
                       // Solo mantener una imagen (reemplazar la existente)
-                      onUpdateEntry(activeImageField.entryId, { 
-                        [activeImageField.fieldKey]: [newImage] 
+                      onUpdateEntry(activeImageField.entryId, {
+                        [activeImageField.fieldKey]: [newImage]
                       });
                     }
                   }
@@ -285,7 +280,7 @@ function TradingTable({
     if (typeof a === 'string' && a.match(/^\d{4}-\d{2}-\d{2}$/)) {
       const dateA = new Date(a);
       const dateB = new Date(b);
-      return direction === 'desc' 
+      return direction === 'desc'
         ? dateB.getTime() - dateA.getTime()
         : dateA.getTime() - dateB.getTime();
     }
@@ -314,18 +309,18 @@ function TradingTable({
       // Primero ordenar por fecha y hora
       const dateA = new Date(`${a.fecha} ${a.hora}`);
       const dateB = new Date(`${b.fecha} ${b.hora}`);
-      const dateCompare = sortDirection === 'desc' 
+      const dateCompare = sortDirection === 'desc'
         ? dateB.getTime() - dateA.getTime()
         : dateA.getTime() - dateB.getTime();
-      
+
       return dateCompare;
     });
 
     // Asignar números de operación después del ordenamiento
     const numberedEntries = sorted.map((entry, index) => ({
       ...entry,
-      operationNumber: sortDirection === 'desc' 
-        ? sorted.length - index 
+      operationNumber: sortDirection === 'desc'
+        ? sorted.length - index
         : index + 1
     }));
 
@@ -334,7 +329,7 @@ function TradingTable({
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = Math.min(startIndex + pageSize, numberedEntries.length);
     const displayEntries = numberedEntries.slice(startIndex, endIndex);
-    
+
 
     // Calcular altura de la tabla basada en la cantidad de entradas
     const headerHeight = 50; // Altura del header
@@ -380,20 +375,20 @@ function TradingTable({
   const handleImageAdd = (entryId: string, fieldKey: string, image: TradeImage) => {
     const entry = entries.find(e => e.id === entryId);
     if (!entry) return;
-    
+
     const currentImages = (entry as any)[fieldKey] as TradeImage[] || [];
-    onUpdateEntry(entryId, { 
-      [fieldKey]: [...currentImages, image] 
+    onUpdateEntry(entryId, {
+      [fieldKey]: [...currentImages, image]
     });
   };
 
   const handleImageRemove = (entryId: string, fieldKey: string, imageId: string) => {
     const entry = entries.find(e => e.id === entryId);
     if (!entry) return;
-    
+
     const currentImages = (entry as any)[fieldKey] as TradeImage[] || [];
-    onUpdateEntry(entryId, { 
-      [fieldKey]: currentImages.filter(img => img.id !== imageId) 
+    onUpdateEntry(entryId, {
+      [fieldKey]: currentImages.filter(img => img.id !== imageId)
     });
   };
 
@@ -442,23 +437,23 @@ function TradingTable({
     if (dateFrom || dateTo) {
       results = results.filter(entry => {
         const entryDate = new Date(entry.fecha);
-        
+
         if (dateFrom && dateTo) {
           return entryDate >= dateFrom && entryDate <= dateTo;
         }
-        
+
         if (dateFrom) {
           return entryDate >= dateFrom;
         }
-        
+
         if (dateTo) {
           return entryDate <= dateTo;
         }
-        
+
         return true;
       });
     }
-    
+
     setSearchResults(results);
   };
 
@@ -479,7 +474,7 @@ function TradingTable({
           onImageClick={handleImageClick}
           fieldName={column.key}
           entryId={entry.id}
-          onActivateField={(entryId, fieldKey) => setActiveImageField({entryId, fieldKey})}
+          onActivateField={(entryId, fieldKey) => setActiveImageField({ entryId, fieldKey })}
           activeImageField={activeImageField}
         />
       );
@@ -535,11 +530,10 @@ function TradingTable({
       return (
         <button
           onClick={() => onUpdateEntry(entry.id, { [column.key]: !value })}
-          className={`px-3 py-1 rounded text-xs font-medium ${
-            value 
-              ? 'bg-green-600 text-white' 
+          className={`px-3 py-1 rounded text-xs font-medium ${value
+              ? 'bg-green-600 text-white'
               : 'bg-red-600 text-white'
-          }`}
+            }`}
         >
           {value ? t('common.yes') : t('common.no')}
         </button>
@@ -550,7 +544,7 @@ function TradingTable({
     if (isEditing) {
       // Campos específicos que requieren textarea para saltos de línea
       const textareaFields = ['razonEntrada', 'leccion', 'emocionesAntes', 'emocionesDurante', 'emocionesDespues', 'ratio', 'beneficio'];
-      
+
       if (textareaFields.includes(column.key)) {
         return (
           <textarea
@@ -591,7 +585,7 @@ function TradingTable({
 
     // Handle normal display
     const textareaFields = ['razonEntrada', 'leccion', 'emocionesAntes', 'emocionesDurante', 'emocionesDespues', 'ratio', 'beneficio'];
-    
+
     return (
       <div
         onClick={() => startEdit(entry.id, column.key, value)}
@@ -697,7 +691,7 @@ function TradingTable({
           {/* Cantidad por página compacta */}
           <div className="flex items-center gap-1">
             <span className="text-sm text-gray-400">{t('filters.show')}:</span>
-            <select 
+            <select
               value={pageSize}
               onChange={(e) => {
                 setPageSize(Number(e.target.value));
@@ -714,7 +708,7 @@ function TradingTable({
           </div>
 
           {/* Limpiar filtros compacto */}
-          <button 
+          <button
             onClick={() => {
               setSearchTerm('');
               setDateFrom(undefined);
@@ -724,15 +718,15 @@ function TradingTable({
               setSortDirection('desc');
               setCurrentPage(1);
               setPageSize(10);
-            }} 
-            className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors flex items-center gap-1" 
+            }}
+            className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors flex items-center gap-1"
             title="Limpiar filtros"
           >
             <RotateCcw className="h-3 w-3" />
             <span className="text-sm">{t('filters.clearFilters')}</span>
           </button>
         </div>
-        
+
         <ColumnManager
           columns={columns}
           onToggleColumn={onToggleColumn}
@@ -740,9 +734,9 @@ function TradingTable({
       </div>
 
       {/* Simple table */}
-      <div 
+      <div
         className="table-container"
-        style={{ 
+        style={{
           height: `${tableHeight}px`,
           overflow: 'hidden'
         }}
@@ -756,25 +750,24 @@ function TradingTable({
               {visibleColumns.map((column) => (
                 <th
                   key={column.id}
-                  className={`px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider ${
-                    column.key === 'fecha' ? 'col-fecha' : 
-                    column.key === 'hora' ? 'col-hora' : 
-                    isImageField(column.key) ? 'col-image' : ''
-                  }`}
+                  className={`px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider ${column.key === 'fecha' ? 'col-fecha' :
+                      column.key === 'hora' ? 'col-hora' :
+                        isImageField(column.key) ? 'col-image' : ''
+                    }`}
                 >
-{t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`)}
+                  {t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`)}
                 </th>
               ))}
               <th className="px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">
-{t('table.actions')}
+                {t('table.actions')}
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
             {entries.length === 0 ? (
               <tr>
-                <td 
-                  colSpan={visibleColumns.length + 2} 
+                <td
+                  colSpan={visibleColumns.length + 2}
                   className="px-4 py-8 text-center text-sm text-gray-400"
                 >
                   {t('table.noOperations')}
@@ -782,8 +775,8 @@ function TradingTable({
               </tr>
             ) : (
               displayEntries.map((entry) => (
-                <tr 
-                  key={entry.id} 
+                <tr
+                  key={entry.id}
                   className="hover:bg-gray-800/50 transition-colors"
                   style={{ height: '100px' }}
                 >
@@ -791,13 +784,12 @@ function TradingTable({
                     {entry.operationNumber}
                   </td>
                   {visibleColumns.map((column) => (
-                    <td 
-                      key={column.id} 
-                      className={`px-3 py-2 text-xs text-gray-300 ${
-                        column.key === 'fecha' ? 'col-fecha' : 
-                        column.key === 'hora' ? 'col-hora' : 
-                        isImageField(column.key) ? 'col-image' : ''
-                      }`}
+                    <td
+                      key={column.id}
+                      className={`px-3 py-2 text-xs text-gray-300 ${column.key === 'fecha' ? 'col-fecha' :
+                          column.key === 'hora' ? 'col-hora' :
+                            isImageField(column.key) ? 'col-image' : ''
+                        }`}
                       style={{ height: '100px', maxHeight: '100px', overflow: 'hidden' }}
                     >
                       {renderCellContent(entry, column)}
@@ -827,53 +819,49 @@ function TradingTable({
             <button
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
-              className={`px-2 py-1 text-sm rounded ${
-                currentPage === 1
+              className={`px-2 py-1 text-sm rounded ${currentPage === 1
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
-              }`}
+                }`}
             >
               {t('table.first')}
             </button>
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              className={`px-2 py-1 text-sm rounded ${
-                currentPage === 1
+              className={`px-2 py-1 text-sm rounded ${currentPage === 1
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
-              }`}
+                }`}
             >
-{t('table.previous')}
+              {t('table.previous')}
             </button>
             <span className="text-sm text-gray-400">
-{t('table.page')} {currentPage} {t('table.of')} {totalPages}
+              {t('table.page')} {currentPage} {t('table.of')} {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              className={`px-2 py-1 text-sm rounded ${
-                currentPage === totalPages
+              className={`px-2 py-1 text-sm rounded ${currentPage === totalPages
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
-              }`}
+                }`}
             >
-{t('table.next')}
+              {t('table.next')}
             </button>
             <button
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
-              className={`px-2 py-1 text-sm rounded ${
-                currentPage === totalPages
+              className={`px-2 py-1 text-sm rounded ${currentPage === totalPages
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
-              }`}
+                }`}
             >
-{t('table.last')}
+              {t('table.last')}
             </button>
           </div>
           <div className="text-sm text-gray-400">
-{t('table.showing')} {displayEntries.length} {t('table.of')} {entries.length} {t('table.operations')}
+            {t('table.showing')} {displayEntries.length} {t('table.of')} {entries.length} {t('table.operations')}
           </div>
         </div>
       )}
