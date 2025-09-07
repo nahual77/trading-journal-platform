@@ -1,179 +1,138 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { BacktestingJournal, BacktestingColumn, BacktestingEntry } from '../components/BacktestingTable';
+
+// Función para crear columnas por defecto
+const createDefaultColumns = (): BacktestingColumn[] => [
+  {
+    id: 'testName',
+    name: 'Nombre de la Prueba',
+    type: 'text',
+    visible: true,
+  },
+  {
+    id: 'strategy',
+    name: 'Estrategia',
+    type: 'text',
+    visible: true,
+  },
+  {
+    id: 'period',
+    name: 'Período',
+    type: 'text',
+    visible: true,
+  },
+  {
+    id: 'winRate',
+    name: 'Tasa de Éxito',
+    type: 'number',
+    visible: true,
+  },
+  {
+    id: 'profit',
+    name: 'Ganancia',
+    type: 'number',
+    visible: true,
+  },
+  {
+    id: 'maxDrawdown',
+    name: 'Máxima Pérdida',
+    type: 'number',
+    visible: true,
+  },
+  {
+    id: 'sharpeRatio',
+    name: 'Ratio de Sharpe',
+    type: 'number',
+    visible: true,
+  },
+  {
+    id: 'notes',
+    name: 'Notas',
+    type: 'text',
+    visible: true,
+  },
+  {
+    id: 'chart',
+    name: 'Gráfico',
+    type: 'image',
+    visible: true,
+  },
+  {
+    id: 'isProfitable',
+    name: 'Rentable',
+    type: 'boolean',
+    visible: true,
+  },
+];
 
 export function useBacktestingState() {
   const [backtestingJournals, setBacktestingJournals] = useState<BacktestingJournal[]>([]);
   const [activeBacktestingId, setActiveBacktestingId] = useState<string>('');
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Cargar datos del localStorage al montar
+  // Cargar datos del localStorage al montar (solo una vez)
   useEffect(() => {
+    if (isInitialized) return;
+
     const savedBacktesting = localStorage.getItem('backtesting-journals');
     const savedActiveId = localStorage.getItem('active-backtesting-id');
     
     if (savedBacktesting) {
-      const journals = JSON.parse(savedBacktesting);
-      setBacktestingJournals(journals);
-      
-      if (savedActiveId && journals.find((j: BacktestingJournal) => j.id === savedActiveId)) {
-        setActiveBacktestingId(savedActiveId);
-      } else if (journals.length > 0) {
-        setActiveBacktestingId(journals[0].id);
+      try {
+        const journals = JSON.parse(savedBacktesting);
+        setBacktestingJournals(journals);
+        
+        if (savedActiveId && journals.find((j: BacktestingJournal) => j.id === savedActiveId)) {
+          setActiveBacktestingId(savedActiveId);
+        } else if (journals.length > 0) {
+          setActiveBacktestingId(journals[0].id);
+        }
+      } catch (error) {
+        console.error('Error parsing backtesting data:', error);
+        // Crear backtesting por defecto si hay error
+        const defaultBacktesting = createDefaultBacktesting();
+        setBacktestingJournals([defaultBacktesting]);
+        setActiveBacktestingId(defaultBacktesting.id);
       }
     } else {
       // Crear backtesting inicial si no existe ninguno
-      const newBacktesting: BacktestingJournal = {
-        id: Date.now().toString(),
-        name: 'Mi Primer Backtesting',
-        entries: [],
-        columns: [
-          {
-            id: 'testName',
-            name: 'Nombre de la Prueba',
-            type: 'text',
-            visible: true,
-          },
-          {
-            id: 'strategy',
-            name: 'Estrategia',
-            type: 'text',
-            visible: true,
-          },
-          {
-            id: 'period',
-            name: 'Período',
-            type: 'text',
-            visible: true,
-          },
-          {
-            id: 'winRate',
-            name: 'Tasa de Éxito',
-            type: 'number',
-            visible: true,
-          },
-          {
-            id: 'profit',
-            name: 'Ganancia',
-            type: 'number',
-            visible: true,
-          },
-          {
-            id: 'maxDrawdown',
-            name: 'Máxima Pérdida',
-            type: 'number',
-            visible: true,
-          },
-          {
-            id: 'sharpeRatio',
-            name: 'Ratio de Sharpe',
-            type: 'number',
-            visible: true,
-          },
-          {
-            id: 'notes',
-            name: 'Notas',
-            type: 'text',
-            visible: true,
-          },
-          {
-            id: 'chart',
-            name: 'Gráfico',
-            type: 'image',
-            visible: true,
-          },
-          {
-            id: 'isProfitable',
-            name: 'Rentable',
-            type: 'boolean',
-            visible: true,
-          },
-        ],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      setBacktestingJournals([newBacktesting]);
-      setActiveBacktestingId(newBacktesting.id);
+      const defaultBacktesting = createDefaultBacktesting();
+      setBacktestingJournals([defaultBacktesting]);
+      setActiveBacktestingId(defaultBacktesting.id);
     }
-  }, []);
+    
+    setIsInitialized(true);
+  }, [isInitialized]);
 
-  // Guardar en localStorage cuando cambien los datos
+  // Función para crear backtesting por defecto
+  const createDefaultBacktesting = (): BacktestingJournal => ({
+    id: Date.now().toString(),
+    name: 'Mi Primer Backtesting',
+    entries: [],
+    columns: createDefaultColumns(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+
+  // Guardar en localStorage cuando cambien los datos (solo después de inicializar)
   useEffect(() => {
-    localStorage.setItem('backtesting-journals', JSON.stringify(backtestingJournals));
-  }, [backtestingJournals]);
+    if (isInitialized && backtestingJournals.length > 0) {
+      localStorage.setItem('backtesting-journals', JSON.stringify(backtestingJournals));
+    }
+  }, [backtestingJournals, isInitialized]);
 
   useEffect(() => {
-    if (activeBacktestingId) {
+    if (isInitialized && activeBacktestingId) {
       localStorage.setItem('active-backtesting-id', activeBacktestingId);
     }
-  }, [activeBacktestingId]);
+  }, [activeBacktestingId, isInitialized]);
 
-  const createBacktesting = (name: string) => {
+  const createBacktesting = useCallback((name: string) => {
     const newBacktesting: BacktestingJournal = {
       id: Date.now().toString(),
       name,
       entries: [],
-      columns: [
-        {
-          id: 'testName',
-          name: 'Nombre de la Prueba',
-          type: 'text',
-          visible: true,
-        },
-        {
-          id: 'strategy',
-          name: 'Estrategia',
-          type: 'text',
-          visible: true,
-        },
-        {
-          id: 'period',
-          name: 'Período',
-          type: 'text',
-          visible: true,
-        },
-        {
-          id: 'winRate',
-          name: 'Tasa de Éxito',
-          type: 'number',
-          visible: true,
-        },
-        {
-          id: 'profit',
-          name: 'Ganancia',
-          type: 'number',
-          visible: true,
-        },
-        {
-          id: 'maxDrawdown',
-          name: 'Máxima Pérdida',
-          type: 'number',
-          visible: true,
-        },
-        {
-          id: 'sharpeRatio',
-          name: 'Ratio de Sharpe',
-          type: 'number',
-          visible: true,
-        },
-        {
-          id: 'notes',
-          name: 'Notas',
-          type: 'text',
-          visible: true,
-        },
-        {
-          id: 'chart',
-          name: 'Gráfico',
-          type: 'image',
-          visible: true,
-        },
-        {
-          id: 'isProfitable',
-          name: 'Rentable',
-          type: 'boolean',
-          visible: true,
-        },
-      ],
+      columns: createDefaultColumns(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -181,7 +140,7 @@ export function useBacktestingState() {
     setBacktestingJournals(prev => [...prev, newBacktesting]);
     setActiveBacktestingId(newBacktesting.id);
     return newBacktesting;
-  };
+  }, []);
 
   const updateBacktestingName = (id: string, name: string) => {
     setBacktestingJournals(prev => 
