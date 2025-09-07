@@ -5,6 +5,108 @@ import BacktestingTable from './BacktestingTable';
 import { BacktestingTabs } from './BacktestingTabs';
 import { useBacktestingState } from '../hooks/useBacktestingState';
 
+// Función para exportar backtesting actual a CSV
+const exportBacktestingToCSV = (backtesting: any) => {
+  if (!backtesting || !backtesting.entries.length) {
+    alert('No hay datos para exportar');
+    return;
+  }
+
+  const headers = backtesting.columns
+    .filter((col: any) => col.visible)
+    .map((col: any) => col.name);
+  
+  const csvContent = [
+    headers.join(','),
+    ...backtesting.entries.map((entry: any) =>
+      headers.map(header => {
+        const column = backtesting.columns.find((col: any) => col.name === header);
+        const value = entry[column.id] || '';
+        return `"${value}"`;
+      }).join(',')
+    )
+  ].join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `${backtesting.name}_backtesting.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+// Función para exportar todos los backtesting a CSV
+const exportAllBacktestingToCSV = (backtestingJournals: any[]) => {
+  if (!backtestingJournals.length) {
+    alert('No hay datos para exportar');
+    return;
+  }
+
+  const allEntries = backtestingJournals.flatMap(journal => 
+    journal.entries.map((entry: any) => ({
+      ...entry,
+      journalName: journal.name
+    }))
+  );
+
+  if (!allEntries.length) {
+    alert('No hay datos para exportar');
+    return;
+  }
+
+  const headers = ['Journal', 'Test Name', 'Strategy', 'Period', 'Win Rate', 'Profit', 'Max Drawdown', 'Sharpe Ratio', 'Notes', 'Chart', 'Is Profitable'];
+  
+  const csvContent = [
+    headers.join(','),
+    ...allEntries.map((entry: any) => [
+      `"${entry.journalName || ''}"`,
+      `"${entry.testName || ''}"`,
+      `"${entry.strategy || ''}"`,
+      `"${entry.period || ''}"`,
+      `"${entry.winRate || ''}"`,
+      `"${entry.profit || ''}"`,
+      `"${entry.maxDrawdown || ''}"`,
+      `"${entry.sharpeRatio || ''}"`,
+      `"${entry.notes || ''}"`,
+      `"${entry.chart || ''}"`,
+      `"${entry.isProfitable ? 'Yes' : 'No'}"`
+    ].join(','))
+  ].join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'all_backtesting.csv');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+// Función para exportar datos completos como JSON
+const exportBacktestingData = (backtestingJournals: any[]) => {
+  const data = {
+    backtestingJournals,
+    exportDate: new Date().toISOString(),
+    version: '1.0'
+  };
+
+  const jsonContent = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'backtesting_data_backup.json');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 export default function Backtesting() {
   const { t } = useTranslation();
   
@@ -78,6 +180,9 @@ export default function Backtesting() {
         onCreateBacktesting={createBacktesting}
         onUpdateBacktestingName={updateBacktestingName}
         onDeleteBacktesting={deleteBacktesting}
+        onExportBacktestingCSV={() => exportBacktestingToCSV(activeBacktesting)}
+        onExportAllBacktestingCSV={() => exportAllBacktestingToCSV(backtestingJournals)}
+        onExportBacktestingData={() => exportBacktestingData(backtestingJournals)}
       />
 
       {/* Estadísticas del backtesting activo */}

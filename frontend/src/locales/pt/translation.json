@@ -277,6 +277,8 @@
       "date": "Data"
     },
     "deleteBacktesting": "Excluir Backtesting",
-    "deleteBacktestingConfirm": "Tem certeza de que deseja excluir este backtesting? Esta ação não pode ser desfeita."
+    "deleteBacktestingConfirm": "Tem certeza de que deseja excluir este backtesting? Esta ação não pode ser desfeita.",
+    "profitable": "Lucrativos",
+    "withCharts": "Com Gráficos"
   }
 }
