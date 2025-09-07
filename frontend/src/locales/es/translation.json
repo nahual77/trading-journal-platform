@@ -277,6 +277,8 @@
       "date": "Fecha"
     },
     "deleteBacktesting": "Eliminar Backtesting",
-    "deleteBacktestingConfirm": "¿Estás seguro de que quieres eliminar este backtesting? Esta acción no se puede deshacer."
+    "deleteBacktestingConfirm": "¿Estás seguro de que quieres eliminar este backtesting? Esta acción no se puede deshacer.",
+    "profitable": "Rentables",
+    "withCharts": "Con Gráficos"
   }
 }
