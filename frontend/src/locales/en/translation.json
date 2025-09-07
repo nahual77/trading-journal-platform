@@ -24,6 +24,7 @@
     "tradingJournal": "Trading Journal",
     "plan": "Trading Plan",
     "statistics": "Statistics",
+    "backtesting": "Backtesting",
     "mt5": "MT5 Connection",
     "dashboard": "Dashboard",
     "operations": "Operations",
@@ -244,5 +245,36 @@
     "currentJournal": "Current journal: {{name}}",
     "allJournals": "All journals",
     "fullBackup": "Full backup"
+  },
+  "backtesting": {
+    "title": "Backtesting",
+    "subtitle": "Test your strategy with historical data",
+    "newTest": "New Test",
+    "tests": "Tests",
+    "testName": "Test Name",
+    "strategy": "Strategy",
+    "period": "Period",
+    "results": "Results",
+    "winRate": "Win Rate",
+    "profit": "Profit",
+    "maxDrawdown": "Max Drawdown",
+    "sharpeRatio": "Sharpe Ratio",
+    "addColumn": "Add Column",
+    "columnName": "Column Name",
+    "columnType": "Column Type",
+    "text": "Text",
+    "image": "Image",
+    "boolean": "Boolean",
+    "number": "Number",
+    "date": "Date",
+    "renameColumn": "Rename Column",
+    "deleteColumn": "Delete Column",
+    "columnTypes": {
+      "text": "Text",
+      "image": "Image",
+      "boolean": "Yes/No",
+      "number": "Number",
+      "date": "Date"
+    }
   }
 }
