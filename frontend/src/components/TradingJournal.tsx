@@ -8,6 +8,7 @@ import StatisticsNew from './StatisticsNew';
 import { MT5Panel } from './MT5Panel';
 import BalanceChart from './BalanceChart';
 import LanguageSelector from './LanguageSelector';
+import DownloadDropdown from './DownloadDropdown';
 import { supabase } from '../supabaseClient';
 import {
   BookOpen,
@@ -489,35 +490,13 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               <div className="absolute right-0 flex items-center space-x-2">
                 {/* Selector de idioma */}
                 <LanguageSelector />
-                {/* Botón exportar diario actual CSV */}
-                <button
-                  onClick={() => handleExportJournalCSV()}
-                  className="flex items-center space-x-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
-                  title={`Exportar ${activeJournal.name} a CSV`}
-                >
-                  <Download className="h-4 w-4" />
-                  <span className="hidden sm:inline">CSV</span>
-                </button>
-
-                {/* Botón exportar todos los diarios CSV */}
-                <button
-                  onClick={handleExportAllJournalsCSV}
-                  className="flex items-center space-x-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
-                  title="Exportar todos los diarios a CSV"
-                >
-                  <Download className="h-4 w-4" />
-                  <span className="hidden sm:inline">Todo</span>
-                </button>
-
-                {/* Botón exportar JSON (backup completo) */}
-                <button
-                  onClick={handleExportData}
-                  className="flex items-center space-x-1 px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
-                  title="Exportar backup completo JSON"
-                >
-                  <Download className="h-4 w-4" />
-                  <span className="hidden sm:inline">JSON</span>
-                </button>
+                {/* Dropdown de descarga */}
+                <DownloadDropdown
+                  onExportJournalCSV={handleExportJournalCSV}
+                  onExportAllJournalsCSV={handleExportAllJournalsCSV}
+                  onExportData={handleExportData}
+                  activeJournalName={activeJournal.name}
+                />
               </div>
             </div>
           </div>
