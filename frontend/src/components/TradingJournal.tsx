@@ -9,6 +9,7 @@ import { MT5Panel } from './MT5Panel';
 import BalanceChart from './BalanceChart';
 import LanguageSelector from './LanguageSelector';
 import DownloadDropdown from './DownloadDropdown';
+import { UserMenu } from './UserMenu';
 import { supabase } from '../supabaseClient';
 import {
   BookOpen,
@@ -308,6 +309,9 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               onDeleteJournal={deleteJournal}
               user={user}
               onLogout={handleLogout}
+              onExportJournalCSV={handleExportJournalCSV}
+              onExportAllJournalsCSV={handleExportAllJournalsCSV}
+              onExportData={handleExportData}
             />
 
             {/* Tabla de operaciones */}
@@ -490,13 +494,13 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               <div className="absolute right-0 flex items-center space-x-2">
                 {/* Selector de idioma */}
                 <LanguageSelector />
-                {/* Dropdown de descarga */}
-                <DownloadDropdown
-                  onExportJournalCSV={handleExportJournalCSV}
-                  onExportAllJournalsCSV={handleExportAllJournalsCSV}
-                  onExportData={handleExportData}
-                  activeJournalName={activeJournal.name}
-                />
+                {/* Menú de usuario */}
+                {user && (
+                  <UserMenu user={user} onLogout={() => {
+                    supabase.auth.signOut();
+                    setUser(null);
+                  }} />
+                )}
               </div>
             </div>
           </div>

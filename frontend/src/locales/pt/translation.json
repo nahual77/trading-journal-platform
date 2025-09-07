@@ -235,5 +235,14 @@
     "errorSaving": "Erro ao salvar",
     "errorDeleting": "Erro ao excluir",
     "errorUploading": "Erro ao carregar imagem"
+  },
+  "downloadDropdown": {
+    "title": "Baixar Diário",
+    "exportCSV": "Exportar CSV",
+    "exportAllCSV": "Exportar Tudo CSV",
+    "exportJSON": "Backup JSON",
+    "currentJournal": "Diário atual: {{name}}",
+    "allJournals": "Todos os diários",
+    "fullBackup": "Backup completo"
   }
 }

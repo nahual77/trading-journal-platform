@@ -54,10 +54,10 @@ export default function DownloadDropdown({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm"
-        title="Descargar diario"
+        title={t('downloadDropdown.title')}
       >
         <Download className="h-4 w-4" />
-        <span className="hidden sm:inline">Descargar Diario</span>
+        <span className="hidden sm:inline">{t('downloadDropdown.title')}</span>
         <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -74,8 +74,8 @@ export default function DownloadDropdown({
                 <Download className="h-4 w-4 text-white" />
               </div>
               <div>
-                <div className="font-medium text-sm">Exportar CSV</div>
-                <div className="text-xs text-gray-400">Diario actual: {activeJournalName}</div>
+                <div className="font-medium text-sm">{t('downloadDropdown.exportCSV')}</div>
+                <div className="text-xs text-gray-400">{t('downloadDropdown.currentJournal', { name: activeJournalName })}</div>
               </div>
             </button>
 
@@ -88,8 +88,8 @@ export default function DownloadDropdown({
                 <Download className="h-4 w-4 text-white" />
               </div>
               <div>
-                <div className="font-medium text-sm">Exportar Todo CSV</div>
-                <div className="text-xs text-gray-400">Todos los diarios</div>
+                <div className="font-medium text-sm">{t('downloadDropdown.exportAllCSV')}</div>
+                <div className="text-xs text-gray-400">{t('downloadDropdown.allJournals')}</div>
               </div>
             </button>
 
@@ -102,8 +102,8 @@ export default function DownloadDropdown({
                 <Download className="h-4 w-4 text-white" />
               </div>
               <div>
-                <div className="font-medium text-sm">Backup JSON</div>
-                <div className="text-xs text-gray-400">Respaldo completo</div>
+                <div className="font-medium text-sm">{t('downloadDropdown.exportJSON')}</div>
+                <div className="text-xs text-gray-400">{t('downloadDropdown.fullBackup')}</div>
               </div>
             </button>
           </div>

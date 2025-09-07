@@ -3,6 +3,7 @@ import { TradingJournal } from '../types/trading';
 import { Plus, Edit3, Trash2, X, Check, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { UserMenu } from './UserMenu';
+import DownloadDropdown from './DownloadDropdown';
 
 interface JournalTabsProps {
   journals: TradingJournal[];
@@ -13,6 +14,9 @@ interface JournalTabsProps {
   onDeleteJournal: (journalId: string) => void;
   user?: any;
   onLogout?: () => void;
+  onExportJournalCSV?: () => void;
+  onExportAllJournalsCSV?: () => void;
+  onExportData?: () => void;
 }
 
 export function JournalTabs({
@@ -24,6 +28,9 @@ export function JournalTabs({
   onDeleteJournal,
   user,
   onLogout,
+  onExportJournalCSV,
+  onExportAllJournalsCSV,
+  onExportData,
 }: JournalTabsProps) {
   const { t } = useTranslation();
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
@@ -240,10 +247,15 @@ export function JournalTabs({
           </div>
         </div>
 
-        {/* Menú de usuario */}
-        {user && onLogout && (
+        {/* Botón de descarga */}
+        {onExportJournalCSV && onExportAllJournalsCSV && onExportData && (
           <div className="flex-shrink-0 px-2 my-2">
-            <UserMenu user={user} onLogout={onLogout} />
+            <DownloadDropdown
+              onExportJournalCSV={onExportJournalCSV}
+              onExportAllJournalsCSV={onExportAllJournalsCSV}
+              onExportData={onExportData}
+              activeJournalName={journals.find(j => j.id === activeJournalId)?.name || 'Diario'}
+            />
           </div>
         )}
       </div>

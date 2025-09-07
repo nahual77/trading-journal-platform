@@ -235,5 +235,14 @@
     "errorSaving": "Error saving",
     "errorDeleting": "Error deleting",
     "errorUploading": "Error uploading image"
+  },
+  "downloadDropdown": {
+    "title": "Download Journal",
+    "exportCSV": "Export CSV",
+    "exportAllCSV": "Export All CSV",
+    "exportJSON": "JSON Backup",
+    "currentJournal": "Current journal: {{name}}",
+    "allJournals": "All journals",
+    "fullBackup": "Full backup"
   }
 }
