@@ -427,6 +427,17 @@
   max-width: 120px !important;
 }
 
+/* Estilos para el contenedor de la tabla */
+.table-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.table-container table {
+  min-width: 100%;
+  table-layout: auto;
+}
+
 /* Estilos básicos para secciones - sin transiciones */
 .section-basic {
   /* Sin efectos especiales */

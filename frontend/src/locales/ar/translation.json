@@ -182,7 +182,17 @@
     "planFollowed": "تم اتباع الخطة",
     "planNotFollowed": "لم يتم اتباع الخطة",
     "buysVsSells": "المشتريات مقابل المبيعات",
-    "neutralOperations": "العمليات المحايدة"
+    "neutralOperations": "العمليات المحايدة",
+    "entryReason": "سبب الدخول",
+    "before": "قبل",
+    "during": "أثناء",
+    "ratio": "النسبة",
+    "lesson": "الدرس",
+    "emotionsBefore": "المشاعر (قبل)",
+    "emotionsDuring": "المشاعر (أثناء)",
+    "emotionsAfter": "المشاعر (بعد)",
+    "entriesNotTaken": "الدخول غير المأخوذة",
+    "whatHappenedWithEntries": "ماذا حدث مع هذه الدخول"
   },
   "downloadDropdown": {
     "title": "تحميل السجل",

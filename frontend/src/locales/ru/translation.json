@@ -196,7 +196,17 @@
     "planFollowed": "План выполнен",
     "planNotFollowed": "План не выполнен",
     "buysVsSells": "Покупки против продаж",
-    "neutralOperations": "Нейтральные операции"
+    "neutralOperations": "Нейтральные операции",
+    "entryReason": "Причина входа",
+    "before": "До",
+    "during": "Во время",
+    "ratio": "Соотношение",
+    "lesson": "Урок",
+    "emotionsBefore": "Эмоции (до)",
+    "emotionsDuring": "Эмоции (во время)",
+    "emotionsAfter": "Эмоции (после)",
+    "entriesNotTaken": "Неиспользованные входы",
+    "whatHappenedWithEntries": "Что произошло с этими входами"
   },
   "downloadDropdown": {
     "title": "Скачать журнал",
