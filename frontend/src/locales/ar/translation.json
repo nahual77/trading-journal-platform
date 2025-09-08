@@ -216,5 +216,14 @@
     "lastOp": "آخر عملية",
     "trend": "الاتجاه",
     "consolidatedBalanceProgression": "تقدم الرصيد الموحد"
+  },
+  "user": {
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات",
+    "help": "المساعدة",
+    "about": "حول",
+    "version": "الإصدار",
+    "tradingJournal": "سجل التداول",
+    "logout": "تسجيل الخروج"
   }
 }
