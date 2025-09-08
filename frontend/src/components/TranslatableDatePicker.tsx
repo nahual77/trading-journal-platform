@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Calendar } from 'lucide-react';
 import { DayPicker } from 'react-day-picker';
 import { format } from 'date-fns';
-import { es, pt } from 'date-fns/locale';
+import { es, pt, fr, de, it, zhCN, ja, ko, ru } from 'date-fns/locale';
 import { Button } from './ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { cn } from '../lib/utils';
@@ -31,6 +31,23 @@ export const TranslatableDatePicker: React.FC<TranslatableDatePickerProps> = ({
         return es;
       case 'pt':
         return pt;
+      case 'fr':
+        return fr;
+      case 'de':
+        return de;
+      case 'it':
+        return it;
+      case 'zh-CN':
+        return zhCN;
+      case 'ja':
+        return ja;
+      case 'ko':
+        return ko;
+      case 'ru':
+        return ru;
+      case 'ar':
+        // Árabe no tiene locale en date-fns, usar inglés
+        return undefined;
       default:
         return undefined; // Inglés por defecto
     }
