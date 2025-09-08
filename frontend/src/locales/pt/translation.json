@@ -299,6 +299,7 @@
     "deleteBacktestingConfirm": "Tem certeza de que deseja excluir este backtesting? Esta ação não pode ser desfeita.",
     "profitable": "Lucrativos",
     "withCharts": "Com Gráficos",
+    "tests": "Testes",
     "profitableTests": "Lucrativos",
     "avgWinRate": "Taxa de Sucesso Média",
     "avgProfit": "Lucro Médio",

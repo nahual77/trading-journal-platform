@@ -299,6 +299,7 @@
     "deleteBacktestingConfirm": "Are you sure you want to delete this backtesting? This action cannot be undone.",
     "profitable": "Profitable",
     "withCharts": "With Charts",
+    "tests": "Tests",
     "profitableTests": "Profitable",
     "avgWinRate": "Average Win Rate",
     "avgProfit": "Average Profit",

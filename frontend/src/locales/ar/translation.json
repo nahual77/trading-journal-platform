@@ -107,6 +107,8 @@
     "deleteBacktestingConfirm": "هل أنت متأكد من حذف هذا الاختبار العكسي؟ لا يمكن التراجع عن هذا الإجراء.",
     "profitable": "مربحة",
     "withCharts": "مع الرسوم البيانية",
+    "tests": "الاختبارات",
+    "profit": "الربح",
     "profitableTests": "مربحة",
     "avgWinRate": "متوسط معدل الربح",
     "avgProfit": "متوسط الربح",
