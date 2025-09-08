@@ -8,7 +8,10 @@ const languages = [
   { code: 'pt', name: 'Português', flag: '🇧🇷' },
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
   { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' }
+  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+  { code: 'zh-CN', name: '中文', flag: '🇨🇳' },
+  { code: 'ja', name: '日本語', flag: '🇯🇵' },
+  { code: 'ko', name: '한국어', flag: '🇰🇷' }
 ];
 
 const LanguageSelector: React.FC = () => {
