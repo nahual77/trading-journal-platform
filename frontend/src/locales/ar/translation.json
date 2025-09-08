@@ -225,5 +225,11 @@
     "version": "الإصدار",
     "tradingJournal": "سجل التداول",
     "logout": "تسجيل الخروج"
+  },
+  "userMenu": {
+    "tradingJournal": "سجل التداول",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "version": "الإصدار"
   }
 }
