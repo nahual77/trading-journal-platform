@@ -11,6 +11,8 @@ import itTranslation from '../locales/it/translation.json';
 import zhCNTranslation from '../locales/zh-CN/translation.json';
 import jaTranslation from '../locales/ja/translation.json';
 import koTranslation from '../locales/ko/translation.json';
+import ruTranslation from '../locales/ru/translation.json';
+import arTranslation from '../locales/ar/translation.json';
 
 const resources = {
   es: { translation: esTranslation },
@@ -21,7 +23,9 @@ const resources = {
   it: { translation: itTranslation },
   'zh-CN': { translation: zhCNTranslation },
   ja: { translation: jaTranslation },
-  ko: { translation: koTranslation }
+  ko: { translation: koTranslation },
+  ru: { translation: ruTranslation },
+  ar: { translation: arTranslation }
 };
 
 i18n
