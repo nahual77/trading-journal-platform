@@ -78,7 +78,7 @@
     "emotionsDuring": "Эмоции (во время)",
     "emotionsAfter": "Эмоции (после)",
     "untakenEntries": "Неиспользованные входы",
-    "whatHappenedWithEntries": "Что произошло с этими входами",
+    "whatHappenedWithEntries": "Что случилось",
     "totalOperations": "Всего операций",
     "planNotFulfilled": "План не выполнен",
     "buysVsSells": "Покупки против продаж",
@@ -205,8 +205,8 @@
     "emotionsBefore": "Эмоции (до)",
     "emotionsDuring": "Эмоции (во время)",
     "emotionsAfter": "Эмоции (после)",
-    "entriesNotTaken": "Неиспользованные входы",
-    "whatHappenedWithEntries": "Что произошло с этими входами"
+    "entriesNotTaken": "Пропущенные входы",
+    "whatHappenedWithEntries": "Что случилось"
   },
   "downloadDropdown": {
     "title": "Скачать журнал",
