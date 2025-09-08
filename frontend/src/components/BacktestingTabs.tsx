@@ -274,7 +274,7 @@ export function BacktestingTabs({
               </div>
               
               <div className="flex items-center space-x-2">
-                <span>Backtesting: {activeBacktesting.name}</span>
+                <span>{t('backtesting.title')}: {activeBacktesting.name}</span>
                 <div className="h-2 w-2 rounded-full bg-green-400"></div>
               </div>
             </div>
