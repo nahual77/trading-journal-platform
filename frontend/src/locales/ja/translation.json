@@ -298,6 +298,7 @@
     "deleteBacktestingConfirm": "このバックテストを削除してもよろしいですか？この操作は元に戻せません。",
     "profitable": "利益",
     "withCharts": "チャート付き",
+    "tests": "テスト",
     "profitableTests": "利益",
     "avgWinRate": "平均勝率",
     "avgProfit": "平均利益",

@@ -298,6 +298,7 @@
     "deleteBacktestingConfirm": "Êtes-vous sûr de vouloir supprimer ce backtesting? Cette action ne peut pas être annulée.",
     "profitable": "Rentables",
     "withCharts": "Avec Graphiques",
+    "tests": "Tests",
     "profitableTests": "Rentables",
     "avgWinRate": "Taux de Réussite Moyen",
     "avgProfit": "Profit Moyen",
