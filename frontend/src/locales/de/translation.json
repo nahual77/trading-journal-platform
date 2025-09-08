@@ -195,7 +195,15 @@
     "operations": "Operationen",
     "initialBalance": "Anfangsguthaben",
     "currentBalance": "Aktuelles Guthaben",
-    "totalProfit": "Gesamtgewinn"
+    "totalProfit": "Gesamtgewinn",
+    "tooltip": {
+      "entryNumber": "Eintrag #:",
+      "symbol": "Symbol:",
+      "type": "Typ:",
+      "benefit": "Gewinn:",
+      "balance": "Guthaben:",
+      "comments": "Kommentare:"
+    }
   },
   "journalTabs": {
     "newJournal": "Neues Journal",

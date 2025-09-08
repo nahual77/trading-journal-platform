@@ -182,7 +182,15 @@
     "operations": "交易",
     "initialBalance": "初始余额",
     "currentBalance": "当前余额",
-    "totalProfit": "总盈利"
+    "totalProfit": "总盈利",
+    "tooltip": {
+      "entryNumber": "条目 #:",
+      "symbol": "符号:",
+      "type": "类型:",
+      "benefit": "收益:",
+      "balance": "余额:",
+      "comments": "评论:"
+    }
   },
   "journalTabs": {
     "newJournal": "新建日志",

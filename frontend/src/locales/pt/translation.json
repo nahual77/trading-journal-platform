@@ -196,7 +196,15 @@
     "operations": "Operações",
     "initialBalance": "Saldo inicial",
     "currentBalance": "Saldo atual",
-    "totalProfit": "Lucro total"
+    "totalProfit": "Lucro total",
+    "tooltip": {
+      "entryNumber": "Entrada #:",
+      "symbol": "Símbolo:",
+      "type": "Tipo:",
+      "benefit": "Benefício:",
+      "balance": "Saldo:",
+      "comments": "Comentários:"
+    }
   },
   "journalTabs": {
     "newJournal": "Novo Diário",

@@ -229,6 +229,25 @@
     "sortOldestFirst": "Сортировать сначала старые",
     "clearFilters": "Очистить фильтры"
   },
+  "balanceChart": {
+    "title": "Прогрессия баланса",
+    "balance": "Баланс",
+    "profit": "Прибыль",
+    "loss": "Убыток",
+    "net": "Чистый",
+    "operations": "Операции",
+    "initialBalance": "Начальный баланс",
+    "currentBalance": "Текущий баланс",
+    "totalProfit": "Общая прибыль",
+    "tooltip": {
+      "entryNumber": "Запись #:",
+      "symbol": "Символ:",
+      "type": "Тип:",
+      "benefit": "Прибыль:",
+      "balance": "Баланс:",
+      "comments": "Комментарии:"
+    }
+  },
   "downloadDropdown": {
     "title": "Скачать журнал",
     "exportCSV": "Экспорт CSV",

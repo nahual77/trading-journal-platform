@@ -219,7 +219,15 @@
     "operations": "Operaciones",
     "initialBalance": "Balance inicial",
     "currentBalance": "Balance actual",
-    "totalProfit": "Beneficio total"
+    "totalProfit": "Beneficio total",
+    "tooltip": {
+      "entryNumber": "Entrada #:",
+      "symbol": "Símbolo:",
+      "type": "Tipo:",
+      "benefit": "Beneficio:",
+      "balance": "Balance:",
+      "comments": "Comentarios:"
+    }
   },
   "journalTabs": {
     "newJournal": "Nuevo Diario",
