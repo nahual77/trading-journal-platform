@@ -18,7 +18,8 @@
     "error": "오류",
     "success": "성공",
     "warning": "경고",
-    "info": "정보"
+    "info": "정보",
+    "actions": "작업"
   },
   "navigation": {
     "tradingJournal": "트레이딩 저널",

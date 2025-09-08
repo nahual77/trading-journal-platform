@@ -18,7 +18,8 @@
     "error": "Erreur",
     "success": "Succès",
     "warning": "Avertissement",
-    "info": "Information"
+    "info": "Information",
+    "actions": "Actions"
   },
   "navigation": {
     "tradingJournal": "Journal de Trading",
