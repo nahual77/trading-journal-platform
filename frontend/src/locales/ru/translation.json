@@ -216,5 +216,14 @@
     "lastOp": "Последняя операция",
     "trend": "Тренд",
     "consolidatedBalanceProgression": "Консолидированная прогрессия баланса"
+  },
+  "user": {
+    "profile": "Профиль",
+    "settings": "Настройки",
+    "help": "Помощь",
+    "about": "О программе",
+    "version": "Версия",
+    "tradingJournal": "Торговый журнал",
+    "logout": "Выйти"
   }
 }
