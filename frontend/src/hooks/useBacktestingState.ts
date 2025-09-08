@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BacktestingJournal, BacktestingColumn, BacktestingEntry } from '../components/BacktestingTable';
 
@@ -115,23 +115,6 @@ export function useBacktestingState() {
   
   const [backtestingJournals, setBacktestingJournals] = useState<BacktestingJournal[]>(initialJournals);
   const [activeBacktestingId, setActiveBacktestingId] = useState<string>(initialActiveId);
-
-  // Actualizar nombres de columnas cuando cambie el idioma
-  useEffect(() => {
-    setBacktestingJournals(prevJournals => 
-      prevJournals.map(journal => ({
-        ...journal,
-        columns: journal.columns.map(column => {
-          // Mapear IDs de columnas a claves de traducción
-          const translationKey = `backtesting.columns.${column.id}`;
-          return {
-            ...column,
-            name: t(translationKey) || column.name
-          };
-        })
-      }))
-    );
-  }, [t]);
 
   const createBacktesting = useCallback((name: string) => {
     const newBacktesting: BacktestingJournal = {

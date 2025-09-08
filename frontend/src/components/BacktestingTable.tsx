@@ -56,6 +56,25 @@ export default function BacktestingTable({
   const [editingColumn, setEditingColumn] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
 
+  // Función para obtener el nombre traducido de una columna
+  const getColumnDisplayName = (column: BacktestingColumn): string => {
+    // Si es una columna por defecto, usar la traducción
+    const defaultColumnTranslations: { [key: string]: string } = {
+      'testName': t('backtesting.columns.testName'),
+      'strategy': t('backtesting.columns.strategy'),
+      'period': t('backtesting.columns.period'),
+      'winRate': t('backtesting.columns.winRate'),
+      'profit': t('backtesting.columns.profit'),
+      'maxDrawdown': t('backtesting.columns.maxDrawdown'),
+      'sharpeRatio': t('backtesting.columns.sharpeRatio'),
+      'notes': t('backtesting.columns.notes'),
+      'chart': t('backtesting.columns.chart'),
+      'isProfitable': t('backtesting.columns.isProfitable'),
+    };
+    
+    return defaultColumnTranslations[column.id] || column.name;
+  };
+
   const visibleColumns = useMemo(() => 
     columns.filter(col => col.visible), 
     [columns]
@@ -279,13 +298,13 @@ export default function BacktestingTable({
                             autoFocus
                           />
                         ) : (
-                          <span className="text-white font-medium">{column.name}</span>
+                          <span className="text-white font-medium">{getColumnDisplayName(column)}</span>
                         )}
                         <div className="flex items-center space-x-1">
                           <button
                             onClick={() => {
                               setEditingColumn(column.id);
-                              setEditingName(column.name);
+                              setEditingName(getColumnDisplayName(column));
                             }}
                             className="p-1 hover:bg-gray-600 rounded text-gray-400 hover:text-white"
                           >
