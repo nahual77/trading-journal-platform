@@ -311,7 +311,8 @@
       "sharpeRatio": "シャープレシオ",
       "notes": "メモ",
       "chart": "チャート",
-      "profitable": "利益"
+      "profitable": "利益",
+      "isProfitable": "利益"
     }
   },
   "tradingPlan": {
