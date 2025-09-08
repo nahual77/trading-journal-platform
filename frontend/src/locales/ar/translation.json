@@ -215,6 +215,25 @@
     "sortOldestFirst": "ترتيب الأقدم أولاً",
     "clearFilters": "مسح المرشحات"
   },
+  "balanceChart": {
+    "title": "تقدم الرصيد",
+    "balance": "الرصيد",
+    "profit": "الربح",
+    "loss": "الخسارة",
+    "net": "الصافي",
+    "operations": "العمليات",
+    "initialBalance": "الرصيد الأولي",
+    "currentBalance": "الرصيد الحالي",
+    "totalProfit": "إجمالي الربح",
+    "tooltip": {
+      "entryNumber": "الإدخال #:",
+      "symbol": "الرمز:",
+      "type": "النوع:",
+      "benefit": "الربح:",
+      "balance": "الرصيد:",
+      "comments": "التعليقات:"
+    }
+  },
   "downloadDropdown": {
     "title": "تحميل السجل",
     "exportCSV": "تصدير CSV",

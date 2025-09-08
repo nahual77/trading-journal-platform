@@ -196,7 +196,15 @@
     "operations": "Operations",
     "initialBalance": "Initial Balance",
     "currentBalance": "Current Balance",
-    "totalProfit": "Total Profit"
+    "totalProfit": "Total Profit",
+    "tooltip": {
+      "entryNumber": "Entry #:",
+      "symbol": "Symbol:",
+      "type": "Type:",
+      "benefit": "Benefit:",
+      "balance": "Balance:",
+      "comments": "Comments:"
+    }
   },
   "journalTabs": {
     "newJournal": "New Journal",

@@ -195,7 +195,15 @@
     "operations": "거래",
     "initialBalance": "초기 잔고",
     "currentBalance": "현재 잔고",
-    "totalProfit": "총 수익"
+    "totalProfit": "총 수익",
+    "tooltip": {
+      "entryNumber": "항목 #:",
+      "symbol": "심볼:",
+      "type": "유형:",
+      "benefit": "수익:",
+      "balance": "잔고:",
+      "comments": "댓글:"
+    }
   },
   "journalTabs": {
     "newJournal": "새 저널",

@@ -284,15 +284,15 @@ const BalanceChart: React.FC<BalanceChartProps> = ({ entries, initialBalance, jo
             </div>
             
             <div className="space-y-1 text-xs text-gray-300">
-              <div><span className="text-gray-400">Entrada #:</span> {chartData.findIndex(p => p.entry?.id === hoveredPoint.entry?.id) + 1 || 'N/A'}</div>
-              <div><span className="text-gray-400">Símbolo:</span> {hoveredPoint.entry.activo || hoveredPoint.entry.simbolo || 'N/A'}</div>
-              <div><span className="text-gray-400">Tipo:</span> {hoveredPoint.entry.tipoOperacion || 'N/A'}</div>
-              <div><span className="text-gray-400">Beneficio:</span> <span className={`font-semibold ${hoveredPoint.benefit && hoveredPoint.benefit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              <div><span className="text-gray-400">{t('balanceChart.tooltip.entryNumber')}</span> {chartData.findIndex(p => p.entry?.id === hoveredPoint.entry?.id) + 1 || 'N/A'}</div>
+              <div><span className="text-gray-400">{t('balanceChart.tooltip.symbol')}</span> {hoveredPoint.entry.activo || hoveredPoint.entry.simbolo || 'N/A'}</div>
+              <div><span className="text-gray-400">{t('balanceChart.tooltip.type')}</span> {hoveredPoint.entry.tipoOperacion || 'N/A'}</div>
+              <div><span className="text-gray-400">{t('balanceChart.tooltip.benefit')}</span> <span className={`font-semibold ${hoveredPoint.benefit && hoveredPoint.benefit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {hoveredPoint.benefit && hoveredPoint.benefit >= 0 ? '+' : ''}${hoveredPoint.benefit?.toFixed(2) || '0.00'}
               </span></div>
-              <div><span className="text-gray-400">Balance:</span> ${hoveredPoint.y.toFixed(2)}</div>
+              <div><span className="text-gray-400">{t('balanceChart.tooltip.balance')}</span> ${hoveredPoint.y.toFixed(2)}</div>
               {hoveredPoint.entry.comentarios && (
-                <div><span className="text-gray-400">Comentarios:</span> {hoveredPoint.entry.comentarios}</div>
+                <div><span className="text-gray-400">{t('balanceChart.tooltip.comments')}</span> {hoveredPoint.entry.comentarios}</div>
               )}
             </div>
             

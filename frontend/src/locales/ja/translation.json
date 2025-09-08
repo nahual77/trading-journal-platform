@@ -195,7 +195,15 @@
     "operations": "取引",
     "initialBalance": "初期残高",
     "currentBalance": "現在の残高",
-    "totalProfit": "総利益"
+    "totalProfit": "総利益",
+    "tooltip": {
+      "entryNumber": "エントリ #:",
+      "symbol": "シンボル:",
+      "type": "タイプ:",
+      "benefit": "利益:",
+      "balance": "残高:",
+      "comments": "コメント:"
+    }
   },
   "journalTabs": {
     "newJournal": "新規ジャーナル",
