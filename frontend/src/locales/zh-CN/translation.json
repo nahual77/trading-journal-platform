@@ -298,7 +298,8 @@
       "sharpeRatio": "夏普比率",
       "notes": "备注",
       "chart": "图表",
-      "profitable": "盈利"
+      "profitable": "盈利",
+      "isProfitable": "盈利"
     }
   },
   "tradingPlan": {

@@ -311,7 +311,8 @@
       "sharpeRatio": "Ratio di Sharpe",
       "notes": "Note",
       "chart": "Grafico",
-      "profitable": "Profittevole"
+      "profitable": "Profittevole",
+      "isProfitable": "Profittevole"
     }
   },
   "tradingPlan": {

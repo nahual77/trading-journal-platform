@@ -311,7 +311,8 @@
       "sharpeRatio": "샤프 비율",
       "notes": "메모",
       "chart": "차트",
-      "profitable": "수익성"
+      "profitable": "수익성",
+      "isProfitable": "수익성"
     }
   },
   "tradingPlan": {

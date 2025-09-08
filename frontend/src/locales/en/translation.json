@@ -312,7 +312,8 @@
       "sharpeRatio": "Sharpe Ratio",
       "notes": "Notes",
       "chart": "Chart",
-      "profitable": "Profitable"
+      "profitable": "Profitable",
+      "isProfitable": "Profitable"
     }
   },
   "tradingPlan": {
