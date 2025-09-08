@@ -438,23 +438,6 @@
   table-layout: auto;
 }
 
-/* Estilos específicos para textos largos (especialmente ruso) */
-.table-container th {
-  padding: 8px 12px !important;
-  white-space: nowrap;
-  overflow: visible;
-  text-overflow: unset;
-  min-width: 150px;
-}
-
-.table-container td {
-  padding: 8px 12px !important;
-  white-space: nowrap;
-  overflow: visible;
-  text-overflow: unset;
-  min-width: 150px;
-}
-
 
 /* Estilos básicos para secciones - sin transiciones */
 .section-basic {
