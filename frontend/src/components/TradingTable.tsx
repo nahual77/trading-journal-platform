@@ -738,10 +738,11 @@ function TradingTable({
         className="table-container"
         style={{
           height: `${tableHeight}px`,
-          overflow: 'hidden'
+          overflowX: 'auto',
+          overflowY: 'hidden'
         }}
       >
-        <table className="w-full bg-gray-900 rounded-lg">
+        <table className="w-full bg-gray-900 rounded-lg" style={{ minWidth: '1200px' }}>
           <thead>
             <tr className="border-b border-gray-700">
               <th className="px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">

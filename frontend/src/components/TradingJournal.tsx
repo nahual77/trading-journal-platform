@@ -370,7 +370,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                     </div>
                     {/* Debug info */}
                     <div className="text-xs text-gray-500 mt-1">
-                      Debug: Inicial: ${currentInitialBalance.toFixed(2)} + Beneficios: ${totalBenefits.toFixed(2)} = ${(currentInitialBalance + totalBenefits).toFixed(2)}
+                      Debug: {t('tradingJournal.initialBalance')}: ${currentInitialBalance.toFixed(2)} + {t('tradingJournal.profit')}: ${totalBenefits.toFixed(2)} = ${(currentInitialBalance + totalBenefits).toFixed(2)}
                     </div>
                   </div>
                 </div>
