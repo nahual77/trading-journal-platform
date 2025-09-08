@@ -208,6 +208,27 @@
     "entriesNotTaken": "Пропущенные входы",
     "whatHappenedWithEntries": "Что случилось"
   },
+  "filters": {
+    "searchPlaceholder": "Поиск...",
+    "search": "Поиск",
+    "dateFrom": "Дата с",
+    "dateTo": "Дата по",
+    "today": "Сегодня",
+    "7days": "7д",
+    "30days": "30д",
+    "show": "Показать",
+    "sortBy": "Сортировать по",
+    "sortDirection": "Направление",
+    "ascending": "По возрастанию",
+    "descending": "По убыванию",
+    "newestFirst": "Сначала новые",
+    "oldestFirst": "Сначала старые",
+    "recent": "↓ Недавние",
+    "oldest": "↑ Старые",
+    "sortNewestFirst": "Сортировать сначала новые",
+    "sortOldestFirst": "Сортировать сначала старые",
+    "clearFilters": "Очистить фильтры"
+  },
   "downloadDropdown": {
     "title": "Скачать журнал",
     "exportCSV": "Экспорт CSV",

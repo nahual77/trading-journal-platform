@@ -194,6 +194,27 @@
     "entriesNotTaken": "الدخول غير المأخوذة",
     "whatHappenedWithEntries": "ماذا حدث مع هذه الدخول"
   },
+  "filters": {
+    "searchPlaceholder": "بحث...",
+    "search": "بحث",
+    "dateFrom": "التاريخ من",
+    "dateTo": "التاريخ إلى",
+    "today": "اليوم",
+    "7days": "7 أيام",
+    "30days": "30 يوم",
+    "show": "إظهار",
+    "sortBy": "ترتيب حسب",
+    "sortDirection": "الاتجاه",
+    "ascending": "تصاعدي",
+    "descending": "تنازلي",
+    "newestFirst": "الأحدث أولاً",
+    "oldestFirst": "الأقدم أولاً",
+    "recent": "↓ حديث",
+    "oldest": "↑ قديم",
+    "sortNewestFirst": "ترتيب الأحدث أولاً",
+    "sortOldestFirst": "ترتيب الأقدم أولاً",
+    "clearFilters": "مسح المرشحات"
+  },
   "downloadDropdown": {
     "title": "تحميل السجل",
     "exportCSV": "تصدير CSV",
