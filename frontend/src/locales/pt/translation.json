@@ -298,6 +298,10 @@
     "deleteBacktestingConfirm": "Tem certeza de que deseja excluir este backtesting? Esta ação não pode ser desfeita.",
     "profitable": "Lucrativos",
     "withCharts": "Com Gráficos",
+    "profitableTests": "Lucrativos",
+    "avgWinRate": "Taxa de Sucesso Média",
+    "avgProfit": "Lucro Médio",
+    "avgSharpe": "Sharpe Médio",
     "columns": {
       "testName": "Nome do Teste",
       "strategy": "Estratégia",

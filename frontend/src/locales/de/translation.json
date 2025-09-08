@@ -297,6 +297,10 @@
     "deleteBacktestingConfirm": "Sind Sie sicher, dass Sie dieses Backtesting löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "profitable": "Profitabel",
     "withCharts": "Mit Charts",
+    "profitableTests": "Profitabel",
+    "avgWinRate": "Durchschnittliche Erfolgsrate",
+    "avgProfit": "Durchschnittlicher Gewinn",
+    "avgSharpe": "Durchschnittlicher Sharpe",
     "columns": {
       "testName": "Testname",
       "strategy": "Strategie",

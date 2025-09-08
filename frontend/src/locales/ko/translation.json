@@ -297,6 +297,10 @@
     "deleteBacktestingConfirm": "이 백테스팅을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
     "profitable": "수익성",
     "withCharts": "차트 포함",
+    "profitableTests": "수익성",
+    "avgWinRate": "평균 승률",
+    "avgProfit": "평균 수익",
+    "avgSharpe": "평균 샤프 비율",
     "columns": {
       "testName": "테스트 이름",
       "strategy": "전략",

@@ -284,6 +284,10 @@
     "deleteBacktestingConfirm": "您确定要删除此回测吗？此操作无法撤销。",
     "profitable": "盈利",
     "withCharts": "带图表",
+    "profitableTests": "盈利",
+    "avgWinRate": "平均胜率",
+    "avgProfit": "平均盈利",
+    "avgSharpe": "平均夏普比率",
     "columns": {
       "testName": "测试名称",
       "strategy": "策略",

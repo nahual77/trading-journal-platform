@@ -298,6 +298,10 @@
     "deleteBacktestingConfirm": "¿Estás seguro de que quieres eliminar este backtesting? Esta acción no se puede deshacer.",
     "profitable": "Rentables",
     "withCharts": "Con Gráficos",
+    "profitableTests": "Rentables",
+    "avgWinRate": "Win Rate Promedio",
+    "avgProfit": "Profit Promedio",
+    "avgSharpe": "Sharpe Promedio",
     "columns": {
       "testName": "Nombre de la Prueba",
       "strategy": "Estrategia",
