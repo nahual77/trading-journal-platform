@@ -297,6 +297,10 @@
     "deleteBacktestingConfirm": "このバックテストを削除してもよろしいですか？この操作は元に戻せません。",
     "profitable": "利益",
     "withCharts": "チャート付き",
+    "profitableTests": "利益",
+    "avgWinRate": "平均勝率",
+    "avgProfit": "平均利益",
+    "avgSharpe": "平均シャープレシオ",
     "columns": {
       "testName": "テスト名",
       "strategy": "戦略",

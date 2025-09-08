@@ -198,7 +198,7 @@ export default function Backtesting() {
         <div className="bg-gray-800 rounded-lg p-4">
           <div className="flex items-center space-x-2">
             <TrendingUp className="h-5 w-5 text-green-400" />
-            <span className="text-sm text-gray-400">Rentables</span>
+            <span className="text-sm text-gray-400">{t('backtesting.profitableTests')}</span>
           </div>
           <div className="text-2xl font-bold text-white mt-1">{stats.profitableTests}</div>
         </div>
@@ -206,7 +206,7 @@ export default function Backtesting() {
         <div className="bg-gray-800 rounded-lg p-4">
           <div className="flex items-center space-x-2">
             <Target className="h-5 w-5 text-yellow-400" />
-            <span className="text-sm text-gray-400">Win Rate Promedio</span>
+            <span className="text-sm text-gray-400">{t('backtesting.avgWinRate')}</span>
           </div>
           <div className="text-2xl font-bold text-white mt-1">{stats.avgWinRate.toFixed(1)}%</div>
         </div>
@@ -214,7 +214,7 @@ export default function Backtesting() {
         <div className="bg-gray-800 rounded-lg p-4">
           <div className="flex items-center space-x-2">
             <TrendingUp className="h-5 w-5 text-green-400" />
-            <span className="text-sm text-gray-400">Profit Promedio</span>
+            <span className="text-sm text-gray-400">{t('backtesting.avgProfit')}</span>
           </div>
           <div className="text-2xl font-bold text-white mt-1">${stats.avgProfit.toFixed(2)}</div>
         </div>
@@ -222,7 +222,7 @@ export default function Backtesting() {
         <div className="bg-gray-800 rounded-lg p-4">
           <div className="flex items-center space-x-2">
             <BarChart3 className="h-5 w-5 text-purple-400" />
-            <span className="text-sm text-gray-400">Sharpe Promedio</span>
+            <span className="text-sm text-gray-400">{t('backtesting.avgSharpe')}</span>
           </div>
           <div className="text-2xl font-bold text-white mt-1">{stats.avgSharpe.toFixed(2)}</div>
         </div>
