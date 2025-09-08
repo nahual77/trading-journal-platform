@@ -253,7 +253,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   };
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-black via-gray-900 to-black relative">
+    <div className="h-screen w-screen relative" style={{
+      background: 'linear-gradient(135deg, #000000 0%, #000000 20%, #111827 40%, #111827 60%, #000000 80%, #000000 100%)'
+    }}>
       {/* Logo con animaciones - Posicionamiento fijo */}
       <img
         src="/logo-growjou.png"

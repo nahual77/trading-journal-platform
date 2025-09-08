@@ -1,72 +1,73 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BacktestingJournal, BacktestingColumn, BacktestingEntry } from '../components/BacktestingTable';
 
 // Función para crear columnas por defecto
-const createDefaultColumns = (): BacktestingColumn[] => [
+const createDefaultColumns = (t: any): BacktestingColumn[] => [
   {
     id: 'testName',
-    name: 'Nombre de la Prueba',
+    name: t('backtesting.columns.testName'),
     type: 'text',
     visible: true,
   },
   {
     id: 'strategy',
-    name: 'Estrategia',
+    name: t('backtesting.columns.strategy'),
     type: 'text',
     visible: true,
   },
   {
     id: 'period',
-    name: 'Período',
+    name: t('backtesting.columns.period'),
     type: 'text',
     visible: true,
   },
   {
     id: 'winRate',
-    name: 'Tasa de Éxito',
+    name: t('backtesting.columns.winRate'),
     type: 'number',
     visible: true,
   },
   {
     id: 'profit',
-    name: 'Ganancia',
+    name: t('backtesting.columns.profit'),
     type: 'number',
     visible: true,
   },
   {
     id: 'maxDrawdown',
-    name: 'Máxima Pérdida',
+    name: t('backtesting.columns.maxDrawdown'),
     type: 'number',
     visible: true,
   },
   {
     id: 'sharpeRatio',
-    name: 'Ratio de Sharpe',
+    name: t('backtesting.columns.sharpeRatio'),
     type: 'number',
     visible: true,
   },
   {
     id: 'notes',
-    name: 'Notas',
+    name: t('backtesting.columns.notes'),
     type: 'text',
     visible: true,
   },
   {
     id: 'chart',
-    name: 'Gráfico',
+    name: t('backtesting.columns.chart'),
     type: 'image',
     visible: true,
   },
   {
     id: 'isProfitable',
-    name: 'Rentable',
+    name: t('backtesting.columns.profitable'),
     type: 'boolean',
     visible: true,
   },
 ];
 
 // Función para cargar datos del localStorage
-const loadFromStorage = (): { journals: BacktestingJournal[], activeId: string } => {
+const loadFromStorage = (t: any): { journals: BacktestingJournal[], activeId: string } => {
   try {
     const savedBacktesting = localStorage.getItem('backtesting-journals');
     const savedActiveId = localStorage.getItem('active-backtesting-id');
@@ -88,7 +89,7 @@ const loadFromStorage = (): { journals: BacktestingJournal[], activeId: string }
     id: Date.now().toString(),
     name: 'Mi Primer Backtesting',
     entries: [],
-    columns: createDefaultColumns(),
+    columns: createDefaultColumns(t),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -107,8 +108,10 @@ const saveToStorage = (journals: BacktestingJournal[], activeId: string) => {
 };
 
 export function useBacktestingState() {
+  const { t } = useTranslation();
+  
   // Inicializar con datos del localStorage
-  const { journals: initialJournals, activeId: initialActiveId } = loadFromStorage();
+  const { journals: initialJournals, activeId: initialActiveId } = loadFromStorage(t);
   
   const [backtestingJournals, setBacktestingJournals] = useState<BacktestingJournal[]>(initialJournals);
   const [activeBacktestingId, setActiveBacktestingId] = useState<string>(initialActiveId);
@@ -118,7 +121,7 @@ export function useBacktestingState() {
       id: Date.now().toString(),
       name,
       entries: [],
-      columns: createDefaultColumns(),
+      columns: createDefaultColumns(t),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

@@ -641,37 +641,37 @@ const StatisticsNew = ({ journals, activeJournalId, initialBalances }: Statistic
                             {/* Métricas */}
                             <div className="space-y-2 mb-3">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-400">Balance</span>
+                                    <span className="text-xs text-gray-400">{t('statistics.balance')}</span>
                                     <span className="text-sm font-semibold text-white">
                                         ${safeFormatCurrency(journal.currentBalance)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-400">Ganancia</span>
+                                    <span className="text-xs text-gray-400">{t('statistics.profit')}</span>
                                     <span className={`text-sm font-semibold ${journal.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                                         {journal.totalProfit >= 0 ? '+' : ''}${safeFormatCurrency(journal.totalProfit)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-400">Win Rate</span>
+                                    <span className="text-xs text-gray-400">{t('statistics.winRate')}</span>
                                     <span className="text-sm font-semibold text-yellow-400">
                                         {safeFormat(journal.winRate, 1)}%
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-400">Profit Factor</span>
+                                    <span className="text-xs text-gray-400">{t('statistics.profitFactor')}</span>
                                     <span className="text-sm font-semibold text-blue-400">
                                         {journal.profitFactor === 999 ? '∞' : safeFormat(journal.profitFactor, 2)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-400">vs Promedio</span>
+                                    <span className="text-xs text-gray-400">{t('statistics.vsAverage')}</span>
                                     <span className={`text-sm font-semibold ${journal.vsAverage >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                                         {journal.vsAverage >= 0 ? '+' : ''}{safeFormat(journal.vsAverage, 1)}%
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-400">Ranking</span>
+                                    <span className="text-xs text-gray-400">{t('statistics.ranking')}</span>
                                     <span className="text-sm font-semibold text-purple-400">
                                         #{journal.ranking}
                                     </span>
@@ -686,19 +686,19 @@ const StatisticsNew = ({ journals, activeJournalId, initialBalances }: Statistic
                             {/* Métricas adicionales */}
                             <div className="space-y-1 mb-3">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-400">Mejor Op</span>
+                                    <span className="text-xs text-gray-400">{t('statistics.bestOp')}</span>
                                     <span className="text-xs font-semibold text-green-400">
                                         +${safeFormatCurrency(journal.bestOperationValue)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-400">Última Op</span>
+                                    <span className="text-xs text-gray-400">{t('statistics.lastOp')}</span>
                                     <span className="text-xs font-semibold text-orange-400">
                                         {journal.daysSinceLast !== null ? `${journal.daysSinceLast}d` : 'N/A'}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-400">Tendencia</span>
+                                    <span className="text-xs text-gray-400">{t('statistics.trend')}</span>
                                     <span className="text-xs font-semibold text-cyan-400">
                                         {journal.trend}
                                     </span>
@@ -726,7 +726,7 @@ const StatisticsNew = ({ journals, activeJournalId, initialBalances }: Statistic
                 }`}>
                 <h3 className="text-xl font-bold text-yellow-400 mb-4 flex items-center gap-2">
                     <BarChart3 className="h-5 w-5" />
-                    Progresión Consolidada de Balance
+                    {t('statistics.consolidatedBalanceProgression')}
                 </h3>
                 <ConsolidatedBalanceChart
                     journals={journals}
