@@ -10,6 +10,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const [recoveryLoading, setRecoveryLoading] = useState(false);
   const [recoveryMessage, setRecoveryMessage] = useState('');
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -49,6 +50,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setLoginError(''); // Limpiar errores previos
     setRegisterError(''); // Limpiar errores previos
 
     try {
@@ -68,21 +70,22 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         if (error.message.includes('Invalid login credentials') ||
             error.message.includes('Invalid email or password') ||
             error.message.includes('Invalid credentials')) {
-          setRegisterError('Email o contraseña incorrectos. Verifica tus datos.');
+          setLoginError('Email o contraseña incorrectos. Verifica tus datos.');
         } else if (error.message.includes('Email not confirmed')) {
-          setRegisterError('Confirma tu email antes de iniciar sesión. Revisa tu bandeja de entrada.');
+          setLoginError('Confirma tu email antes de iniciar sesión. Revisa tu bandeja de entrada.');
         } else {
-          setRegisterError(error.message || 'Error al iniciar sesión');
+          setLoginError(error.message || 'Error al iniciar sesión');
         }
       } else if (data.user) {
         console.log('✅ Login exitoso:', data.user);
         // El usuario será redirigido automáticamente por el App.tsx
         // Limpiar errores previos
+        setLoginError('');
         setRegisterError('');
       }
     } catch (error: any) {
       console.error('Error general en login:', error);
-      setRegisterError('Error inesperado al iniciar sesión. Intenta nuevamente.');
+      setLoginError('Error inesperado al iniciar sesión. Intenta nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -321,6 +324,13 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             {/* Formulario de login */}
             <div className="card-premium">
               <h2 className="text-xl font-bold text-white mb-5 text-center">Iniciar Sesión</h2>
+
+              {/* Mensaje de error de login */}
+              {loginError && (
+                <div className="p-3 bg-red-900/30 border border-red-600/30 rounded-lg mb-4">
+                  <p className="text-sm text-red-400">{loginError}</p>
+                </div>
+              )}
 
               <form onSubmit={handleLogin} className="space-y-3">
                 <div className="max-w-xs mx-auto">
