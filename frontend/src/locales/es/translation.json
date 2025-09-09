@@ -208,7 +208,8 @@
     "oldest": "↑ Antiguo",
     "sortNewestFirst": "Ordenar más reciente primero",
     "sortOldestFirst": "Ordenar más antiguo primero",
-    "clearFilters": "Limpiar filtros"
+    "clearFilters": "Limpiar filtros",
+    "all": "Todas"
   },
   "balanceChart": {
     "title": "Progresión de Balance",
