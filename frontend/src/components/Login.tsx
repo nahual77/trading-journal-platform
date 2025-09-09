@@ -266,65 +266,65 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
           logoInCenter ? 'fixed' : 'absolute'
         }`}
         style={{ 
-          height: isMobile ? '120px' : '200px',
+          height: isMobile ? '80px' : '200px',
           width: 'auto',
-          maxWidth: '90%',
+          maxWidth: isMobile ? '85%' : '90%',
           objectFit: 'contain',
           position: logoInCenter ? 'fixed' : 'absolute',
-          top: logoInCenter ? '50%' : '20px',
+          top: logoInCenter ? '50%' : '15px',
           left: '50%',
           transform: logoInCenter 
-            ? 'translate(-50%, -50%) scale(1.2)' 
+            ? 'translate(-50%, -50%) scale(1.1)' 
             : 'translate(-50%, 0) scale(1)',
           zIndex: logoInCenter ? 20 : 10,
-          transition: 'all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
         }}
       />
 
       {/* Contenido principal responsive */}
       <div className="h-full flex flex-col lg:flex-row">
         {/* Contenido en móvil: vertical, en desktop: horizontal */}
-        <div className={`flex-1 flex flex-col lg:flex-row items-center justify-center lg:justify-between p-4 lg:p-8 transition-all duration-800 ease-out ${
+        <div className={`flex-1 flex flex-col lg:flex-row items-center justify-center lg:justify-between p-2 lg:p-8 transition-all duration-800 ease-out ${
           showContent 
             ? 'opacity-100 transform translate-y-0' 
             : 'opacity-0 transform translate-y-8'
-        } ${logoInCenter ? 'pt-32 lg:pt-64' : 'pt-20 lg:pt-32'}`}>
+        } ${logoInCenter ? 'pt-24 lg:pt-64' : 'pt-16 lg:pt-32'}`}>
         {/* Panel izquierdo - Información de la empresa */}
-        <div className={`flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-300 ${
+        <div className={`flex-1 lg:flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-300 ${
           showContent 
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform -translate-x-12'
         }`}>
-          <div className="text-center max-w-xl flex items-center justify-center h-full px-4">
+          <div className="text-center max-w-lg lg:max-w-xl flex items-center justify-center h-full px-2 lg:px-4">
             {/* Texto descriptivo */}
-            <div className="space-y-4 lg:space-y-8 text-gray-300">
-              <div className="space-y-3 lg:space-y-6">
-                <p className="text-lg lg:text-2xl leading-relaxed text-center font-light">
+            <div className="space-y-3 lg:space-y-8 text-gray-300">
+              <div className="space-y-2 lg:space-y-6">
+                <p className="text-sm lg:text-2xl leading-relaxed text-center font-light">
                   La plataforma profesional para traders que buscan
                   <span className="text-yellow-400 font-semibold"> crecer consistentemente</span> en los mercados.
                 </p>
-                <p className="text-base lg:text-xl text-center leading-relaxed font-light">
+                <p className="text-xs lg:text-xl text-center leading-relaxed font-light">
                   Registra, analiza y optimiza tus operaciones con herramientas
                   avanzadas de análisis y seguimiento de rendimiento.
                 </p>
-                <p className="text-lg lg:text-2xl text-center leading-relaxed font-bold text-yellow-400">
+                <p className="text-sm lg:text-2xl text-center leading-relaxed font-bold text-yellow-400">
                   ¡Crea una cuenta gratuita y regístra tu operativa como un pro!
                 </p>
               </div>
 
               {/* Estadísticas - Responsive */}
-              <div className="flex justify-center space-x-8 lg:space-x-16 mt-8 lg:mt-16">
+              <div className="flex justify-center space-x-4 lg:space-x-16 mt-4 lg:mt-16">
                 <div className="text-center">
-                  <div className="text-3xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">100%</div>
-                  <div className="text-sm lg:text-lg text-gray-400 font-medium">Gratuito</div>
+                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">100%</div>
+                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Gratuito</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">∞</div>
-                  <div className="text-sm lg:text-lg text-gray-400 font-medium">Operaciones</div>
+                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">∞</div>
+                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Operaciones</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">24/7</div>
-                  <div className="text-sm lg:text-lg text-gray-400 font-medium">Disponible</div>
+                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">24/7</div>
+                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Disponible</div>
                 </div>
               </div>
             </div>
@@ -332,46 +332,46 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </div>
 
         {/* Panel derecho - Formulario de acceso */}
-        <div className={`flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
+        <div className={`flex-1 lg:flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
           showContent 
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform translate-x-12'
         }`}>
-          <div className="w-full max-w-sm mx-4 lg:mx-0">
+          <div className="w-full max-w-xs lg:max-w-sm mx-2 lg:mx-0">
             {/* Formulario de login */}
             <div className="card-premium">
-              <h2 className="text-lg lg:text-xl font-bold text-white mb-4 lg:mb-5 text-center">Iniciar Sesión</h2>
+              <h2 className="text-base lg:text-xl font-bold text-white mb-3 lg:mb-5 text-center">Iniciar Sesión</h2>
 
-              <form onSubmit={handleLogin} className="space-y-3 lg:space-y-4">
-                <div className="w-full max-w-xs mx-auto">
+              <form onSubmit={handleLogin} className="space-y-2 lg:space-y-4">
+                <div className="w-full mx-auto">
                   <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
                     Email
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                     <input
                       type="email"
                       placeholder="tu@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="input-premium pl-10 w-full text-sm py-3 lg:py-2"
+                      className="input-premium pl-8 w-full text-xs lg:text-sm py-2 lg:py-2"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="w-full max-w-xs mx-auto">
+                <div className="w-full mx-auto">
                   <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
                     Contraseña
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Lock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                     <input
                       type="password"
                       placeholder="Tu contraseña"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="input-premium pl-10 w-full text-sm py-3 lg:py-2"
+                      className="input-premium pl-8 w-full text-xs lg:text-sm py-2 lg:py-2"
                       required
                     />
                   </div>
@@ -380,19 +380,19 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full btn-primary flex items-center justify-center space-x-2 py-3 lg:py-2 text-sm"
+                  className="w-full btn-primary flex items-center justify-center space-x-2 py-2 lg:py-2 text-xs lg:text-sm"
                 >
                   {loading ? (
-                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    <RefreshCw className="h-3 w-3 animate-spin" />
                   ) : (
-                    <LogIn className="h-4 w-4" />
+                    <LogIn className="h-3 w-3" />
                   )}
                   <span>{loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}</span>
                 </button>
               </form>
 
               {/* Opciones adicionales */}
-              <div className="mt-4 lg:mt-5 pt-4 lg:pt-5 border-t border-gray-700 space-y-3">
+              <div className="mt-3 lg:mt-5 pt-3 lg:pt-5 border-t border-gray-700 space-y-2 lg:space-y-3">
                 {/* Botón de registro */}
                 <div className="text-center">
                   <p className="text-xs text-gray-400 mb-2">
@@ -400,9 +400,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                   </p>
                   <button
                     onClick={() => setShowRegisterModal(true)}
-                    className="w-full flex items-center justify-center space-x-2 px-3 py-3 lg:py-2 bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors text-sm"
+                    className="w-full flex items-center justify-center space-x-2 px-2 py-2 lg:py-2 bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors text-xs lg:text-sm"
                   >
-                    <UserPlus className="h-4 w-4" />
+                    <UserPlus className="h-3 w-3" />
                     <span>Crear Cuenta</span>
                   </button>
                 </div>
@@ -415,12 +415,12 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                   <button
                     onClick={handlePasswordRecovery}
                     disabled={recoveryLoading || !email}
-                    className="w-full flex items-center justify-center space-x-2 px-3 py-3 lg:py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    className="w-full flex items-center justify-center space-x-2 px-2 py-2 lg:py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs lg:text-sm"
                   >
                     {recoveryLoading ? (
-                      <RefreshCw className="h-4 w-4 animate-spin" />
+                      <RefreshCw className="h-3 w-3 animate-spin" />
                     ) : (
-                      <Mail className="h-4 w-4" />
+                      <Mail className="h-3 w-3" />
                     )}
                     <span>
                       {recoveryLoading ? 'Enviando...' : 'Recuperar Contraseña'}
