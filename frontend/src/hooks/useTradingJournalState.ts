@@ -84,7 +84,7 @@ const initialAppState: AppState = {
 
 export function useTradingJournalState() {
   // Detectar si es un usuario nuevo (sin datos guardados)
-  const [appState, setAppState] = useLocalStorage<AppState>('nagual-trader-journal-state', createNewUserState);
+  const [appState, setAppState] = useLocalStorage<AppState>('nagual-trader-journal-state', createNewUserState());
 
   // Crear un estado válido siempre
   const validAppState = useMemo((): AppState => {
