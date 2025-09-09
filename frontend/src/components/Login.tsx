@@ -159,26 +159,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
 
     console.log('✅ Validaciones pasadas, procediendo con Supabase');
 
-    // Verificar si el email ya existe antes de intentar crear
+    // Proceder directamente con el registro - Supabase manejará si el email ya existe
     try {
-      console.log('🔍 Verificando si el email ya existe:', registerData.email);
-      
-      const { data: existingUser, error: checkError } = await supabase.auth.signInWithPassword({
-        email: registerData.email,
-        password: 'dummy_password_to_check_if_exists'
-      });
-
-      console.log('🔍 Resultado de verificación:', { existingUser, checkError });
-
-      // Si hay error de "invalid credentials", significa que el email existe pero la contraseña es incorrecta
-      if (checkError && checkError.message.includes('Invalid login credentials')) {
-        console.log('❌ Email ya existe - bloqueando registro');
-        setRegisterError('Este email ya está registrado. Usa otro email o intenta iniciar sesión.');
-        setRegisterLoading(false);
-        return;
-      }
-
-      console.log('✅ Email disponible, procediendo con registro');
+      console.log('✅ Procediendo con registro en Supabase');
       
       const { data, error } = await supabase.auth.signUp({
         email: registerData.email,
