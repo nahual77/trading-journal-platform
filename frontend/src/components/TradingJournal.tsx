@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useTradingJournalState } from '../hooks/useTradingJournalState';
 import { JournalTabs } from './JournalTabs';
 import { TradingTableWithFilters } from './TradingTableWithFilters';
+import MobileTradingView from './MobileTradingView';
 import { TradingPlan } from './TradingPlan';
 import StatisticsNew from './StatisticsNew';
 import Backtesting from './Backtesting';
@@ -12,6 +13,7 @@ import LanguageSelector from './LanguageSelector';
 import DownloadDropdown from './DownloadDropdown';
 import { UserMenu } from './UserMenu';
 import { supabase } from '../supabaseClient';
+import { useIsMobile } from '../hooks/use-mobile';
 import {
   BookOpen,
   Target,
@@ -35,6 +37,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
   const [activeView, setActiveView] = useState<ActiveView>('journals');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const isMobile = useIsMobile();
 
   // Estados para calculadora independiente por diario
   const [initialBalances, setInitialBalances] = useState<{ [key: string]: number }>({});
@@ -330,16 +333,16 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                   {t('tradingJournal.operations')} - {activeJournal.name}
                 </h3>
 
-                {/* Calculadora de Balance Centrada */}
-                <div className="inline-block bg-gray-800 border border-gray-600 rounded-lg p-6 w-80">
-                  <h4 className="text-base font-semibold text-yellow-400 mb-2 flex items-center justify-center">
+                {/* Calculadora de Balance Centrada - Responsive */}
+                <div className={`inline-block bg-gray-800 border border-gray-600 rounded-lg p-4 md:p-6 w-full max-w-sm md:max-w-md mobile-calculator`}>
+                  <h4 className="text-sm md:text-base font-semibold text-yellow-400 mb-2 flex items-center justify-center">
                     💰 {t('tradingJournal.balance')} - {activeJournal.name}
                   </h4>
 
                   <div className="space-y-2">
                     {/* Campo saldo inicial */}
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-400">{t('tradingJournal.initialBalance')}:</span>
+                      <span className="text-xs md:text-sm text-gray-400">{t('tradingJournal.initialBalance')}:</span>
                       <input
                         type="number"
                         step="0.01"
@@ -348,54 +351,70 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                           console.log('📝 Input onChange ejecutado:', e.target.value);
                           updateInitialBalanceLocal(parseFloat(e.target.value) || 0);
                         }}
-                        className="w-24 px-2 py-1 bg-gray-700 border border-gray-600 rounded text-white text-sm text-right"
+                        className="w-20 md:w-24 px-2 py-1 bg-gray-700 border border-gray-600 rounded text-white text-xs md:text-sm text-right"
                         placeholder="0.00"
                       />
                     </div>
 
                     {/* Total beneficios calculado */}
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-400">{t('tradingJournal.profit')}:</span>
-                      <span className={`text-sm font-semibold ${totalBenefits >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <span className="text-xs md:text-sm text-gray-400">{t('tradingJournal.profit')}:</span>
+                      <span className={`text-xs md:text-sm font-semibold ${totalBenefits >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         {totalBenefits >= 0 ? '+' : ''}${totalBenefits.toFixed(2)}
                       </span>
                     </div>
 
                     {/* Balance final */}
                     <div className="flex justify-between items-center border-t border-gray-600 pt-2">
-                      <span className="text-sm font-semibold text-gray-200">{t('tradingJournal.currentBalance')}:</span>
-                      <span className="text-sm font-bold text-yellow-400">
+                      <span className="text-xs md:text-sm font-semibold text-gray-200">{t('tradingJournal.currentBalance')}:</span>
+                      <span className="text-xs md:text-sm font-bold text-yellow-400">
                         ${(currentInitialBalance + totalBenefits).toFixed(2)}
                       </span>
                     </div>
-                    {/* Debug info */}
-                    <div className="text-xs text-gray-500 mt-1">
+                    {/* Debug info - Solo en desktop */}
+                    <div className="text-xs text-gray-500 mt-1 hidden md:block">
                       {t('tradingJournal.initialBalance')}: ${currentInitialBalance.toFixed(2)} + {t('tradingJournal.profit')}: ${totalBenefits.toFixed(2)} = ${(currentInitialBalance + totalBenefits).toFixed(2)}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <TradingTableWithFilters
-                entries={activeJournal.entries}
-                columns={activeJournal.customColumns}
-                onAddEntry={() => createTradeEntry(activeJournal.id)}
-                onUpdateEntry={(entryId, updates) => updateTradeEntry(entryId, updates, activeJournal.id)}
-                onDeleteEntry={(entryId) => deleteTradeEntry(entryId, activeJournal.id)}
-                onAddImage={(entryId, image) => addImageToEntry(entryId, image, activeJournal.id)}
-                onRemoveImage={(entryId, imageId) => removeImageFromEntry(entryId, imageId, activeJournal.id)}
-                onUpdateColumn={(columnId, updates) => updateColumn(columnId, updates, activeJournal.id)}
-                onAddColumn={(column) => addCustomColumn(column, activeJournal.id)}
-                onRemoveColumn={(columnId) => removeColumn(columnId, activeJournal.id)}
-                onToggleColumn={(columnId) => toggleColumn(columnId, activeJournal.id)}
-              />
+              {/* Renderizado condicional: MobileTradingView para móviles, TradingTableWithFilters para desktop */}
+              {isMobile ? (
+                <MobileTradingView
+                  entries={activeJournal.entries}
+                  columns={activeJournal.customColumns}
+                  onAddEntry={() => createTradeEntry(activeJournal.id)}
+                  onUpdateEntry={(entryId, updates) => updateTradeEntry(entryId, updates, activeJournal.id)}
+                  onDeleteEntry={(entryId) => deleteTradeEntry(entryId, activeJournal.id)}
+                  onAddImage={(entryId, image) => addImageToEntry(entryId, image, activeJournal.id)}
+                  onRemoveImage={(entryId, imageId) => removeImageFromEntry(entryId, imageId, activeJournal.id)}
+                  onToggleColumn={(columnId) => toggleColumn(columnId, activeJournal.id)}
+                />
+              ) : (
+                <TradingTableWithFilters
+                  entries={activeJournal.entries}
+                  columns={activeJournal.customColumns}
+                  onAddEntry={() => createTradeEntry(activeJournal.id)}
+                  onUpdateEntry={(entryId, updates) => updateTradeEntry(entryId, updates, activeJournal.id)}
+                  onDeleteEntry={(entryId) => deleteTradeEntry(entryId, activeJournal.id)}
+                  onAddImage={(entryId, image) => addImageToEntry(entryId, image, activeJournal.id)}
+                  onRemoveImage={(entryId, imageId) => removeImageFromEntry(entryId, imageId, activeJournal.id)}
+                  onUpdateColumn={(columnId, updates) => updateColumn(columnId, updates, activeJournal.id)}
+                  onAddColumn={(column) => addCustomColumn(column, activeJournal.id)}
+                  onRemoveColumn={(columnId) => removeColumn(columnId, activeJournal.id)}
+                  onToggleColumn={(columnId) => toggleColumn(columnId, activeJournal.id)}
+                />
+              )}
 
-              {/* Gráfico de Progresión de Balance */}
-              <BalanceChart
-                entries={activeJournal.entries}
-                initialBalance={currentInitialBalance}
-                journalName={activeJournal.name}
-              />
+              {/* Gráfico de Progresión de Balance - Solo en desktop */}
+              <div className="hidden md:block">
+                <BalanceChart
+                  entries={activeJournal.entries}
+                  initialBalance={currentInitialBalance}
+                  journalName={activeJournal.name}
+                />
+              </div>
             </div>
           </div>
         );
@@ -468,20 +487,20 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
         {/* Header */}
         <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-40">
           <div className="full-width-container">
-            <div className="flex items-center h-20 relative">
+            <div className="flex items-center h-16 md:h-20 relative">
               {/* Logo y título - Posición absoluta a la izquierda */}
-              <div className="absolute left-0 flex items-center space-x-4">
+              <div className="absolute left-0 flex items-center space-x-2 md:space-x-4">
                 {/* Logo GrowJou */}
                 <img
                   src="/logo-growjou.png"
                   alt="GrowJou - My Trading Journal"
-                  className="h-16 w-auto"
+                  className="h-12 md:h-16 w-auto"
                 />
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
                   className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors"
                 >
-                  {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                  {sidebarOpen ? <X className="h-5 w-5 md:h-6 md:w-6" /> : <Menu className="h-5 w-5 md:h-6 md:w-6" />}
                 </button>
               </div>
 
@@ -506,7 +525,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               </nav>
 
               {/* Botones de acción - Posición absoluta a la derecha */}
-              <div className="absolute right-0 flex items-center space-x-2">
+              <div className="absolute right-0 flex items-center space-x-1 md:space-x-2">
                 {/* Selector de idioma */}
                 <LanguageSelector />
                 {/* Menú de usuario */}
@@ -557,8 +576,24 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
         </main>
       </div>
 
-      {/* Footer */}
-      <footer className="footer bg-gray-900/50 border-t border-gray-700 mt-4">
+      {/* Navegación móvil inferior */}
+      <div className="lg:hidden mobile-nav">
+        <div className="mobile-nav-items">
+          {navigationItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleViewChange(item.id)}
+              className={`mobile-nav-item ${activeView === item.id ? 'active' : ''}`}
+            >
+              <item.icon />
+              <span>{item.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer - Solo en desktop */}
+      <footer className="hidden lg:block footer bg-gray-900/50 border-t border-gray-700 mt-4">
         <div className="full-width-container py-3">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-400">

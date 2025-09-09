@@ -444,3 +444,144 @@
   /* Sin efectos especiales */
 }
 
+/* ===== MEJORAS RESPONSIVE PARA MÓVILES ===== */
+
+/* Media queries para móviles */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 8px;
+  }
+  
+  .full-width-container {
+    padding: 0 8px;
+  }
+  
+  .table-container {
+    height: calc(100vh - 300px);
+    margin-bottom: 10px;
+  }
+  
+  /* Contenedor de tabla móvil */
+  .mobile-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .mobile-table {
+    min-width: 100%;
+    font-size: 12px;
+  }
+  
+  .mobile-table th,
+  .mobile-table td {
+    padding: 4px 2px;
+    white-space: nowrap;
+  }
+  
+  /* Controles móviles */
+  .mobile-controls {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .mobile-controls .flex {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  
+  /* Calculadora móvil */
+  .mobile-calculator {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px;
+  }
+  
+  .mobile-calculator h4 {
+    font-size: 14px;
+  }
+  
+  .mobile-calculator .space-y-2 > * + * {
+    margin-top: 4px;
+  }
+  
+  /* Navegación móvil inferior */
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(17, 24, 39, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(55, 65, 81, 0.5);
+    z-index: 50;
+  }
+  
+  .mobile-nav-items {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0;
+  }
+  
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #9ca3af;
+    transition: color 0.2s;
+  }
+  
+  .mobile-nav-item.active {
+    color: #3b82f6;
+  }
+  
+  .mobile-nav-item svg {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 2px;
+  }
+  
+  .mobile-nav-item span {
+    font-size: 10px;
+    font-weight: 500;
+  }
+  
+  /* Área de contenido con padding para navegación móvil */
+  .content-area {
+    padding-bottom: 60px;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    padding: 4px;
+  }
+  
+  .full-width-container {
+    padding: 0 4px;
+  }
+  
+  .table-container {
+    height: calc(100vh - 280px);
+  }
+  
+  .mobile-table th,
+  .mobile-table td {
+    padding: 2px 1px;
+    font-size: 10px;
+  }
+  
+  .mobile-calculator {
+    padding: 8px;
+  }
+  
+  .mobile-calculator h4 {
+    font-size: 14px;
+  }
+  
+  .mobile-calculator .space-y-2 > * + * {
+    margin-top: 4px;
+  }
+}
+
