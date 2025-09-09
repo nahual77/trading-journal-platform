@@ -375,6 +375,7 @@ export class DatabaseService {
           id: entry.id,
           fecha: entry.fecha,
           hora: entry.hora,
+          activo: entry.activo || '',
           razonEntrada: entry.razon_entrada || '',
           antes: images.filter(img => img.image_type === 'antes').map(this.mapDatabaseImageToTradeImage),
           durante: images.filter(img => img.image_type === 'durante').map(this.mapDatabaseImageToTradeImage),
@@ -388,6 +389,7 @@ export class DatabaseService {
           entradasNoTomadas: images.filter(img => img.image_type === 'entradas_no_tomadas').map(this.mapDatabaseImageToTradeImage),
           queSucedioConEntradasNoTomadas: images.filter(img => img.image_type === 'que_sucedio_entradas').map(this.mapDatabaseImageToTradeImage),
           screenshots: images.filter(img => img.image_type === 'screenshots').map(this.mapDatabaseImageToTradeImage),
+          tipoOperacion: entry.tipo_operacion || '',
           customFields: entry.custom_fields || {}
         });
         
@@ -399,6 +401,7 @@ export class DatabaseService {
           id: entry.id,
           fecha: entry.fecha,
           hora: entry.hora,
+          activo: entry.activo || '',
           razonEntrada: entry.razon_entrada || '',
           antes: [],
           durante: [],
@@ -412,6 +415,7 @@ export class DatabaseService {
           entradasNoTomadas: [],
           queSucedioConEntradasNoTomadas: [],
           screenshots: [],
+          tipoOperacion: entry.tipo_operacion || '',
           customFields: entry.custom_fields || {}
         });
       }
