@@ -22,6 +22,7 @@ export interface BacktestingJournal {
   entries: BacktestingEntry[];
   columns: BacktestingColumn[];
   createdAt?: string;
+  updatedAt?: string;
 }
 
 interface BacktestingTableProps {
