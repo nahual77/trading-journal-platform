@@ -146,7 +146,7 @@ export default function MobileTradingView({
                 {/* Beneficio */}
                 <div className="col-span-2">
                   <div className="text-gray-400 text-xs mb-1">{t('table.profit')}</div>
-                  <div className={`font-bold text-lg ${getProfitColor(entry.beneficio || 0)}`}>
+                  <div className={`font-bold text-lg ${getProfitColor(typeof entry.beneficio === 'number' ? entry.beneficio : 0)}`}>
                     {formatValue(entry.beneficio, 'beneficio')}
                   </div>
                 </div>
