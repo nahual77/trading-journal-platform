@@ -16,6 +16,13 @@ export interface BacktestingEntry {
   [key: string]: any;
 }
 
+export interface BacktestingJournal {
+  id: string;
+  name: string;
+  entries: BacktestingEntry[];
+  columns: BacktestingColumn[];
+}
+
 interface BacktestingTableProps {
   entries: BacktestingEntry[];
   columns: BacktestingColumn[];

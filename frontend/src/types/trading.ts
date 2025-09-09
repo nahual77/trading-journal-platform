@@ -6,6 +6,7 @@ export interface TradeEntry {
   fecha: string;
   hora: string;
   activo: string;
+  simbolo?: string; // Alias para activo
   razonEntrada: string;
   antes: TradeImage[]; // Campo de imagen
   durante: TradeImage[]; // Campo de imagen
@@ -13,11 +14,13 @@ export interface TradeEntry {
   beneficio: string;
   seCumplioElPlan: boolean;
   leccion: string;
+  comentarios?: string; // Campo de comentarios
   emocionesAntes: string;
   emocionesDurante: string;
   emocionesDespues: string;
   entradasNoTomadas: TradeImage[]; // Campo de imagen
   queSucedioConEntradasNoTomadas: TradeImage[]; // Campo de imagen
+  screenshots?: TradeImage[]; // Campo de screenshots
   tipoOperacion: 'compra' | 'venta' | '';
   customFields?: { [key: string]: string };
 }

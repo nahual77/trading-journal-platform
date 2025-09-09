@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 
-export default function Register() {
+interface RegisterProps {
+  onSwitchToLogin: () => void;
+}
+
+export default function Register({ onSwitchToLogin }: RegisterProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -38,6 +42,13 @@ export default function Register() {
           className="w-full p-2 bg-green-500 text-white rounded"
         >
           Registrarse
+        </button>
+        <button
+          type="button"
+          onClick={onSwitchToLogin}
+          className="w-full p-2 mt-2 text-blue-500 underline"
+        >
+          ¿Ya tienes cuenta? Inicia sesión
         </button>
       </form>
     </div>
