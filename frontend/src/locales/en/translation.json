@@ -185,7 +185,8 @@
     "oldest": "↑ Oldest",
     "sortNewestFirst": "Sort newest first",
     "sortOldestFirst": "Sort oldest first",
-    "clearFilters": "Clear filters"
+    "clearFilters": "Clear filters",
+    "all": "All"
   },
   "balanceChart": {
     "title": "Balance Progression",

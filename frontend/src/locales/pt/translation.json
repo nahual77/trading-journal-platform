@@ -185,7 +185,8 @@
     "oldest": "↑ Antigo",
     "sortNewestFirst": "Ordenar mais recente primeiro",
     "sortOldestFirst": "Ordenar mais antigo primeiro",
-    "clearFilters": "Limpar filtros"
+    "clearFilters": "Limpar filtros",
+    "all": "Todas"
   },
   "balanceChart": {
     "title": "Progressão do Saldo",
