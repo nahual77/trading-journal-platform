@@ -297,6 +297,7 @@ export function useTradingJournalState() {
       entradasNoTomadas: [], // Array de imágenes
       queSucedioConEntradasNoTomadas: [], // Array de imágenes
       screenshots: [],
+      tipoOperacion: '',
       customFields: {},
     };
 
