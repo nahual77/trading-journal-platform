@@ -42,7 +42,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     setIsHovering(false);
     const timeout = setTimeout(() => {
       setIsOpen(false);
-    }, 800); // 800ms de delay - más tiempo para todos los navegadores
+    }, 1000); // 1000ms de delay - más tiempo para estabilidad
     setHoverTimeout(timeout);
   };
 
@@ -69,13 +69,8 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     };
 
     if (isOpen) {
-      // Usar un pequeño delay para evitar conflictos
-      const timeoutId = setTimeout(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-      }, 100);
-      
+      document.addEventListener('mousedown', handleClickOutside);
       return () => {
-        clearTimeout(timeoutId);
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
@@ -103,11 +98,21 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
         <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
+      {/* Área de conexión invisible */}
+      {isOpen && (
+        <div
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          className="absolute right-0 top-full w-64 h-2 z-40"
+          style={{ marginTop: '-2px' }}
+        />
+      )}
+
       {/* Menú desplegable */}
       <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300 ease-out transform ${
+        className={`absolute right-0 top-full mt-1 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300 ease-out transform ${
           isOpen 
             ? 'opacity-100 scale-100 translate-y-0' 
             : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
