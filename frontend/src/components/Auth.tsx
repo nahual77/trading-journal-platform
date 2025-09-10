@@ -11,17 +11,18 @@ export default function Auth() {
   useEffect(() => {
     // Verificar si hay un token de reset en la URL
     const handleResetPassword = async () => {
-      const { data, error } = await supabase.auth.getSession();
+      // Verificar si hay un token de recuperación en el hash de la URL
+      const hash = window.location.hash;
+      const urlParams = new URLSearchParams(hash.substring(1)); // Remover el #
+      const type = urlParams.get('type');
       
-      if (data.session) {
-        // Si hay una sesión activa, verificar si es un reset de contraseña
-        const urlParams = new URLSearchParams(window.location.search);
-        const type = urlParams.get('type');
+      if (type === 'recovery') {
+        console.log('🔄 Token de recuperación detectado');
+        setIsResettingPassword(true);
+        setResetMessage('¡Token de recuperación válido! Por favor, actualiza tu contraseña en la configuración de tu perfil.');
         
-        if (type === 'recovery') {
-          setIsResettingPassword(true);
-          setResetMessage('Por favor, actualiza tu contraseña en la configuración de tu perfil.');
-        }
+        // Limpiar la URL para evitar que se muestre el token
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
     };
 
