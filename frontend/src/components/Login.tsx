@@ -70,7 +70,22 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         if (error.message.includes('Invalid login credentials') ||
             error.message.includes('Invalid email or password') ||
             error.message.includes('Invalid credentials')) {
-          setLoginError('Email o contraseña incorrectos. Verifica tus datos.');
+          
+          // Verificar si el email existe intentando recuperar contraseña
+          try {
+            const { error: recoveryError } = await supabase.auth.resetPasswordForEmail(email, {
+              redirectTo: `${window.location.origin}/reset-password`
+            });
+            
+            if (recoveryError && recoveryError.message.includes('User not found')) {
+              setLoginError('Este email no está registrado. Verifica el email o crea una cuenta.');
+            } else {
+              setLoginError('Contraseña incorrecta. Verifica tu contraseña.');
+            }
+          } catch {
+            // Si falla la verificación, usar mensaje genérico
+            setLoginError('Email o contraseña incorrectos. Verifica tus datos.');
+          }
         } else if (error.message.includes('Email not confirmed')) {
           setLoginError('Confirma tu email antes de iniciar sesión. Revisa tu bandeja de entrada.');
         } else {
