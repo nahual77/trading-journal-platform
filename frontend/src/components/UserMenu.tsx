@@ -11,8 +11,6 @@ interface UserMenuProps {
 export function UserMenu({ user, onLogout }: UserMenuProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [isHovering, setIsHovering] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -29,31 +27,9 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     setIsOpen(false);
   };
 
-  const handleMouseEnter = () => {
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
-      setHoverTimeout(null);
-    }
-    setIsHovering(true);
-    setIsOpen(true);
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
   };
-
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-    const timeout = setTimeout(() => {
-      setIsOpen(false);
-    }, 1000); // 1000ms de delay - más tiempo para estabilidad
-    setHoverTimeout(timeout);
-  };
-
-  // Limpiar timeout al desmontar el componente
-  useEffect(() => {
-    return () => {
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
-      }
-    };
-  }, [hoverTimeout]);
 
   // Cerrar menú al hacer click fuera
   useEffect(() => {
@@ -61,10 +37,6 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
       const target = event.target as Element;
       if (isOpen && !target.closest('.user-menu-container')) {
         setIsOpen(false);
-        if (hoverTimeout) {
-          clearTimeout(hoverTimeout);
-          setHoverTimeout(null);
-        }
       }
     };
 
@@ -74,14 +46,13 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [isOpen, hoverTimeout]);
+  }, [isOpen]);
 
   return (
     <div className="relative user-menu-container">
       {/* Botón principal del menú */}
       <button
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onClick={toggleMenu}
         className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group my-2 hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50"
       >
         <div className="flex items-center space-x-2">
@@ -98,26 +69,9 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
         <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* Área de conexión invisible */}
-      {isOpen && (
-        <div
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          className="absolute right-0 top-full w-64 h-2 z-40"
-          style={{ marginTop: '-2px' }}
-        />
-      )}
-
       {/* Menú desplegable */}
-      <div
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className={`absolute right-0 top-full mt-1 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300 ease-out transform ${
-          isOpen 
-            ? 'opacity-100 scale-100 translate-y-0' 
-            : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-        }`}
-      >
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 overflow-hidden">
           {/* Header del menú */}
           <div className="px-4 py-3 border-b border-gray-700">
             <div className="flex items-center justify-between gap-2">
@@ -135,13 +89,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
                 </div>
               </div>
               <button
-                onClick={() => {
-                  setIsOpen(false);
-                  if (hoverTimeout) {
-                    clearTimeout(hoverTimeout);
-                    setHoverTimeout(null);
-                  }
-                }}
+                onClick={() => setIsOpen(false)}
                 className="p-1 text-gray-400 hover:text-white transition-colors flex-shrink-0"
                 title="Cerrar menú"
               >
@@ -176,6 +124,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             </div>
           </div>
         </div>
+      )}
     </div>
   );
 }
