@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, LogOut, Settings, ChevronDown } from 'lucide-react';
+import { User, LogOut, Settings, ChevronDown, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../supabaseClient';
 
@@ -41,10 +41,8 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
   const handleMouseLeave = () => {
     setIsHovering(false);
     const timeout = setTimeout(() => {
-      if (!isHovering) {
-        setIsOpen(false);
-      }
-    }, 500); // 500ms de delay antes de cerrar (más tiempo para navegación normal)
+      setIsOpen(false);
+    }, 800); // 800ms de delay - más tiempo para todos los navegadores
     setHoverTimeout(timeout);
   };
 
@@ -57,8 +55,30 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     };
   }, [hoverTimeout]);
 
+  // Cerrar menú al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isOpen && !target.closest('.user-menu-container')) {
+        setIsOpen(false);
+        if (hoverTimeout) {
+          clearTimeout(hoverTimeout);
+          setHoverTimeout(null);
+        }
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, hoverTimeout]);
+
   return (
-    <div className="relative">
+    <div className="relative user-menu-container">
       {/* Botón principal del menú */}
       <button
         onMouseEnter={handleMouseEnter}
@@ -91,18 +111,27 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
       >
           {/* Header del menú */}
           <div className="px-4 py-3 border-b border-gray-700">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center">
-                <User className="h-5 w-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-white truncate">
-                  {user?.email?.split('@')[0] || 'Usuario'}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center">
+                  <User className="h-5 w-5 text-white" />
                 </div>
-                <div className="text-xs text-gray-400 truncate">
-                  {user?.email || 'usuario@ejemplo.com'}
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-white truncate">
+                    {user?.email?.split('@')[0] || 'Usuario'}
+                  </div>
+                  <div className="text-xs text-gray-400 truncate">
+                    {user?.email || 'usuario@ejemplo.com'}
+                  </div>
                 </div>
               </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1 text-gray-400 hover:text-white transition-colors"
+                title="Cerrar menú"
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
           </div>
 
