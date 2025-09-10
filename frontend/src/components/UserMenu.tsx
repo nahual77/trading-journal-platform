@@ -69,12 +69,16 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      // Usar un pequeño delay para evitar conflictos
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+      }, 100);
+      
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
     }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
   }, [isOpen, hoverTimeout]);
 
   return (
@@ -103,7 +107,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
       <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`absolute right-0 top-full mt-2 w-56 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300 ease-out transform ${
+        className={`absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300 ease-out transform ${
           isOpen 
             ? 'opacity-100 scale-100 translate-y-0' 
             : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
@@ -111,12 +115,12 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
       >
           {/* Header del menú */}
           <div className="px-4 py-3 border-b border-gray-700">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center space-x-3 min-w-0 flex-1">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center flex-shrink-0">
                   <User className="h-5 w-5 text-white" />
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="text-sm font-medium text-white truncate">
                     {user?.email?.split('@')[0] || 'Usuario'}
                   </div>
@@ -126,8 +130,14 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
                 </div>
               </div>
               <button
-                onClick={() => setIsOpen(false)}
-                className="p-1 text-gray-400 hover:text-white transition-colors"
+                onClick={() => {
+                  setIsOpen(false);
+                  if (hoverTimeout) {
+                    clearTimeout(hoverTimeout);
+                    setHoverTimeout(null);
+                  }
+                }}
+                className="p-1 text-gray-400 hover:text-white transition-colors flex-shrink-0"
                 title="Cerrar menú"
               >
                 <X className="h-4 w-4" />
