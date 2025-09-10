@@ -71,23 +71,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             error.message.includes('Invalid email or password') ||
             error.message.includes('Invalid credentials')) {
           
-          // Verificar si el email existe intentando hacer signup
-          try {
-            const { error: signupError } = await supabase.auth.signUp({
-              email: email,
-              password: 'dummy_password_to_check_email'
-            });
-            
-            // Si el email ya existe, signup fallará con error específico
-            if (signupError && signupError.message.includes('already registered')) {
-              setLoginError('Contraseña incorrecta. Verifica tu contraseña.');
-            } else {
-              setLoginError('Este email no está registrado. Verifica el email o crea una cuenta.');
-            }
-          } catch {
-            // Si falla la verificación, usar mensaje genérico
-            setLoginError('Email o contraseña incorrectos. Verifica tus datos.');
-          }
+          // Por ahora, usar mensaje genérico ya que Supabase no diferencia estos casos
+          // En el futuro se puede implementar una verificación más sofisticada
+          setLoginError('Email o contraseña incorrectos. Verifica tus datos o crea una cuenta.');
         } else if (error.message.includes('Email not confirmed')) {
           setLoginError('Confirma tu email antes de iniciar sesión. Revisa tu bandeja de entrada.');
         } else {
