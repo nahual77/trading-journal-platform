@@ -119,23 +119,35 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   const handleGoogleLogin = async () => {
     try {
       console.log('🔄 Iniciando login con Google');
+      console.log('🌐 URL actual:', window.location.origin);
+      console.log('🌐 URL completa:', window.location.href);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: `${window.location.origin}/dashboard`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         }
       });
 
       if (error) {
-        console.error('Error en login con Google:', error);
-        setRegisterError('Error al iniciar sesión con Google. Intenta nuevamente.');
+        console.error('❌ Error en login con Google:', error);
+        console.error('❌ Detalles del error:', {
+          message: error.message,
+          status: error.status,
+          statusText: error.statusText
+        });
+        setRegisterError(`Error al iniciar sesión con Google: ${error.message}`);
       } else {
         console.log('✅ Redirigiendo a Google:', data);
+        console.log('🔗 URL de redirección:', data?.url);
       }
     } catch (error: any) {
-      console.error('Error general en login con Google:', error);
-      setRegisterError('Error inesperado al iniciar sesión con Google.');
+      console.error('❌ Error general en login con Google:', error);
+      setRegisterError(`Error inesperado al iniciar sesión con Google: ${error.message}`);
     }
   };
 
