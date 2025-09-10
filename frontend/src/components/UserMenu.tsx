@@ -12,6 +12,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isHovering, setIsHovering] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -33,13 +34,17 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
       clearTimeout(hoverTimeout);
       setHoverTimeout(null);
     }
+    setIsHovering(true);
     setIsOpen(true);
   };
 
   const handleMouseLeave = () => {
+    setIsHovering(false);
     const timeout = setTimeout(() => {
-      setIsOpen(false);
-    }, 300); // 300ms de delay antes de cerrar (más tiempo)
+      if (!isHovering) {
+        setIsOpen(false);
+      }
+    }, 500); // 500ms de delay antes de cerrar (más tiempo para navegación normal)
     setHoverTimeout(timeout);
   };
 
