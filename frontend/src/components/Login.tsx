@@ -118,9 +118,10 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
 
   const handleGoogleLogin = async () => {
     try {
-      console.log('🔄 Iniciando login con Google');
+      console.log('🔄 Iniciando login con Google - DEBUG v2');
       console.log('🌐 URL actual:', window.location.origin);
       console.log('🌐 URL completa:', window.location.href);
+      console.log('🔑 Client ID esperado: 763136612444-t6dnd7b393t8sg1icjhd56pk215c86lm.apps.googleusercontent.com');
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
