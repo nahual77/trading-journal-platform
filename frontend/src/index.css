@@ -167,7 +167,7 @@
     
     /* Botones pequeños mantienen su tamaño */
     button.text-xs {
-      @apply min-h-[36px] text-xs;
+      @apply min-h-[36px];
     }
   }
   
