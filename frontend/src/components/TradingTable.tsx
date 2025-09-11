@@ -756,7 +756,7 @@ function TradingTable({
                         isImageField(column.key) ? 'col-image' : ''
                     }`}
                 >
-                  {t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`)}
+                  {column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}
                 </th>
               ))}
               <th className="px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, Check } from 'lucide-react';
+import { useIsMobile } from '../hooks/use-mobile';
 
   const languages = [
     { code: 'es', name: 'Español', flag: '🇪🇸' },
@@ -19,6 +20,7 @@ import { Globe, Check } from 'lucide-react';
 const LanguageSelector: React.FC = () => {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
@@ -31,12 +33,12 @@ const LanguageSelector: React.FC = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+        className={`flex items-center ${isMobile ? 'space-x-1 px-2 py-1' : 'space-x-2 px-3 py-2'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors`}
         title="Cambiar idioma"
       >
-        <Globe className="h-4 w-4 text-gray-300" />
-        <span className="text-sm text-gray-300">{currentLanguage.flag}</span>
-        <span className="text-sm text-gray-300">{currentLanguage.name}</span>
+        <Globe className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-gray-300`} />
+        <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-300`}>{currentLanguage.flag}</span>
+        {!isMobile && <span className="text-sm text-gray-300">{currentLanguage.name}</span>}
       </button>
 
       {isOpen && (
