@@ -25,28 +25,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   const [registerError, setRegisterError] = useState('');
   const [registerMessage, setRegisterMessage] = useState('');
   
-  // Estados para animaciones
-  const [showLogo, setShowLogo] = useState(true);
-  const [logoInCenter, setLogoInCenter] = useState(true);
-  const [showContent, setShowContent] = useState(false);
-
-  // Control de animaciones
-  useEffect(() => {
-    // 1. Logo aparece en fade
-    const timer1 = setTimeout(() => setShowLogo(true), 300);
-    
-    // 2. Logo se mantiene en el centro por 3 segundos
-    const timer2 = setTimeout(() => setLogoInCenter(false), 3500);
-    
-    // 3. Contenido aparece desde los lados
-    const timer3 = setTimeout(() => setShowContent(true), 4000);
-    
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-    };
-  }, []);
+  // Sin animaciones - layout simple
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -242,42 +221,30 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       background: 'linear-gradient(135deg, #000000 0%, #000000 20%, #111827 40%, #111827 60%, #000000 80%, #000000 100%)'
     }}>
       {/* Logo con animaciones - Responsive */}
+      {/* Logo simple - sin animaciones */}
       <img
         src="/logo-growjou.png"
         alt="GrowJou - My Trading Journal"
-        className={`block opacity-100 transition-all duration-1000 ease-out ${
-          logoInCenter ? 'fixed' : 'absolute'
-        }`}
+        className="block opacity-100"
         style={{ 
-          height: isMobile ? '80px' : '200px',
+          height: isMobile ? '60px' : '120px',
           width: 'auto',
-          maxWidth: isMobile ? '85%' : '90%',
+          maxWidth: isMobile ? '80%' : '90%',
           objectFit: 'contain',
-          position: logoInCenter ? 'fixed' : 'absolute',
-          top: logoInCenter ? '50%' : '15px',
+          position: 'absolute',
+          top: '20px',
           left: '50%',
-          transform: logoInCenter 
-            ? 'translate(-50%, -50%) scale(1.1)' 
-            : 'translate(-50%, 0) scale(1)',
-          zIndex: logoInCenter ? 20 : 10,
-          transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          transform: 'translate(-50%, 0)',
+          zIndex: 10
         }}
       />
 
       {/* Contenido principal responsive */}
       <div className="h-full flex flex-col lg:flex-row">
         {/* Contenido en móvil: vertical, en desktop: horizontal */}
-        <div className={`flex-1 flex flex-col lg:flex-row items-center justify-center lg:justify-between p-2 lg:p-8 transition-all duration-800 ease-out ${
-          showContent 
-            ? 'opacity-100 transform translate-y-0' 
-            : 'opacity-0 transform translate-y-8'
-        } ${logoInCenter ? 'pt-24 lg:pt-64' : 'pt-16 lg:pt-32'}`}>
+        <div className="flex-1 flex flex-col lg:flex-row items-center justify-center lg:justify-between p-2 lg:p-8 pt-20 lg:pt-32">
         {/* Panel izquierdo - Información de la empresa */}
-        <div className={`flex-1 lg:flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-300 ${
-          showContent 
-            ? 'opacity-100 transform translate-x-0' 
-            : 'opacity-0 transform -translate-x-12'
-        }`}>
+        <div className="flex-1 lg:flex-1 flex items-center justify-center">
           <div className="text-center max-w-lg lg:max-w-xl flex items-center justify-center h-full px-2 lg:px-4">
             {/* Texto descriptivo */}
             <div className="space-y-3 lg:space-y-8 text-gray-300">
@@ -315,11 +282,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </div>
 
         {/* Panel derecho - Formulario de acceso */}
-        <div className={`flex-1 lg:flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
-          showContent 
-            ? 'opacity-100 transform translate-x-0' 
-            : 'opacity-0 transform translate-x-12'
-        }`}>
+        <div className="flex-1 lg:flex-1 flex items-center justify-center">
           <div className="w-full max-w-xs lg:max-w-sm mx-2 lg:mx-0">
             {/* Formulario de login */}
             <div className="card-premium">
