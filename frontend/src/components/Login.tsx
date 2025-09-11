@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Mail, Lock, LogIn, RefreshCw, UserPlus, X } from 'lucide-react';
+import { useIsMobile } from '../hooks/use-mobile';
 
 interface LoginProps {
   onSwitchToRegister?: () => void;
@@ -28,6 +29,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   const [showLogo, setShowLogo] = useState(true);
   const [logoInCenter, setLogoInCenter] = useState(true);
   const [showContent, setShowContent] = useState(false);
+  
+  // Hook para detectar móvil
+  const isMobile = useIsMobile();
 
   // Control de animaciones
   useEffect(() => {
@@ -134,8 +138,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         console.error('❌ Error en login con Google:', error);
         console.error('❌ Detalles del error:', {
           message: error.message,
-          status: error.status,
-          statusText: error.statusText
+          status: error.status
         });
         setRegisterError(`Error al iniciar sesión con Google: ${error.message}`);
       } else {
@@ -260,18 +263,18 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         alt="GrowJou - My Trading Journal"
         className="block opacity-100"
         style={{ 
-          height: '200px',
+          height: isMobile ? '60px' : '200px',
           width: 'auto',
-          maxWidth: '100%',
+          maxWidth: isMobile ? '80%' : '100%',
           objectFit: 'contain',
           position: 'fixed',
           top: '50%',
           left: '50%',
-            transform: logoInCenter 
-              ? 'translate(-50%, -50%) scale(1.2)' 
-              : 'translate(-50%, -50%) translateY(-300px) scale(1)',
+          transform: logoInCenter 
+            ? 'translate(-50%, -50%) scale(1)' 
+            : 'translate(-50%, -50%) translateY(-300px) scale(1)',
           zIndex: logoInCenter ? 20 : 10,
-          transition: 'all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          transition: 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
         }}
       />
 
@@ -279,47 +282,47 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       <div className="h-full flex flex-col">
 
       {/* Contenido en la parte inferior - justificado entre sí */}
-      <div className={`flex-1 flex items-end justify-between p-8 pt-64 pb-16 transition-all duration-800 ease-out ${
+      <div className={`flex-1 flex ${isMobile ? 'flex-col' : 'flex-row'} items-end justify-between p-2 lg:p-8 pt-24 lg:pt-64 pb-16 transition-all duration-800 ease-out ${
         showContent 
           ? 'opacity-100 transform translate-y-0' 
           : 'opacity-0 transform translate-y-8'
       }`}>
         {/* Panel izquierdo - Información de la empresa */}
-        <div className={`flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-300 ${
+        <div className={`${isMobile ? 'flex-1' : 'flex-1'} flex items-center justify-center transition-all duration-600 ease-out delay-300 ${
           showContent 
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform -translate-x-12'
         }`}>
-          <div className="text-center max-w-xl flex items-center justify-center h-full">
+          <div className={`text-center ${isMobile ? 'max-w-sm' : 'max-w-xl'} flex items-center justify-center h-full`}>
             {/* Texto descriptivo */}
-            <div className="space-y-8 text-gray-300">
-              <div className="space-y-6">
-                <p className="text-2xl leading-relaxed text-center font-light">
+            <div className={`${isMobile ? 'space-y-4' : 'space-y-8'} text-gray-300`}>
+              <div className={`${isMobile ? 'space-y-3' : 'space-y-6'}`}>
+                <p className={`${isMobile ? 'text-sm' : 'text-2xl'} leading-relaxed text-center font-light`}>
                   La plataforma profesional para traders que buscan
                   <span className="text-yellow-400 font-semibold"> crecer consistentemente</span> en los mercados.
                 </p>
-                <p className="text-xl text-center leading-relaxed font-light">
+                <p className={`${isMobile ? 'text-xs' : 'text-xl'} text-center leading-relaxed font-light`}>
                   Registra, analiza y optimiza tus operaciones con herramientas
                   avanzadas de análisis y seguimiento de rendimiento.
                 </p>
-                <p className="text-2xl text-center leading-relaxed font-bold text-yellow-400">
+                <p className={`${isMobile ? 'text-sm' : 'text-2xl'} text-center leading-relaxed font-bold text-yellow-400`}>
                   ¡Crea una cuenta gratuita y regístra tu operativa como un pro!
                 </p>
               </div>
 
               {/* Estadísticas */}
-              <div className="flex justify-center space-x-16 mt-16">
+              <div className={`flex justify-center ${isMobile ? 'space-x-8 mt-8' : 'space-x-16 mt-16'}`}>
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-yellow-400 mb-2">100%</div>
-                  <div className="text-lg text-gray-400 font-medium">Gratuito</div>
+                  <div className={`${isMobile ? 'text-3xl' : 'text-5xl'} font-bold text-yellow-400 mb-2`}>100%</div>
+                  <div className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-400 font-medium`}>Gratuito</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-yellow-400 mb-2">∞</div>
-                  <div className="text-lg text-gray-400 font-medium">Operaciones</div>
+                  <div className={`${isMobile ? 'text-3xl' : 'text-5xl'} font-bold text-yellow-400 mb-2`}>∞</div>
+                  <div className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-400 font-medium`}>Operaciones</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-yellow-400 mb-2">24/7</div>
-                  <div className="text-lg text-gray-400 font-medium">Disponible</div>
+                  <div className={`${isMobile ? 'text-3xl' : 'text-5xl'} font-bold text-yellow-400 mb-2`}>24/7</div>
+                  <div className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-400 font-medium`}>Disponible</div>
                 </div>
               </div>
             </div>
@@ -327,15 +330,15 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </div>
 
         {/* Panel derecho - Formulario de acceso */}
-        <div className={`flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
+        <div className={`${isMobile ? 'flex-1' : 'flex-1'} flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
           showContent 
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform translate-x-12'
         }`}>
-          <div className="w-full max-w-sm">
+          <div className={`w-full ${isMobile ? 'max-w-xs' : 'max-w-sm'}`}>
             {/* Formulario de login */}
             <div className="card-premium">
-              <h2 className="text-xl font-bold text-white mb-5 text-center">Iniciar Sesión</h2>
+              <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-white ${isMobile ? 'mb-3' : 'mb-5'} text-center`}>Iniciar Sesión</h2>
 
               {/* Mensaje de error de login */}
               {loginError && (
@@ -344,36 +347,36 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                 </div>
               )}
 
-              <form onSubmit={handleLogin} className="space-y-3">
-                <div className="max-w-xs mx-auto">
-                  <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
+              <form onSubmit={handleLogin} className={`${isMobile ? 'space-y-2' : 'space-y-3'}`}>
+                <div className={`${isMobile ? 'max-w-full' : 'max-w-xs'} mx-auto`}>
+                  <label className={`block ${isMobile ? 'text-xs' : 'text-xs'} font-medium text-gray-300 ${isMobile ? 'mb-1' : 'mb-1'} text-center`}>
                     Email
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+                    <Mail className={`absolute left-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-3 w-3' : 'h-3 w-3'} text-gray-400`} />
         <input
           type="email"
                       placeholder="tu@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-                      className="input-premium pl-8 w-full text-sm py-2"
+                      className={`input-premium pl-8 w-full ${isMobile ? 'text-xs py-1.5' : 'text-sm py-2'}`}
                       required
                     />
                   </div>
                 </div>
 
-                <div className="max-w-xs mx-auto">
-                  <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
+                <div className={`${isMobile ? 'max-w-full' : 'max-w-xs'} mx-auto`}>
+                  <label className={`block ${isMobile ? 'text-xs' : 'text-xs'} font-medium text-gray-300 ${isMobile ? 'mb-1' : 'mb-1'} text-center`}>
                     Contraseña
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+                    <Lock className={`absolute left-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-3 w-3' : 'h-3 w-3'} text-gray-400`} />
         <input
           type="password"
                       placeholder="Tu contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-                      className="input-premium pl-8 w-full text-sm py-2"
+                      className={`input-premium pl-8 w-full ${isMobile ? 'text-xs py-1.5' : 'text-sm py-2'}`}
                       required
         />
                   </div>
@@ -382,47 +385,47 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         <button
           type="submit"
                   disabled={loading}
-                  className="w-full btn-primary flex items-center justify-center space-x-2 py-2 text-sm"
+                  className={`w-full btn-primary flex items-center justify-center space-x-2 ${isMobile ? 'py-1.5 text-xs' : 'py-2 text-sm'}`}
                 >
                   {loading ? (
-                    <RefreshCw className="h-3 w-3 animate-spin" />
+                    <RefreshCw className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} animate-spin`} />
                   ) : (
-                    <LogIn className="h-3 w-3" />
+                    <LogIn className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'}`} />
                   )}
                   <span>{loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}</span>
         </button>
       </form>
 
               {/* Opciones adicionales */}
-              <div className="mt-5 pt-5 border-t border-gray-700 space-y-3">
+              <div className={`${isMobile ? 'mt-3 pt-3' : 'mt-5 pt-5'} border-t border-gray-700 ${isMobile ? 'space-y-2' : 'space-y-3'}`}>
                 {/* Botón de registro */}
                 <div className="text-center">
-                  <p className="text-xs text-gray-400 mb-2">
+                  <p className={`${isMobile ? 'text-xs' : 'text-xs'} text-gray-400 ${isMobile ? 'mb-1' : 'mb-2'}`}>
                     ¿No tienes cuenta?
                   </p>
                   <button
                     onClick={() => setShowRegisterModal(true)}
-                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors text-sm"
+                    className={`w-full flex items-center justify-center space-x-2 px-3 ${isMobile ? 'py-1.5' : 'py-2'} bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors ${isMobile ? 'text-xs' : 'text-sm'}`}
                   >
-                    <UserPlus className="h-3 w-3" />
+                    <UserPlus className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'}`} />
                     <span>Crear Cuenta</span>
                   </button>
                 </div>
 
                 {/* Recuperar contraseña */}
                 <div className="text-center">
-                  <p className="text-xs text-gray-400 mb-2">
+                  <p className={`${isMobile ? 'text-xs' : 'text-xs'} text-gray-400 ${isMobile ? 'mb-1' : 'mb-2'}`}>
                     ¿Olvidaste tu contraseña?
                   </p>
                   <button
                     onClick={handlePasswordRecovery}
                     disabled={recoveryLoading || !email}
-                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    className={`w-full flex items-center justify-center space-x-2 px-3 ${isMobile ? 'py-1.5' : 'py-2'} bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isMobile ? 'text-xs' : 'text-sm'}`}
                   >
                     {recoveryLoading ? (
-                      <RefreshCw className="h-3 w-3 animate-spin" />
+                      <RefreshCw className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} animate-spin`} />
                     ) : (
-                      <Mail className="h-3 w-3" />
+                      <Mail className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'}`} />
                     )}
                     <span>
                       {recoveryLoading ? 'Enviando...' : 'Recuperar Contraseña'}
@@ -430,8 +433,8 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                   </button>
 
                   {recoveryMessage && (
-                    <div className="mt-2 p-2 bg-green-900/30 border border-green-600/30 rounded-lg">
-                      <p className="text-xs text-green-400">{recoveryMessage}</p>
+                    <div className={`${isMobile ? 'mt-1' : 'mt-2'} p-2 bg-green-900/30 border border-green-600/30 rounded-lg`}>
+                      <p className={`${isMobile ? 'text-xs' : 'text-xs'} text-green-400`}>{recoveryMessage}</p>
                     </div>
                   )}
                 </div>
