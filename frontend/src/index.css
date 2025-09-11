@@ -154,6 +154,23 @@
     @apply bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
   }
   
+  /* Inputs optimizados para móvil */
+  @media (max-width: 768px) {
+    .input-premium {
+      @apply py-3 text-base min-h-[48px];
+    }
+    
+    /* Botones más grandes para móvil */
+    button {
+      @apply min-h-[44px] text-base;
+    }
+    
+    /* Botones pequeños mantienen su tamaño */
+    button.text-xs {
+      @apply min-h-[36px] text-xs;
+    }
+  }
+  
   /* Estilos para cards premium */
   .card-premium {
     @apply bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-lg p-6 shadow-xl backdrop-blur-sm;
@@ -526,25 +543,34 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px 12px;
+    padding: 12px 16px;
     text-decoration: none;
     color: #9ca3af;
-    transition: color 0.2s;
+    transition: all 0.2s;
+    border-radius: 8px;
+    min-width: 60px;
+  }
+  
+  .mobile-nav-item:hover {
+    background: rgba(55, 65, 81, 0.3);
+    color: #d1d5db;
   }
   
   .mobile-nav-item.active {
     color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
   }
   
   .mobile-nav-item svg {
-    width: 20px;
-    height: 20px;
-    margin-bottom: 2px;
+    width: 22px;
+    height: 22px;
+    margin-bottom: 4px;
   }
   
   .mobile-nav-item span {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 500;
+    text-align: center;
   }
   
   /* Área de contenido con padding para navegación móvil */
