@@ -262,9 +262,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       <img
         src="/logo-growjou.png"
         alt="GrowJou - My Trading Journal"
-        className={`block opacity-100 transition-all duration-1000 ease-out ${
+        className={`main-logo block opacity-100 transition-all duration-1000 ease-out ${
           logoInCenter ? 'fixed' : 'absolute'
-        } lg:hidden`}
+        }`}
         style={{ 
           height: isMobile ? '80px' : '200px',
           width: 'auto',
@@ -586,6 +586,10 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
           
           /* Orientación horizontal */
           @media (orientation: landscape) {
+            .main-logo {
+              display: none !important;
+            }
+            
             .login-main-container {
               flex-direction: row;
             }
