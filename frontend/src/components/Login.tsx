@@ -289,47 +289,6 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             ? 'opacity-100 transform translate-y-0' 
             : 'opacity-0 transform translate-y-8'
         } ${logoInCenter ? 'pt-24 lg:pt-64' : 'pt-16 lg:pt-32'}`}>
-        {/* Panel izquierdo - Información de la empresa */}
-        <div className={`flex-1 lg:flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-300 ${
-          showContent 
-            ? 'opacity-100 transform translate-x-0' 
-            : 'opacity-0 transform -translate-x-12'
-        }`}>
-          <div className="text-center max-w-lg lg:max-w-xl flex items-center justify-center h-full px-2 lg:px-4">
-            {/* Texto descriptivo */}
-            <div className="space-y-3 lg:space-y-8 text-gray-300">
-              <div className="space-y-2 lg:space-y-6">
-                <p className="text-sm lg:text-2xl leading-relaxed text-center font-light">
-                  La plataforma profesional para traders que buscan
-                  <span className="text-yellow-400 font-semibold"> crecer consistentemente</span> en los mercados.
-                </p>
-                <p className="text-xs lg:text-xl text-center leading-relaxed font-light">
-                  Registra, analiza y optimiza tus operaciones con herramientas
-                  avanzadas de análisis y seguimiento de rendimiento.
-                </p>
-                <p className="text-sm lg:text-2xl text-center leading-relaxed font-bold text-yellow-400">
-                  ¡Crea una cuenta gratuita y regístra tu operativa como un pro!
-                </p>
-              </div>
-
-              {/* Estadísticas - Responsive */}
-              <div className="flex justify-center space-x-4 lg:space-x-16 mt-4 lg:mt-16">
-                <div className="text-center">
-                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">100%</div>
-                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Gratuito</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">∞</div>
-                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Operaciones</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">24/7</div>
-                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Disponible</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Panel derecho - Formulario de acceso */}
         <div className={`flex-1 lg:flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
