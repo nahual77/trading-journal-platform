@@ -26,10 +26,17 @@
   .w-full:last-child {
     width: 50% !important;
     order: 2 !important;
-    padding: 10px !important;
+    padding: 15px 20px 15px 10px !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-end !important;
+    justify-content: center !important;
+  }
+  
+  /* Contenedor del formulario */
+  .w-full:last-child > div {
+    width: 100% !important;
+    max-width: 280px !important;
+    margin: 0 auto !important;
   }
   
   /* Texto alineado a la izquierda */
