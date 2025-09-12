@@ -298,7 +298,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         }`}>
           <div className="w-full max-w-xs lg:max-w-sm mx-2 lg:mx-0">
             {/* Formulario de login */}
-            <div className="card-premium">
+            <div className="card-premium landscape-form-container">
               <h2 className="text-base lg:text-xl font-bold text-white mb-3 lg:mb-5 text-center">Iniciar Sesión</h2>
 
               <form onSubmit={handleLogin} className="space-y-2 lg:space-y-4">
@@ -532,6 +532,32 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </div>
       )}
       </div>
+
+      {/* Estilos CSS para orientación horizontal */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @media (orientation: landscape) {
+            .landscape-form-container {
+              max-height: 80vh !important;
+              overflow-y: auto !important;
+              padding: 0.75rem !important;
+            }
+            
+            .landscape-form-container h2 {
+              margin-bottom: 0.75rem !important;
+              font-size: 1rem !important;
+            }
+            
+            .landscape-form-container .space-y-2 > * + * {
+              margin-top: 0.5rem !important;
+            }
+            
+            .landscape-form-container .space-y-3 > * + * {
+              margin-top: 0.5rem !important;
+            }
+          }
+        `
+      }} />
     </div>
   );
 }
