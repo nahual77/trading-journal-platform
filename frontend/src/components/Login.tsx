@@ -242,7 +242,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       {/* Contenido principal responsive */}
       <div className="flex-1 flex flex-col lg:flex-row pt-20 lg:pt-32">
         {/* Panel izquierdo - Información de la empresa */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center lg:justify-start p-2 lg:p-8">
+        <div className="w-full lg:w-1/2 flex items-center justify-center lg:justify-start p-2 lg:p-8 lg:pr-4">
           <div className="text-center lg:text-left max-w-lg lg:max-w-xl px-2 lg:px-4">
             {/* Texto descriptivo */}
             <div className="space-y-3 lg:space-y-8 text-gray-300">
@@ -280,7 +280,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </div>
 
         {/* Panel derecho - Formulario de acceso */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center lg:justify-end p-2 lg:p-8">
+        <div className="w-full lg:w-1/2 flex items-center justify-center lg:justify-end p-2 lg:p-8 lg:pl-4">
           <div className="w-full max-w-xs lg:max-w-sm">
             {/* Formulario de login */}
             <div className="card-premium">
