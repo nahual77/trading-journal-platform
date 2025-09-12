@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Mail, Lock, LogIn, RefreshCw, UserPlus, X } from 'lucide-react';
+import { useIsMobile } from '../hooks/use-mobile';
 
 interface LoginProps {
   onSwitchToRegister?: () => void;
 }
 
 export default function Login({ onSwitchToRegister }: LoginProps) {
+  const isMobile = useIsMobile();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -253,73 +255,76 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   };
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-black via-gray-900 to-black relative">
-      {/* Logo con animaciones - Posicionamiento fijo */}
+    <div className="h-screen w-screen relative overflow-hidden" style={{
+      background: 'linear-gradient(135deg, #000000 0%, #000000 20%, #111827 40%, #111827 60%, #000000 80%, #000000 100%)'
+    }}>
+      {/* Logo con animaciones - Responsive */}
       <img
         src="/logo-growjou.png"
         alt="GrowJou - My Trading Journal"
-        className="block opacity-100"
+        className={`block opacity-100 transition-all duration-1000 ease-out ${
+          logoInCenter ? 'fixed' : 'absolute'
+        }`}
         style={{ 
-          height: '200px',
+          height: isMobile ? '80px' : '200px',
           width: 'auto',
-          maxWidth: '100%',
+          maxWidth: isMobile ? '85%' : '90%',
           objectFit: 'contain',
-          position: 'fixed',
-          top: '50%',
+          position: logoInCenter ? 'fixed' : 'absolute',
+          top: logoInCenter ? '50%' : '15px',
           left: '50%',
-            transform: logoInCenter 
-              ? 'translate(-50%, -50%) scale(1.2)' 
-              : 'translate(-50%, -50%) translateY(-300px) scale(1)',
+          transform: logoInCenter 
+            ? 'translate(-50%, -50%) scale(1.1)' 
+            : 'translate(-50%, 0) scale(1)',
           zIndex: logoInCenter ? 20 : 10,
-          transition: 'all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
         }}
       />
 
-      {/* Contenido principal con flex */}
-      <div className="h-full flex flex-col">
-
-      {/* Contenido en la parte inferior - justificado entre sí */}
-      <div className={`flex-1 flex items-end justify-between p-8 pt-64 pb-16 transition-all duration-800 ease-out ${
-        showContent 
-          ? 'opacity-100 transform translate-y-0' 
-          : 'opacity-0 transform translate-y-8'
-      }`}>
+      {/* Contenido principal responsive */}
+      <div className="h-full flex flex-col lg:flex-row">
+        {/* Contenido en móvil: vertical, en desktop: horizontal */}
+        <div className={`flex-1 flex flex-col lg:flex-row items-center justify-center lg:justify-between p-2 lg:p-8 transition-all duration-800 ease-out ${
+          showContent 
+            ? 'opacity-100 transform translate-y-0' 
+            : 'opacity-0 transform translate-y-8'
+        } ${logoInCenter ? 'pt-24 lg:pt-64' : 'pt-16 lg:pt-32'}`}>
         {/* Panel izquierdo - Información de la empresa */}
-        <div className={`flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-300 ${
+        <div className={`flex-1 lg:flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-300 ${
           showContent 
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform -translate-x-12'
         }`}>
-          <div className="text-center max-w-xl flex items-center justify-center h-full">
+          <div className="text-center max-w-lg lg:max-w-xl flex items-center justify-center h-full px-2 lg:px-4">
             {/* Texto descriptivo */}
-            <div className="space-y-8 text-gray-300">
-              <div className="space-y-6">
-                <p className="text-2xl leading-relaxed text-center font-light">
+            <div className="space-y-3 lg:space-y-8 text-gray-300">
+              <div className="space-y-2 lg:space-y-6">
+                <p className="text-sm lg:text-2xl leading-relaxed text-center font-light">
                   La plataforma profesional para traders que buscan
                   <span className="text-yellow-400 font-semibold"> crecer consistentemente</span> en los mercados.
                 </p>
-                <p className="text-xl text-center leading-relaxed font-light">
+                <p className="text-xs lg:text-xl text-center leading-relaxed font-light">
                   Registra, analiza y optimiza tus operaciones con herramientas
                   avanzadas de análisis y seguimiento de rendimiento.
                 </p>
-                <p className="text-2xl text-center leading-relaxed font-bold text-yellow-400">
+                <p className="text-sm lg:text-2xl text-center leading-relaxed font-bold text-yellow-400">
                   ¡Crea una cuenta gratuita y regístra tu operativa como un pro!
                 </p>
               </div>
 
-              {/* Estadísticas */}
-              <div className="flex justify-center space-x-16 mt-16">
+              {/* Estadísticas - Responsive */}
+              <div className="flex justify-center space-x-4 lg:space-x-16 mt-4 lg:mt-16">
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-yellow-400 mb-2">100%</div>
-                  <div className="text-lg text-gray-400 font-medium">Gratuito</div>
+                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">100%</div>
+                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Gratuito</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-yellow-400 mb-2">∞</div>
-                  <div className="text-lg text-gray-400 font-medium">Operaciones</div>
+                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">∞</div>
+                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Operaciones</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-yellow-400 mb-2">24/7</div>
-                  <div className="text-lg text-gray-400 font-medium">Disponible</div>
+                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">24/7</div>
+                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Disponible</div>
                 </div>
               </div>
             </div>
@@ -327,55 +332,55 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </div>
 
         {/* Panel derecho - Formulario de acceso */}
-        <div className={`flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
+        <div className={`flex-1 lg:flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
           showContent 
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform translate-x-12'
         }`}>
-          <div className="w-full max-w-sm">
+          <div className="w-full max-w-xs lg:max-w-sm mx-2 lg:mx-0">
             {/* Formulario de login */}
             <div className="card-premium">
-              <h2 className="text-xl font-bold text-white mb-5 text-center">Iniciar Sesión</h2>
+              <h2 className="text-base lg:text-xl font-bold text-white mb-3 lg:mb-5 text-center">Iniciar Sesión</h2>
 
-              <form onSubmit={handleLogin} className="space-y-3">
-                <div className="max-w-xs mx-auto">
+              <form onSubmit={handleLogin} className="space-y-2 lg:space-y-4">
+                <div className="w-full mx-auto">
                   <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
                     Email
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
-        <input
-          type="email"
+                    <input
+                      type="email"
                       placeholder="tu@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-                      className="input-premium pl-8 w-full text-sm py-2"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="input-premium pl-8 w-full text-xs lg:text-sm py-2 lg:py-2"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="max-w-xs mx-auto">
+                <div className="w-full mx-auto">
                   <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
                     Contraseña
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
-        <input
-          type="password"
+                    <input
+                      type="password"
                       placeholder="Tu contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-                      className="input-premium pl-8 w-full text-sm py-2"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="input-premium pl-8 w-full text-xs lg:text-sm py-2 lg:py-2"
                       required
-        />
+                    />
                   </div>
                 </div>
 
-        <button
-          type="submit"
+                <button
+                  type="submit"
                   disabled={loading}
-                  className="w-full btn-primary flex items-center justify-center space-x-2 py-2 text-sm"
+                  className="w-full btn-primary flex items-center justify-center space-x-2 py-2 lg:py-2 text-xs lg:text-sm"
                 >
                   {loading ? (
                     <RefreshCw className="h-3 w-3 animate-spin" />
@@ -383,11 +388,11 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                     <LogIn className="h-3 w-3" />
                   )}
                   <span>{loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}</span>
-        </button>
-      </form>
+                </button>
+              </form>
 
               {/* Opciones adicionales */}
-              <div className="mt-5 pt-5 border-t border-gray-700 space-y-3">
+              <div className="mt-3 lg:mt-5 pt-3 lg:pt-5 border-t border-gray-700 space-y-2 lg:space-y-3">
                 {/* Botón de registro */}
                 <div className="text-center">
                   <p className="text-xs text-gray-400 mb-2">
@@ -395,7 +400,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                   </p>
                   <button
                     onClick={() => setShowRegisterModal(true)}
-                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors text-sm"
+                    className="w-full flex items-center justify-center space-x-2 px-2 py-2 lg:py-2 bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors text-xs lg:text-sm"
                   >
                     <UserPlus className="h-3 w-3" />
                     <span>Crear Cuenta</span>
@@ -410,7 +415,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                   <button
                     onClick={handlePasswordRecovery}
                     disabled={recoveryLoading || !email}
-                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    className="w-full flex items-center justify-center space-x-2 px-2 py-2 lg:py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs lg:text-sm"
                   >
                     {recoveryLoading ? (
                       <RefreshCw className="h-3 w-3 animate-spin" />
@@ -435,8 +440,8 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 text-center py-4">
-        <p className="text-sm text-gray-500">
+      <div className="absolute bottom-0 left-0 right-0 text-center py-2 lg:py-4">
+        <p className="text-xs lg:text-sm text-gray-500 px-4">
           © 2025 GrowJou. Diseñado para todos los traders.
         </p>
       </div>
