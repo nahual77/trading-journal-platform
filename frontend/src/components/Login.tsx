@@ -282,16 +282,16 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       />
 
       {/* Contenido principal responsive */}
-      <div className="h-full flex flex-col lg:flex-row">
+      <div className="login-main-container">
         {/* Contenido en móvil: vertical, en desktop: horizontal */}
-        <div className={`flex-1 flex flex-col lg:flex-row items-center justify-center lg:justify-between p-2 lg:p-8 transition-all duration-800 ease-out ${
+        <div className={`login-content-container transition-all duration-800 ease-out ${
           showContent 
             ? 'opacity-100 transform translate-y-0' 
             : 'opacity-0 transform translate-y-8'
-        } ${logoInCenter ? 'pt-24 lg:pt-8' : 'pt-16 lg:pt-8'}`}>
+        }`}>
 
         {/* Panel izquierdo - Logo en horizontal */}
-        <div className={`hidden lg:flex flex-1 items-center justify-center transition-all duration-600 ease-out delay-300 ${
+        <div className={`login-logo-panel transition-all duration-600 ease-out delay-300 ${
           showContent 
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform -translate-x-12'
@@ -312,7 +312,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </div>
 
         {/* Panel derecho - Formulario de acceso */}
-        <div className={`flex-1 lg:flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
+        <div className={`login-form-panel transition-all duration-600 ease-out delay-500 ${
           showContent 
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform translate-x-12'
@@ -554,10 +554,61 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       )}
       </div>
 
-      {/* Estilos CSS para orientación horizontal */}
+      {/* Estilos CSS para orientación */}
       <style dangerouslySetInnerHTML={{
         __html: `
+          /* Estilos base */
+          .login-main-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+          }
+          
+          .login-content-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+          }
+          
+          .login-logo-panel {
+            display: none;
+          }
+          
+          .login-form-panel {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          
+          /* Orientación horizontal */
           @media (orientation: landscape) {
+            .login-main-container {
+              flex-direction: row;
+            }
+            
+            .login-content-container {
+              flex-direction: row;
+              justify-content: space-between;
+              padding: 2rem;
+            }
+            
+            .login-logo-panel {
+              display: flex !important;
+              flex: 1;
+              align-items: center;
+              justify-content: center;
+            }
+            
+            .login-form-panel {
+              flex: 1;
+              align-items: center;
+              justify-content: center;
+            }
+            
             .landscape-form-container {
               max-height: 90vh !important;
               overflow-y: auto !important;
