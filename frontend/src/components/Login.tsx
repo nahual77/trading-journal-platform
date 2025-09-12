@@ -234,13 +234,14 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
     <div className="h-screen w-screen relative overflow-hidden" style={{
       background: 'linear-gradient(135deg, #000000 0%, #000000 20%, #111827 40%, #111827 60%, #000000 80%, #000000 100%)'
     }}>
-      {/* Logo con animaciones - Responsive */}
-      {/* Logo simple - sin animaciones */}
+      {/* Logo */}
       <div className="absolute top-0 left-0 right-0 z-10 flex justify-center pt-4 lg:pt-6">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">G</span>
-          </div>
+          <img 
+            src="/logo-growjou.png" 
+            alt="GrowJou" 
+            className="h-8 w-8 lg:h-10 lg:w-10"
+          />
           <span className="text-white font-bold text-lg lg:text-xl">GrowJou</span>
         </div>
       </div>
@@ -249,14 +250,11 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       <div className="h-full flex items-center justify-center px-4">
         <div className="w-full max-w-md">
           {/* Formulario de Login */}
-          <div className="bg-gray-800 bg-opacity-50 backdrop-blur-md border border-gray-500 border-opacity-50 rounded-xl p-6 lg:p-8 shadow-2xl">
+          <div className={`bg-gray-800 bg-opacity-50 backdrop-blur-md border border-gray-500 border-opacity-50 rounded-xl ${isLandscape ? 'p-4' : 'p-6 lg:p-8'} shadow-2xl`}>
             <div className="text-center mb-6">
-              <h1 className="text-2xl lg:text-3xl font-bold text-white mb-2">
+              <h1 className={`${isLandscape ? 'text-xl' : 'text-2xl lg:text-3xl'} font-bold text-white mb-2`}>
                 Iniciar Sesión
               </h1>
-              <p className="text-gray-400 text-sm lg:text-base">
-                Accede a tu cuenta de trading
-              </p>
             </div>
 
             {/* Mensaje de error */}
@@ -266,12 +264,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className={`${isLandscape ? 'space-y-2' : 'space-y-4'}`}>
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                  Email
-                </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <input
@@ -279,7 +274,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 lg:py-3 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className={`w-full pl-10 pr-4 ${isLandscape ? 'py-1.5 text-sm' : 'py-2 lg:py-3 text-sm lg:text-base'} bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
                     placeholder="tu@email.com"
                     required
                   />
@@ -288,9 +283,6 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
 
               {/* Contraseña */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                  Contraseña
-                </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <input
@@ -298,7 +290,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 lg:py-3 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className={`w-full pl-10 pr-4 ${isLandscape ? 'py-1.5 text-sm' : 'py-2 lg:py-3 text-sm lg:text-base'} bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
                     placeholder="Tu contraseña"
                     required
                   />
@@ -309,7 +301,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-medium py-2 lg:py-3 px-4 rounded-lg transition-colors"
+                className={`w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-medium ${isLandscape ? 'py-1.5 text-sm' : 'py-2 lg:py-3 text-sm lg:text-base'} px-4 rounded-lg transition-colors`}
               >
                 {loading ? (
                   <RefreshCw className="h-4 w-4 animate-spin" />
@@ -327,7 +319,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                   type="button"
                   onClick={handlePasswordRecovery}
                   disabled={recoveryLoading}
-                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                  className={`${isLandscape ? 'text-xs' : 'text-xs'} text-gray-400 ${isLandscape ? 'mb-1' : 'mb-2'} hover:text-white transition-colors`}
                 >
                   {recoveryLoading ? (
                     <span className="flex items-center justify-center space-x-2">
@@ -348,13 +340,13 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
 
               {/* Crear cuenta */}
               <div className="text-center">
-                <p className="text-xs text-gray-400 mb-2">
+                <p className={`${isLandscape ? 'text-xs' : 'text-xs'} text-gray-400 ${isLandscape ? 'mb-1' : 'mb-2'}`}>
                   ¿No tienes cuenta?
                 </p>
                 <button
                   type="button"
                   onClick={() => setShowRegisterModal(true)}
-                  className="w-full flex items-center justify-center space-x-2 px-2 py-2 lg:py-2 text-xs lg:text-sm bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors"
+                  className={`w-full flex items-center justify-center space-x-2 px-2 ${isLandscape ? 'py-1.5 text-xs' : 'py-2 lg:py-2 text-xs lg:text-sm'} bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors`}
                 >
                   <UserPlus className="h-3 w-3" />
                   <span>Crear Cuenta</span>
