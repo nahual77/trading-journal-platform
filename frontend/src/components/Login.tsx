@@ -353,7 +353,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                     <div className="mt-2 p-2 bg-green-900/30 border border-green-600/30 rounded-lg">
                       <p className="text-xs text-green-400">{recoveryMessage}</p>
                     </div>
-                  }
+                  )}
                 </div>
               </div>
             </div>
