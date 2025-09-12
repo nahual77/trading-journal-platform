@@ -290,6 +290,27 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             : 'opacity-0 transform translate-y-8'
         } ${logoInCenter ? 'pt-24 lg:pt-64' : 'pt-16 lg:pt-32'}`}>
 
+        {/* Panel izquierdo - Logo en horizontal */}
+        <div className={`hidden lg:flex flex-1 items-center justify-center transition-all duration-600 ease-out delay-300 ${
+          showContent 
+            ? 'opacity-100 transform translate-x-0' 
+            : 'opacity-0 transform -translate-x-12'
+        }`}>
+          <div className="text-center">
+            <img
+              src="/logo-growjou.png"
+              alt="GrowJou - My Trading Journal"
+              className="block opacity-100"
+              style={{ 
+                height: '150px',
+                width: 'auto',
+                maxWidth: '90%',
+                objectFit: 'contain'
+              }}
+            />
+          </div>
+        </div>
+
         {/* Panel derecho - Formulario de acceso */}
         <div className={`flex-1 lg:flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
           showContent 
@@ -538,22 +559,26 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         __html: `
           @media (orientation: landscape) {
             .landscape-form-container {
-              max-height: 80vh !important;
+              max-height: 90vh !important;
               overflow-y: auto !important;
-              padding: 0.75rem !important;
+              padding: 1rem !important;
             }
             
             .landscape-form-container h2 {
-              margin-bottom: 0.75rem !important;
-              font-size: 1rem !important;
+              margin-bottom: 1rem !important;
+              font-size: 1.125rem !important;
             }
             
             .landscape-form-container .space-y-2 > * + * {
-              margin-top: 0.5rem !important;
+              margin-top: 0.75rem !important;
             }
             
             .landscape-form-container .space-y-3 > * + * {
-              margin-top: 0.5rem !important;
+              margin-top: 0.75rem !important;
+            }
+            
+            .landscape-form-container .space-y-4 > * + * {
+              margin-top: 1rem !important;
             }
           }
         `
