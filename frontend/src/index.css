@@ -25,23 +25,49 @@
 @media (orientation: landscape) and (max-width: 1024px) {
   .login-container {
     flex-direction: row !important;
-    padding-top: 20px !important;
-    padding-bottom: 20px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    min-height: 100vh !important;
+    align-items: flex-start !important;
   }
 
   .login-text, .login-form {
     width: 50% !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
   }
 
   .login-text {
     order: 1 !important;
     text-align: left !important;
-    padding: 20px !important;
+    padding: 10px 15px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
   }
 
   .login-form {
     order: 2 !important;
-    padding: 20px !important;
+    padding: 10px 15px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+  }
+
+  /* Ajustar el logo en horizontal */
+  .login-logo {
+    height: 40px !important;
+    max-width: 80% !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin-bottom: 15px !important;
+  }
+
+  /* Asegurar que el contenido no se superponga con el logo */
+  .login-container {
+    padding-top: 60px !important;
   }
 }
 
