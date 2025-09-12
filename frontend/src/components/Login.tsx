@@ -271,11 +271,11 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
-                    <input
-                      type="email"
+        <input
+          type="email"
                       placeholder="tu@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
                       className={`input-premium pl-8 w-full ${isLandscape ? 'text-xs py-1.5' : 'text-xs lg:text-sm py-2 lg:py-2'}`}
                       required
                     />
@@ -288,19 +288,19 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
-                    <input
-                      type="password"
+        <input
+          type="password"
                       placeholder="Tu contraseña"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
                       className={`input-premium pl-8 w-full ${isLandscape ? 'text-xs py-1.5' : 'text-xs lg:text-sm py-2 lg:py-2'}`}
                       required
-                    />
+        />
                   </div>
                 </div>
 
-                <button
-                  type="submit"
+        <button
+          type="submit"
                   disabled={loading}
                   className={`w-full btn-primary flex items-center justify-center space-x-2 ${isLandscape ? 'py-1.5 text-xs' : 'py-2 lg:py-2 text-xs lg:text-sm'}`}
                 >
@@ -310,8 +310,8 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                     <LogIn className="h-3 w-3" />
                   )}
                   <span>{loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}</span>
-                </button>
-              </form>
+        </button>
+      </form>
 
               {/* Opciones adicionales */}
               <div className={`${isLandscape ? 'mt-2 pt-2 space-y-1' : 'mt-3 lg:mt-5 pt-3 lg:pt-5 space-y-2 lg:space-y-3'} border-t border-gray-700`}>

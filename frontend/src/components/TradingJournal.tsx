@@ -392,28 +392,28 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                   onToggleColumn={(columnId) => toggleColumn(columnId, activeJournal.id)}
                 />
               ) : (
-                <TradingTableWithFilters
-                  entries={activeJournal.entries}
-                  columns={activeJournal.customColumns}
-                  onAddEntry={() => createTradeEntry(activeJournal.id)}
-                  onUpdateEntry={(entryId, updates) => updateTradeEntry(entryId, updates, activeJournal.id)}
-                  onDeleteEntry={(entryId) => deleteTradeEntry(entryId, activeJournal.id)}
-                  onAddImage={(entryId, image) => addImageToEntry(entryId, image, activeJournal.id)}
-                  onRemoveImage={(entryId, imageId) => removeImageFromEntry(entryId, imageId, activeJournal.id)}
-                  onUpdateColumn={(columnId, updates) => updateColumn(columnId, updates, activeJournal.id)}
-                  onAddColumn={(column) => addCustomColumn(column, activeJournal.id)}
-                  onRemoveColumn={(columnId) => removeColumn(columnId, activeJournal.id)}
-                  onToggleColumn={(columnId) => toggleColumn(columnId, activeJournal.id)}
-                />
+              <TradingTableWithFilters
+                entries={activeJournal.entries}
+                columns={activeJournal.customColumns}
+                onAddEntry={() => createTradeEntry(activeJournal.id)}
+                onUpdateEntry={(entryId, updates) => updateTradeEntry(entryId, updates, activeJournal.id)}
+                onDeleteEntry={(entryId) => deleteTradeEntry(entryId, activeJournal.id)}
+                onAddImage={(entryId, image) => addImageToEntry(entryId, image, activeJournal.id)}
+                onRemoveImage={(entryId, imageId) => removeImageFromEntry(entryId, imageId, activeJournal.id)}
+                onUpdateColumn={(columnId, updates) => updateColumn(columnId, updates, activeJournal.id)}
+                onAddColumn={(column) => addCustomColumn(column, activeJournal.id)}
+                onRemoveColumn={(columnId) => removeColumn(columnId, activeJournal.id)}
+                onToggleColumn={(columnId) => toggleColumn(columnId, activeJournal.id)}
+              />
               )}
 
               {/* Gráfico de Progresión de Balance - Solo en desktop */}
               <div className="hidden md:block">
-                <BalanceChart
-                  entries={activeJournal.entries}
-                  initialBalance={currentInitialBalance}
-                  journalName={activeJournal.name}
-                />
+              <BalanceChart
+                entries={activeJournal.entries}
+                initialBalance={currentInitialBalance}
+                journalName={activeJournal.name}
+              />
               </div>
             </div>
           </div>

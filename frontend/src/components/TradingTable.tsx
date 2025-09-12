@@ -622,116 +622,116 @@ function TradingTable({
         {/* Filtros responsive */}
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2 w-full lg:w-auto mobile-controls">
           <div className="flex flex-wrap items-center gap-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700">
-            {/* Búsqueda compacta */}
-            <div className="flex items-center gap-1">
-              <div className="relative">
-                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  placeholder=""
+          {/* Búsqueda compacta */}
+          <div className="flex items-center gap-1">
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder=""
                   className="pl-6 pr-2 py-1 bg-gray-700 border border-gray-600 rounded-l text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm w-24 sm:w-32"
-                />
-              </div>
-              <button
-                onClick={handleSearch}
-                className="px-2 py-1 bg-blue-600 text-white rounded-r text-sm hover:bg-blue-700 transition-colors flex items-center gap-1"
-              >
-                <Search className="h-3 w-3" />
+              />
+            </div>
+            <button
+              onClick={handleSearch}
+              className="px-2 py-1 bg-blue-600 text-white rounded-r text-sm hover:bg-blue-700 transition-colors flex items-center gap-1"
+            >
+              <Search className="h-3 w-3" />
                 <span className="hidden sm:inline">{t('filters.search')}</span>
-              </button>
-              {isSearching && searchResults.length > 0 && (
+            </button>
+            {isSearching && searchResults.length > 0 && (
                 <span className="text-xs sm:text-sm text-gray-400">
                   ({searchResults.length})
-                </span>
-              )}
-            </div>
+              </span>
+            )}
+          </div>
 
             {/* Filtros de fecha compactos - Solo en desktop */}
             <div className="hidden lg:flex items-center gap-1">
-              <Calendar className="h-3 w-3 text-gray-400" />
-              <TranslatableDatePicker
-                value={dateFrom}
-                onChange={setDateFrom}
-                placeholder={t('filters.dateFrom')}
-                className="h-8 text-sm"
-              />
-              <span className="text-gray-400 text-sm">-</span>
-              <TranslatableDatePicker
-                value={dateTo}
-                onChange={setDateTo}
-                placeholder={t('filters.dateTo')}
-                className="h-8 text-sm"
-              />
-            </div>
+            <Calendar className="h-3 w-3 text-gray-400" />
+            <TranslatableDatePicker
+              value={dateFrom}
+              onChange={setDateFrom}
+              placeholder={t('filters.dateFrom')}
+              className="h-8 text-sm"
+            />
+            <span className="text-gray-400 text-sm">-</span>
+            <TranslatableDatePicker
+              value={dateTo}
+              onChange={setDateTo}
+              placeholder={t('filters.dateTo')}
+              className="h-8 text-sm"
+            />
+          </div>
 
-            {/* Ordenar compacto */}
-            <button
-              onClick={() => setSortDirection(prev => prev === 'desc' ? 'asc' : 'desc')}
-              className="px-2 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors flex items-center gap-1"
-              title={sortDirection === 'desc' ? t('filters.sortOldestFirst') : t('filters.sortNewestFirst')}
-            >
-              {sortDirection === 'desc' ? t('filters.recent') : t('filters.oldest')}
-            </button>
+          {/* Ordenar compacto */}
+          <button
+            onClick={() => setSortDirection(prev => prev === 'desc' ? 'asc' : 'desc')}
+            className="px-2 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors flex items-center gap-1"
+            title={sortDirection === 'desc' ? t('filters.sortOldestFirst') : t('filters.sortNewestFirst')}
+          >
+            {sortDirection === 'desc' ? t('filters.recent') : t('filters.oldest')}
+          </button>
 
             {/* Filtros rápidos compactos - Solo en desktop */}
             <div className="hidden lg:flex items-center gap-1">
-              <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title={t('filters.today')}>
-                {t('filters.today')}
-              </button>
-              <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title={t('filters.7days')}>
-                {t('filters.7days')}
-              </button>
-              <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title={t('filters.30days')}>
-                {t('filters.30days')}
-              </button>
-            </div>
-
-            {/* Cantidad por página compacta */}
-            <div className="flex items-center gap-1">
-              <span className="text-xs sm:text-sm text-gray-400">{t('filters.show')}:</span>
-              <select
-                value={pageSize}
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value));
-                  setCurrentPage(1); // Reset a la primera página al cambiar el tamaño
-                }}
-                className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs sm:text-sm"
-              >
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-                <option value={9999}>{t('filters.all')}</option>
-              </select>
-            </div>
-
-            {/* Limpiar filtros compacto */}
-            <button
-              onClick={() => {
-                setSearchTerm('');
-                setDateFrom(undefined);
-                setDateTo(undefined);
-                setSearchResults([]);
-                setIsSearching(false);
-                setSortDirection('desc');
-                setCurrentPage(1);
-                setPageSize(10);
-              }}
-              className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors flex items-center gap-1"
-              title="Limpiar filtros"
-            >
-              <RotateCcw className="h-3 w-3" />
-              <span className="hidden sm:inline text-sm">{t('filters.clearFilters')}</span>
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title={t('filters.today')}>
+              {t('filters.today')}
+            </button>
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title={t('filters.7days')}>
+              {t('filters.7days')}
+            </button>
+            <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title={t('filters.30days')}>
+              {t('filters.30days')}
             </button>
           </div>
-          
-          <ColumnManager
-            columns={columns}
-            onToggleColumn={onToggleColumn}
-          />
+
+          {/* Cantidad por página compacta */}
+          <div className="flex items-center gap-1">
+              <span className="text-xs sm:text-sm text-gray-400">{t('filters.show')}:</span>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setCurrentPage(1); // Reset a la primera página al cambiar el tamaño
+              }}
+                className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs sm:text-sm"
+            >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={9999}>{t('filters.all')}</option>
+            </select>
+          </div>
+
+          {/* Limpiar filtros compacto */}
+          <button
+            onClick={() => {
+              setSearchTerm('');
+              setDateFrom(undefined);
+              setDateTo(undefined);
+              setSearchResults([]);
+              setIsSearching(false);
+              setSortDirection('desc');
+              setCurrentPage(1);
+              setPageSize(10);
+            }}
+            className="p-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded transition-colors flex items-center gap-1"
+            title="Limpiar filtros"
+          >
+            <RotateCcw className="h-3 w-3" />
+              <span className="hidden sm:inline text-sm">{t('filters.clearFilters')}</span>
+          </button>
+        </div>
+
+        <ColumnManager
+          columns={columns}
+          onToggleColumn={onToggleColumn}
+        />
         </div>
       </div>
 
@@ -759,7 +759,7 @@ function TradingTable({
                     }`}
                 >
                   <span className="hidden sm:inline">
-                    {t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`)}
+                  {t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`)}
                   </span>
                   <span className="sm:hidden">
                     {t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`).substring(0, 3)}
