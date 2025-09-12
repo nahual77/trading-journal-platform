@@ -264,7 +264,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         alt="GrowJou - My Trading Journal"
         className={`block opacity-100 transition-all duration-1000 ease-out ${
           logoInCenter ? 'fixed' : 'absolute'
-        }`}
+        } lg:hidden`}
         style={{ 
           height: isMobile ? '80px' : '200px',
           width: 'auto',
@@ -288,7 +288,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
           showContent 
             ? 'opacity-100 transform translate-y-0' 
             : 'opacity-0 transform translate-y-8'
-        } ${logoInCenter ? 'pt-24 lg:pt-64' : 'pt-16 lg:pt-32'}`}>
+        } ${logoInCenter ? 'pt-24 lg:pt-8' : 'pt-16 lg:pt-8'}`}>
 
         {/* Panel izquierdo - Logo en horizontal */}
         <div className={`hidden lg:flex flex-1 items-center justify-center transition-all duration-600 ease-out delay-300 ${
