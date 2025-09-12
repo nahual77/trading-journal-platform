@@ -300,10 +300,10 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         <div className={`${isLandscape ? 'w-1/2' : 'w-full lg:w-1/2'} flex items-center ${isLandscape ? 'justify-center' : 'justify-center lg:justify-end'} ${isLandscape ? 'p-2' : 'p-2 lg:p-8 lg:pl-4'}`}>
           <div className={`w-full ${isLandscape ? 'max-w-xs' : 'max-w-xs lg:max-w-sm'}`}>
             {/* Formulario de login */}
-            <div className="card-premium">
-              <h2 className="text-base lg:text-xl font-bold text-white mb-3 lg:mb-5 text-center">Iniciar Sesión</h2>
+            <div className={`card-premium ${isLandscape ? 'p-3' : ''}`}>
+              <h2 className={`${isLandscape ? 'text-sm mb-2' : 'text-base lg:text-xl mb-3 lg:mb-5'} font-bold text-white text-center`}>Iniciar Sesión</h2>
 
-              <form onSubmit={handleLogin} className="space-y-2 lg:space-y-4">
+              <form onSubmit={handleLogin} className={`${isLandscape ? 'space-y-1' : 'space-y-2 lg:space-y-4'}`}>
                 <div className="w-full mx-auto">
                   <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
                     Email
@@ -315,7 +315,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                       placeholder="tu@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="input-premium pl-8 w-full text-xs lg:text-sm py-2 lg:py-2"
+                      className={`input-premium pl-8 w-full ${isLandscape ? 'text-xs py-1.5' : 'text-xs lg:text-sm py-2 lg:py-2'}`}
                       required
                     />
                   </div>
@@ -332,7 +332,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                       placeholder="Tu contraseña"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="input-premium pl-8 w-full text-xs lg:text-sm py-2 lg:py-2"
+                      className={`input-premium pl-8 w-full ${isLandscape ? 'text-xs py-1.5' : 'text-xs lg:text-sm py-2 lg:py-2'}`}
                       required
                     />
                   </div>
@@ -341,7 +341,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full btn-primary flex items-center justify-center space-x-2 py-2 lg:py-2 text-xs lg:text-sm"
+                  className={`w-full btn-primary flex items-center justify-center space-x-2 ${isLandscape ? 'py-1.5 text-xs' : 'py-2 lg:py-2 text-xs lg:text-sm'}`}
                 >
                   {loading ? (
                     <RefreshCw className="h-3 w-3 animate-spin" />
@@ -353,15 +353,15 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
               </form>
 
               {/* Opciones adicionales */}
-              <div className="mt-3 lg:mt-5 pt-3 lg:pt-5 border-t border-gray-700 space-y-2 lg:space-y-3">
+              <div className={`${isLandscape ? 'mt-2 pt-2 space-y-1' : 'mt-3 lg:mt-5 pt-3 lg:pt-5 space-y-2 lg:space-y-3'} border-t border-gray-700`}>
                 {/* Botón de registro */}
                 <div className="text-center">
-                  <p className="text-xs text-gray-400 mb-2">
+                  <p className={`${isLandscape ? 'text-xs' : 'text-xs'} text-gray-400 ${isLandscape ? 'mb-1' : 'mb-2'}`}>
                     ¿No tienes cuenta?
                   </p>
                   <button
                     onClick={() => setShowRegisterModal(true)}
-                    className="w-full flex items-center justify-center space-x-2 px-2 py-2 lg:py-2 bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors text-xs lg:text-sm"
+                    className={`w-full flex items-center justify-center space-x-2 px-2 ${isLandscape ? 'py-1.5 text-xs' : 'py-2 lg:py-2 text-xs lg:text-sm'} bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors`}
                   >
                     <UserPlus className="h-3 w-3" />
                     <span>Crear Cuenta</span>
