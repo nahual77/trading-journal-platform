@@ -240,12 +240,10 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       />
 
       {/* Contenido principal responsive */}
-      <div className="h-full flex flex-col lg:flex-row">
-        {/* Contenido en móvil: vertical, en desktop: horizontal */}
-        <div className="flex-1 flex flex-col lg:flex-row items-center justify-center lg:justify-between p-2 lg:p-8 pt-20 lg:pt-32">
+      <div className="h-full flex flex-col lg:flex-row pt-20 lg:pt-32">
         {/* Panel izquierdo - Información de la empresa */}
-        <div className="flex-1 lg:flex-1 flex items-center justify-center order-1 lg:order-1">
-          <div className="text-center lg:text-left max-w-lg lg:max-w-xl flex items-center justify-center h-full px-2 lg:px-4">
+        <div className="flex-1 flex items-center justify-center p-2 lg:p-8">
+          <div className="text-center lg:text-left max-w-lg lg:max-w-xl px-2 lg:px-4">
             {/* Texto descriptivo */}
             <div className="space-y-3 lg:space-y-8 text-gray-300">
               <div className="space-y-2 lg:space-y-6">
@@ -282,8 +280,8 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </div>
 
         {/* Panel derecho - Formulario de acceso */}
-        <div className="flex-1 lg:flex-1 flex items-center justify-center order-2 lg:order-2">
-          <div className="w-full max-w-xs lg:max-w-sm mx-2 lg:mx-0">
+        <div className="flex-1 flex items-center justify-center p-2 lg:p-8">
+          <div className="w-full max-w-xs lg:max-w-sm">
             {/* Formulario de login */}
             <div className="card-premium">
               <h2 className="text-base lg:text-xl font-bold text-white mb-3 lg:mb-5 text-center">Iniciar Sesión</h2>
