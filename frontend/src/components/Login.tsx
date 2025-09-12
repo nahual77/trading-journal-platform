@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Mail, Lock, LogIn, RefreshCw, UserPlus, X } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import { useLockOrientation } from '../hooks/use-orientation';
 
 interface LoginProps {
   onSwitchToRegister?: () => void;
@@ -9,6 +10,9 @@ interface LoginProps {
 
 export default function Login({ onSwitchToRegister }: LoginProps) {
   const isMobile = useIsMobile();
+  
+  // Bloquear orientación solo en móviles
+  useLockOrientation(isMobile);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
