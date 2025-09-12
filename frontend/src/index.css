@@ -2,72 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Estilos específicos para el login responsive */
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-}
-
-.login-text, .login-form {
-  width: 100%;
-  text-align: center;
-}
-
-.login-form img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Media query para orientación horizontal en móviles */
+/* Media query para orientación horizontal en móviles - solo ajustar tamaño de caja */
 @media (orientation: landscape) and (max-width: 1024px) {
-  .login-container {
-    flex-direction: row !important;
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-    min-height: 100vh !important;
-    align-items: flex-start !important;
-  }
-
-  .login-text, .login-form {
-    width: 50% !important;
-    height: 100vh !important;
+  .login-form {
+    max-width: 300px !important;
+    max-height: 80vh !important;
     overflow-y: auto !important;
   }
-
-  .login-text {
-    order: 1 !important;
-    text-align: left !important;
-    padding: 10px 15px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
+  
+  .login-form .card-premium {
+    padding: 12px !important;
   }
-
-  .login-form {
-    order: 2 !important;
-    padding: 10px 15px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
+  
+  .login-form h2 {
+    font-size: 16px !important;
+    margin-bottom: 12px !important;
   }
-
-  /* Ajustar el logo en horizontal */
-  .login-logo {
-    height: 40px !important;
-    max-width: 80% !important;
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    transform: none !important;
-    margin-bottom: 15px !important;
+  
+  .login-form .space-y-2 > * + * {
+    margin-top: 8px !important;
   }
-
-  /* Asegurar que el contenido no se superponga con el logo */
-  .login-container {
-    padding-top: 60px !important;
+  
+  .login-form input {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+  }
+  
+  .login-form button {
+    padding: 8px 16px !important;
+    font-size: 14px !important;
   }
 }
 
