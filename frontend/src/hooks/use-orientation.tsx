@@ -33,11 +33,25 @@ export const useLockOrientation = (shouldLock: boolean) => {
     if (!shouldLock) return;
 
     const lockOrientation = () => {
-      // Try to lock orientation to portrait
-      if (screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock('portrait').catch((err) => {
-          console.log('Orientation lock failed:', err);
-        });
+      // Try to lock orientation to portrait using different methods
+      try {
+        // Method 1: Modern Screen Orientation API
+        if (screen.orientation && 'lock' in screen.orientation) {
+          (screen.orientation as any).lock('portrait').catch((err: any) => {
+            console.log('Screen orientation lock failed:', err);
+          });
+        }
+        // Method 2: Legacy fullscreen API (fallback)
+        else if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().then(() => {
+            // This can help prevent rotation in some cases
+            console.log('Using fullscreen as orientation lock fallback');
+          }).catch((err) => {
+            console.log('Fullscreen fallback failed:', err);
+          });
+        }
+      } catch (error) {
+        console.log('Orientation lock not supported:', error);
       }
     };
 
