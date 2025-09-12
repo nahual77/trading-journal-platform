@@ -100,47 +100,38 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
     });
 
     if (error) {
-      alert(error.message);
+      console.error('Error al enviar email de recuperación:', error);
+      setRecoveryMessage('Error al enviar email de recuperación. Intenta nuevamente.');
     } else {
-      setRecoveryMessage('Se ha enviado un enlace de recuperación a tu email');
+      setRecoveryMessage('Email de recuperación enviado. Revisa tu bandeja de entrada.');
     }
 
     setRecoveryLoading(false);
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      console.log('🔄 Iniciando login con Google');
-      
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: 'http://localhost:5173'
-        }
-      });
-
-      if (error) {
-        console.error('Error en login con Google:', error);
-        setRegisterError('Error al iniciar sesión con Google. Intenta nuevamente.');
-      } else {
-        console.log('✅ Redirigiendo a Google:', data);
-      }
-    } catch (error: any) {
-      console.error('Error general en login con Google:', error);
-      setRegisterError('Error inesperado al iniciar sesión con Google.');
-    }
-  };
-
   const handleRegister = async (e: React.FormEvent) => {
-    console.log('🚀 INICIANDO handleRegister');
     e.preventDefault();
-    console.log('🚀 Formulario enviado, datos:', registerData);
-    
     setRegisterLoading(true);
     setRegisterError('');
     setRegisterMessage('');
 
+    console.log('🔄 Iniciando registro:', registerData);
+
     // Validaciones básicas
+    if (!registerData.name.trim()) {
+      console.log('❌ Nombre vacío');
+      setRegisterError('El nombre es requerido');
+      setRegisterLoading(false);
+      return;
+    }
+
+    if (!registerData.email.trim()) {
+      console.log('❌ Email vacío');
+      setRegisterError('El email es requerido');
+      setRegisterLoading(false);
+      return;
+    }
+
     if (registerData.password !== registerData.confirmPassword) {
       console.log('❌ Contraseñas no coinciden');
       setRegisterError('Las contraseñas no coinciden');
@@ -159,7 +150,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
 
     // Proceder directamente con el registro - Supabase manejará si el email ya existe
     try {
-      console.log('✅ Procediendo con registro en Supabase');
+      console.log('🔄 Creando usuario en Supabase...');
       
       const { data, error } = await supabase.auth.signUp({
         email: registerData.email,
@@ -167,32 +158,20 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         options: {
           data: {
             name: registerData.name,
-          },
-        },
+            full_name: registerData.name
+          }
+        }
       });
 
-      console.log('📊 Respuesta de Supabase:', { data, error });
-      console.log('📊 data.user:', data.user);
-      console.log('📊 data.session:', data.session);
+      console.log('📊 Respuesta de registro:', { data, error });
 
       if (error) {
-        console.log('❌ Error de Supabase:', error);
+        console.error('❌ Error en registro:', error);
         
-        // Manejar errores específicos de Supabase
-        const errorMessage = error.message.toLowerCase();
-        if (errorMessage.includes('already registered') || 
-            errorMessage.includes('user already registered') ||
-            errorMessage.includes('already been registered') ||
-            errorMessage.includes('already exists') ||
-            errorMessage.includes('duplicate') ||
-            errorMessage.includes('already in use') ||
-            errorMessage.includes('email already') ||
-            errorMessage.includes('user exists') ||
-            errorMessage.includes('email address is already') ||
-            errorMessage.includes('user with this email') ||
-            errorMessage.includes('email is already taken') ||
-            errorMessage.includes('email has already been registered')) {
-          setRegisterError('Este email ya está registrado. Usa otro email o intenta iniciar sesión.');
+        if (error.message.includes('User already registered')) {
+          setRegisterError('Este email ya está registrado. Intenta iniciar sesión.');
+        } else if (error.message.includes('Invalid email')) {
+          setRegisterError('El email no es válido. Verifica el formato.');
         } else {
           setRegisterError(error.message || 'Error al crear la cuenta');
         }
@@ -203,13 +182,8 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       // Usuario creado exitosamente (ya verificamos que no existe)
       if (data.user && data.user.id) {
         console.log('✅ Usuario registrado exitosamente:', data.user);
-        
-        // Verificar si el usuario necesita confirmación de email
-        if (data.user.email_confirmed_at) {
-          setRegisterMessage('¡Cuenta creada y confirmada exitosamente!');
-        } else {
-          setRegisterMessage('¡Cuenta creada exitosamente! Revisa tu email para confirmar tu cuenta.');
-        }
+        setRegisterError('');
+        setRegisterMessage('¡Cuenta creada exitosamente! Revisa tu email para confirmar tu cuenta.');
         
         // Cerrar modal después de 8 segundos
         setTimeout(() => {
@@ -233,130 +207,160 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      console.log('🔄 Iniciando login con Google');
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'http://localhost:5173'
+        }
+      });
+
+      if (error) {
+        console.error('Error en login con Google:', error);
+        setRegisterError('Error al iniciar sesión con Google. Intenta nuevamente.');
+      } else {
+        console.log('✅ Redirigiendo a Google:', data);
+      }
+    } catch (error) {
+      console.error('Error general en Google login:', error);
+      setRegisterError('Error al iniciar sesión con Google. Intenta nuevamente.');
+    }
+  };
+
   return (
     <div className="h-screen w-screen relative overflow-hidden" style={{
       background: 'linear-gradient(135deg, #000000 0%, #000000 20%, #111827 40%, #111827 60%, #000000 80%, #000000 100%)'
     }}>
       {/* Logo con animaciones - Responsive */}
       {/* Logo simple - sin animaciones */}
-      <img
-        src="/logo-growjou.png"
-        alt="GrowJou - My Trading Journal"
-        className="block opacity-100 login-logo"
-        style={{ 
-          height: isMobile ? '60px' : '120px',
-          width: 'auto',
-          maxWidth: isMobile ? '80%' : '90%',
-          objectFit: 'contain',
-          position: 'absolute',
-          top: '20px',
-          left: '50%',
-          transform: 'translate(-50%, 0)',
-          zIndex: 10
-        }}
-      />
+      <div className="absolute top-0 left-0 right-0 z-10 flex justify-center pt-4 lg:pt-6">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-sm">G</span>
+          </div>
+          <span className="text-white font-bold text-lg lg:text-xl">GrowJou</span>
+        </div>
+      </div>
 
-      {/* Contenido principal - Solo formulario centrado */}
-      <div className="flex-1 flex items-center justify-center pt-20 lg:pt-32 pb-8 lg:pb-0 min-h-screen">
-        {/* Formulario de acceso */}
-        <div className="w-full max-w-sm p-4">
-            {/* Formulario de login */}
-            <div className={`card-premium ${isLandscape ? 'p-3' : ''}`}>
-              <h2 className={`${isLandscape ? 'text-sm mb-2' : 'text-base lg:text-xl mb-3 lg:mb-5'} font-bold text-white text-center`}>Iniciar Sesión</h2>
+      {/* Contenido principal */}
+      <div className="h-full flex items-center justify-center px-4">
+        <div className="w-full max-w-md">
+          {/* Formulario de Login */}
+          <div className="bg-gray-800 bg-opacity-50 backdrop-blur-md border border-gray-500 border-opacity-50 rounded-xl p-6 lg:p-8 shadow-2xl">
+            <div className="text-center mb-6">
+              <h1 className="text-2xl lg:text-3xl font-bold text-white mb-2">
+                Iniciar Sesión
+              </h1>
+              <p className="text-gray-400 text-sm lg:text-base">
+                Accede a tu cuenta de trading
+              </p>
+            </div>
 
-              <form onSubmit={handleLogin} className={`${isLandscape ? 'space-y-1' : 'space-y-2 lg:space-y-4'}`}>
-                <div className="w-full mx-auto">
-                  <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
-                    Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
-        <input
-          type="email"
-                      placeholder="tu@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-                      className={`input-premium pl-8 w-full ${isLandscape ? 'text-xs py-1.5' : 'text-xs lg:text-sm py-2 lg:py-2'}`}
-                      required
-                    />
-                  </div>
-                </div>
+            {/* Mensaje de error */}
+            {registerError && (
+              <div className="mb-4 p-3 bg-red-900/30 border border-red-600/30 rounded-lg">
+                <p className="text-sm text-red-400">{registerError}</p>
+              </div>
+            )}
 
-                <div className="w-full mx-auto">
-                  <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
-                    Contraseña
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
-        <input
-          type="password"
-                      placeholder="Tu contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-                      className={`input-premium pl-8 w-full ${isLandscape ? 'text-xs py-1.5' : 'text-xs lg:text-sm py-2 lg:py-2'}`}
-                      required
-        />
-                  </div>
-                </div>
-
-        <button
-          type="submit"
-                  disabled={loading}
-                  className={`w-full btn-primary flex items-center justify-center space-x-2 ${isLandscape ? 'py-1.5 text-xs' : 'py-2 lg:py-2 text-xs lg:text-sm'}`}
-                >
-                  {loading ? (
-                    <RefreshCw className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <LogIn className="h-3 w-3" />
-                  )}
-                  <span>{loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}</span>
-        </button>
-      </form>
-
-              {/* Opciones adicionales */}
-              <div className={`${isLandscape ? 'mt-2 pt-2 space-y-1' : 'mt-3 lg:mt-5 pt-3 lg:pt-5 space-y-2 lg:space-y-3'} border-t border-gray-700`}>
-                {/* Botón de registro */}
-                <div className="text-center">
-                  <p className={`${isLandscape ? 'text-xs' : 'text-xs'} text-gray-400 ${isLandscape ? 'mb-1' : 'mb-2'}`}>
-                    ¿No tienes cuenta?
-                  </p>
-                  <button
-                    onClick={() => setShowRegisterModal(true)}
-                    className={`w-full flex items-center justify-center space-x-2 px-2 ${isLandscape ? 'py-1.5 text-xs' : 'py-2 lg:py-2 text-xs lg:text-sm'} bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors`}
-                  >
-                    <UserPlus className="h-3 w-3" />
-                    <span>Crear Cuenta</span>
-                  </button>
-                </div>
-
-                {/* Recuperar contraseña */}
-                <div className="text-center">
-                  <p className="text-xs text-gray-400 mb-2">
-                    ¿Olvidaste tu contraseña?
-                  </p>
-                  <button
-                    onClick={handlePasswordRecovery}
-                    disabled={recoveryLoading || !email}
-                    className="w-full flex items-center justify-center space-x-2 px-2 py-2 lg:py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs lg:text-sm"
-                  >
-                    {recoveryLoading ? (
-                      <RefreshCw className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <Mail className="h-3 w-3" />
-                    )}
-                    <span>
-                      {recoveryLoading ? 'Enviando...' : 'Recuperar Contraseña'}
-                    </span>
-                  </button>
-
-                  {recoveryMessage && (
-                    <div className="mt-2 p-2 bg-green-900/30 border border-green-600/30 rounded-lg">
-                      <p className="text-xs text-green-400">{recoveryMessage}</p>
-                    </div>
-                  )}
+            <form onSubmit={handleLogin} className="space-y-4">
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 lg:py-3 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="tu@email.com"
+                    required
+                  />
                 </div>
               </div>
-            </div>
+
+              {/* Contraseña */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+                  Contraseña
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 lg:py-3 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Tu contraseña"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Botón de Login */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-medium py-2 lg:py-3 px-4 rounded-lg transition-colors"
+              >
+                {loading ? (
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                ) : (
+                  <LogIn className="h-4 w-4" />
+                )}
+                <span>
+                  {loading ? 'Iniciando...' : 'Iniciar Sesión'}
+                </span>
+              </button>
+
+              {/* Recuperar contraseña */}
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={handlePasswordRecovery}
+                  disabled={recoveryLoading}
+                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                >
+                  {recoveryLoading ? (
+                    <span className="flex items-center justify-center space-x-2">
+                      <RefreshCw className="h-3 w-3 animate-spin" />
+                      <span>Enviando...</span>
+                    </span>
+                  ) : (
+                    '¿Olvidaste tu contraseña?'
+                  )}
+                </button>
+
+                {recoveryMessage && (
+                  <div className="mt-2 p-2 bg-green-900/30 border border-green-600/30 rounded-lg">
+                    <p className="text-xs text-green-400">{recoveryMessage}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Crear cuenta */}
+              <div className="text-center">
+                <p className="text-xs text-gray-400 mb-2">
+                  ¿No tienes cuenta?
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowRegisterModal(true)}
+                  className="w-full flex items-center justify-center space-x-2 px-2 py-2 lg:py-2 text-xs lg:text-sm bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors"
+                >
+                  <UserPlus className="h-3 w-3" />
+                  <span>Crear Cuenta</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -402,78 +406,85 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                 </div>
               )}
 
+              {/* Nombre */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Nombre
+                <label htmlFor="registerName" className="block text-sm font-medium text-gray-300 mb-2">
+                  Nombre completo
                 </label>
                 <input
+                  id="registerName"
                   type="text"
-                  placeholder="Tu nombre completo"
                   value={registerData.name}
-                  onChange={(e) => setRegisterData({...registerData, name: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:border-opacity-70 focus:bg-gray-700 focus:bg-opacity-70 transition-all duration-200 backdrop-blur-sm"
+                  onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Tu nombre completo"
                   required
                 />
               </div>
 
+              {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label htmlFor="registerEmail" className="block text-sm font-medium text-gray-300 mb-2">
                   Email
                 </label>
                 <input
+                  id="registerEmail"
                   type="email"
-                  placeholder="tu@email.com"
                   value={registerData.email}
-                  onChange={(e) => setRegisterData({...registerData, email: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:border-opacity-70 focus:bg-gray-700 focus:bg-opacity-70 transition-all duration-200 backdrop-blur-sm"
+                  onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="tu@email.com"
                   required
                 />
               </div>
 
+              {/* Contraseña */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label htmlFor="registerPassword" className="block text-sm font-medium text-gray-300 mb-2">
                   Contraseña
                 </label>
                 <input
+                  id="registerPassword"
                   type="password"
-                  placeholder="Mínimo 6 caracteres"
                   value={registerData.password}
-                  onChange={(e) => setRegisterData({...registerData, password: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:border-opacity-70 focus:bg-gray-700 focus:bg-opacity-70 transition-all duration-200 backdrop-blur-sm"
+                  onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Mínimo 6 caracteres"
                   required
-                  minLength={6}
                 />
               </div>
 
+              {/* Confirmar contraseña */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Confirmar Contraseña
+                <label htmlFor="registerConfirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+                  Confirmar contraseña
                 </label>
                 <input
+                  id="registerConfirmPassword"
                   type="password"
-                  placeholder="Repite tu contraseña"
                   value={registerData.confirmPassword}
-                  onChange={(e) => setRegisterData({...registerData, confirmPassword: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:border-opacity-70 focus:bg-gray-700 focus:bg-opacity-70 transition-all duration-200 backdrop-blur-sm"
+                  onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-700 bg-opacity-50 border border-gray-600 border-opacity-50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Repite tu contraseña"
                   required
                 />
               </div>
 
+              {/* Botón de registro */}
               <button
                 type="submit"
                 disabled={registerLoading}
-                onClick={() => console.log('🖱️ Botón Crear Cuenta clickeado')}
-                className="w-full bg-blue-600 bg-opacity-50 hover:bg-blue-600 hover:bg-opacity-70 text-white font-medium py-2 px-4 rounded-lg border border-blue-500 border-opacity-50 hover:border-blue-400 hover:border-opacity-70 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500 hover:shadow-opacity-20"
+                className="w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
               >
-                {registerLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
+                {registerLoading ? (
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                ) : (
+                  <UserPlus className="h-4 w-4" />
+                )}
+                <span>
+                  {registerLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
+                </span>
               </button>
-
-              {/* Separador */}
-              <div className="flex items-center my-4">
-                <div className="flex-1 border-t border-gray-600"></div>
-                <span className="px-3 text-sm text-gray-400">o</span>
-                <div className="flex-1 border-t border-gray-600"></div>
-              </div>
 
               {/* Botón de Google */}
               <button
