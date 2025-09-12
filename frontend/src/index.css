@@ -2,6 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Estilos específicos para el login responsive */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.login-text, .login-form {
+  width: 100%;
+  text-align: center;
+}
+
+.login-form img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Media query para orientación horizontal en móviles */
+@media (orientation: landscape) and (max-width: 1024px) {
+  .login-container {
+    flex-direction: row !important;
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+
+  .login-text, .login-form {
+    width: 50% !important;
+  }
+
+  .login-text {
+    order: 1 !important;
+    text-align: left !important;
+    padding: 20px !important;
+  }
+
+  .login-form {
+    order: 2 !important;
+    padding: 20px !important;
+  }
+}
+
 @layer base {
   * {
     margin: 0;
