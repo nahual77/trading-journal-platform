@@ -515,7 +515,6 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             </form>
           </div>
         </div>
-      )}
       </div>
     </div>
   );
