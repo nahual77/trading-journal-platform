@@ -2,28 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Forzar orientación vertical en móviles */
-@media screen and (max-width: 1024px) {
-  html, body {
-    height: 100vh;
-    overflow-x: hidden;
-  }
-  
-  /* Prevenir rotación a horizontal */
-  @media screen and (orientation: landscape) {
-    body {
-      transform: rotate(90deg);
-      transform-origin: center;
-      width: 100vh;
-      height: 100vw;
-      overflow-x: hidden;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-  }
-}
-
 @layer base {
   * {
     margin: 0;
