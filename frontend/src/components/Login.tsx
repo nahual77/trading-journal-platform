@@ -8,10 +8,10 @@ interface LoginProps {
 }
 
 export default function Login({ onSwitchToRegister }: LoginProps) {
+  const isMobile = useIsMobile();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [loginError, setLoginError] = useState('');
   const [recoveryLoading, setRecoveryLoading] = useState(false);
   const [recoveryMessage, setRecoveryMessage] = useState('');
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -29,9 +29,6 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   const [showLogo, setShowLogo] = useState(true);
   const [logoInCenter, setLogoInCenter] = useState(true);
   const [showContent, setShowContent] = useState(false);
-  
-  // Hook para detectar móvil
-  const isMobile = useIsMobile();
 
   // Control de animaciones
   useEffect(() => {
@@ -54,7 +51,6 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setLoginError(''); // Limpiar errores previos
     setRegisterError(''); // Limpiar errores previos
 
     try {
@@ -74,25 +70,21 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         if (error.message.includes('Invalid login credentials') ||
             error.message.includes('Invalid email or password') ||
             error.message.includes('Invalid credentials')) {
-          
-          // Por ahora, usar mensaje genérico ya que Supabase no diferencia estos casos
-          // En el futuro se puede implementar una verificación más sofisticada
-          setLoginError('Email o contraseña incorrectos. Verifica tus datos o crea una cuenta.');
+          setRegisterError('Email o contraseña incorrectos. Verifica tus datos.');
         } else if (error.message.includes('Email not confirmed')) {
-          setLoginError('Confirma tu email antes de iniciar sesión. Revisa tu bandeja de entrada.');
+          setRegisterError('Confirma tu email antes de iniciar sesión. Revisa tu bandeja de entrada.');
         } else {
-          setLoginError(error.message || 'Error al iniciar sesión');
+          setRegisterError(error.message || 'Error al iniciar sesión');
         }
       } else if (data.user) {
         console.log('✅ Login exitoso:', data.user);
         // El usuario será redirigido automáticamente por el App.tsx
         // Limpiar errores previos
-        setLoginError('');
         setRegisterError('');
       }
     } catch (error: any) {
       console.error('Error general en login:', error);
-      setLoginError('Error inesperado al iniciar sesión. Intenta nuevamente.');
+      setRegisterError('Error inesperado al iniciar sesión. Intenta nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -108,7 +100,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
     setRecoveryMessage('');
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `https://growjou.vercel.app/`,
+      redirectTo: `${window.location.origin}/reset-password`,
     });
 
     if (error) {
@@ -122,32 +114,24 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
 
   const handleGoogleLogin = async () => {
     try {
-      console.log('🔄 Iniciando login con Google - DEBUG v2');
-      console.log('🌐 URL actual:', window.location.origin);
-      console.log('🌐 URL completa:', window.location.href);
-      console.log('🔑 Client ID esperado: 763136612444-t6dnd7b393t8sg1icjhd56pk215c86lm.apps.googleusercontent.com');
+      console.log('🔄 Iniciando login con Google');
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`
+          redirectTo: 'http://localhost:5173'
         }
       });
 
       if (error) {
-        console.error('❌ Error en login con Google:', error);
-        console.error('❌ Detalles del error:', {
-          message: error.message,
-          status: error.status
-        });
-        setRegisterError(`Error al iniciar sesión con Google: ${error.message}`);
+        console.error('Error en login con Google:', error);
+        setRegisterError('Error al iniciar sesión con Google. Intenta nuevamente.');
       } else {
         console.log('✅ Redirigiendo a Google:', data);
-        console.log('🔗 URL de redirección:', data?.url);
       }
     } catch (error: any) {
-      console.error('❌ Error general en login con Google:', error);
-      setRegisterError(`Error inesperado al iniciar sesión con Google: ${error.message}`);
+      console.error('Error general en login con Google:', error);
+      setRegisterError('Error inesperado al iniciar sesión con Google.');
     }
   };
 
@@ -177,9 +161,26 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
 
     console.log('✅ Validaciones pasadas, procediendo con Supabase');
 
-    // Proceder directamente con el registro - Supabase manejará si el email ya existe
+    // Verificar si el email ya existe antes de intentar crear
     try {
-      console.log('✅ Procediendo con registro en Supabase');
+      console.log('🔍 Verificando si el email ya existe:', registerData.email);
+      
+      const { data: existingUser, error: checkError } = await supabase.auth.signInWithPassword({
+        email: registerData.email,
+        password: 'dummy_password_to_check_if_exists'
+      });
+
+      console.log('🔍 Resultado de verificación:', { existingUser, checkError });
+
+      // Si hay error de "invalid credentials", significa que el email existe pero la contraseña es incorrecta
+      if (checkError && checkError.message.includes('Invalid login credentials')) {
+        console.log('❌ Email ya existe - bloqueando registro');
+        setRegisterError('Este email ya está registrado. Usa otro email o intenta iniciar sesión.');
+        setRegisterLoading(false);
+        return;
+      }
+
+      console.log('✅ Email disponible, procediendo con registro');
       
       const { data, error } = await supabase.auth.signUp({
         email: registerData.email,
@@ -254,75 +255,76 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   };
 
   return (
-    <div className="h-screen w-screen relative" style={{
+    <div className="h-screen w-screen relative overflow-hidden" style={{
       background: 'linear-gradient(135deg, #000000 0%, #000000 20%, #111827 40%, #111827 60%, #000000 80%, #000000 100%)'
     }}>
-      {/* Logo con animaciones - Posicionamiento fijo */}
+      {/* Logo con animaciones - Responsive */}
       <img
         src="/logo-growjou.png"
         alt="GrowJou - My Trading Journal"
-        className="block opacity-100"
+        className={`block opacity-100 transition-all duration-1000 ease-out ${
+          logoInCenter ? 'fixed' : 'absolute'
+        }`}
         style={{ 
-          height: isMobile ? '60px' : '200px',
+          height: isMobile ? '120px' : '200px',
           width: 'auto',
-          maxWidth: isMobile ? '80%' : '100%',
+          maxWidth: '90%',
           objectFit: 'contain',
-          position: 'fixed',
-          top: '50%',
+          position: logoInCenter ? 'fixed' : 'absolute',
+          top: logoInCenter ? '50%' : '20px',
           left: '50%',
           transform: logoInCenter 
-            ? 'translate(-50%, -50%) scale(1)' 
-            : 'translate(-50%, -50%) translateY(-300px) scale(1)',
+            ? 'translate(-50%, -50%) scale(1.2)' 
+            : 'translate(-50%, 0) scale(1)',
           zIndex: logoInCenter ? 20 : 10,
-          transition: 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          transition: 'all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
         }}
       />
 
-      {/* Contenido principal con flex */}
-      <div className="h-full flex flex-col">
-
-      {/* Contenido en la parte inferior - justificado entre sí */}
-      <div className={`flex-1 flex ${isMobile ? 'flex-col' : 'flex-row'} items-end justify-between p-2 lg:p-8 pt-24 lg:pt-64 pb-16 transition-all duration-800 ease-out ${
-        showContent 
-          ? 'opacity-100 transform translate-y-0' 
-          : 'opacity-0 transform translate-y-8'
-      }`}>
+      {/* Contenido principal responsive */}
+      <div className="h-full flex flex-col lg:flex-row">
+        {/* Contenido en móvil: vertical, en desktop: horizontal */}
+        <div className={`flex-1 flex flex-col lg:flex-row items-center justify-center lg:justify-between p-4 lg:p-8 transition-all duration-800 ease-out ${
+          showContent 
+            ? 'opacity-100 transform translate-y-0' 
+            : 'opacity-0 transform translate-y-8'
+        } ${logoInCenter ? 'pt-32 lg:pt-64' : 'pt-20 lg:pt-32'}`}>
         {/* Panel izquierdo - Información de la empresa */}
-        <div className={`${isMobile ? 'flex-1' : 'flex-1'} flex items-center justify-center transition-all duration-600 ease-out delay-300 ${
+        <div className={`flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-300 ${
           showContent 
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform -translate-x-12'
         }`}>
-          <div className={`text-center ${isMobile ? 'max-w-sm' : 'max-w-xl'} flex items-center justify-center h-full`}>
+          <div className="text-center max-w-xl flex items-center justify-center h-full px-4">
             {/* Texto descriptivo */}
-            <div className={`${isMobile ? 'space-y-4' : 'space-y-8'} text-gray-300`}>
-              <div className={`${isMobile ? 'space-y-3' : 'space-y-6'}`}>
-                <p className={`${isMobile ? 'text-sm' : 'text-2xl'} leading-relaxed text-center font-light`}>
+            <div className="space-y-4 lg:space-y-8 text-gray-300">
+              <div className="space-y-3 lg:space-y-6">
+                <p className="text-lg lg:text-2xl leading-relaxed text-center font-light">
                   La plataforma profesional para traders que buscan
                   <span className="text-yellow-400 font-semibold"> crecer consistentemente</span> en los mercados.
                 </p>
-                <p className={`${isMobile ? 'text-xs' : 'text-xl'} text-center leading-relaxed font-light`}>
+                <p className="text-base lg:text-xl text-center leading-relaxed font-light">
                   Registra, analiza y optimiza tus operaciones con herramientas
                   avanzadas de análisis y seguimiento de rendimiento.
                 </p>
-                <p className={`${isMobile ? 'text-sm' : 'text-2xl'} text-center leading-relaxed font-bold text-yellow-400`}>
+                <p className="text-lg lg:text-2xl text-center leading-relaxed font-bold text-yellow-400">
                   ¡Crea una cuenta gratuita y regístra tu operativa como un pro!
                 </p>
               </div>
 
-              {/* Estadísticas */}
-              <div className={`flex justify-center ${isMobile ? 'space-x-8 mt-8' : 'space-x-16 mt-16'}`}>
+              {/* Estadísticas - Responsive */}
+              <div className="flex justify-center space-x-8 lg:space-x-16 mt-8 lg:mt-16">
                 <div className="text-center">
-                  <div className={`${isMobile ? 'text-3xl' : 'text-5xl'} font-bold text-yellow-400 mb-2`}>100%</div>
-                  <div className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-400 font-medium`}>Gratuito</div>
+                  <div className="text-3xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">100%</div>
+                  <div className="text-sm lg:text-lg text-gray-400 font-medium">Gratuito</div>
                 </div>
                 <div className="text-center">
-                  <div className={`${isMobile ? 'text-3xl' : 'text-5xl'} font-bold text-yellow-400 mb-2`}>∞</div>
-                  <div className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-400 font-medium`}>Operaciones</div>
+                  <div className="text-3xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">∞</div>
+                  <div className="text-sm lg:text-lg text-gray-400 font-medium">Operaciones</div>
                 </div>
                 <div className="text-center">
-                  <div className={`${isMobile ? 'text-3xl' : 'text-5xl'} font-bold text-yellow-400 mb-2`}>24/7</div>
-                  <div className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-400 font-medium`}>Disponible</div>
+                  <div className="text-3xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">24/7</div>
+                  <div className="text-sm lg:text-lg text-gray-400 font-medium">Disponible</div>
                 </div>
               </div>
             </div>
@@ -330,102 +332,95 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </div>
 
         {/* Panel derecho - Formulario de acceso */}
-        <div className={`${isMobile ? 'flex-1' : 'flex-1'} flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
+        <div className={`flex-1 flex items-center justify-center transition-all duration-600 ease-out delay-500 ${
           showContent 
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform translate-x-12'
         }`}>
-          <div className={`w-full ${isMobile ? 'max-w-xs' : 'max-w-sm'}`}>
+          <div className="w-full max-w-sm mx-4 lg:mx-0">
             {/* Formulario de login */}
             <div className="card-premium">
-              <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-white ${isMobile ? 'mb-3' : 'mb-5'} text-center`}>Iniciar Sesión</h2>
+              <h2 className="text-lg lg:text-xl font-bold text-white mb-4 lg:mb-5 text-center">Iniciar Sesión</h2>
 
-              {/* Mensaje de error de login */}
-              {loginError && (
-                <div className="p-3 bg-red-900/30 border border-red-600/30 rounded-lg mb-4">
-                  <p className="text-sm text-red-400">{loginError}</p>
-                </div>
-              )}
-
-              <form onSubmit={handleLogin} className={`${isMobile ? 'space-y-2' : 'space-y-3'}`}>
-                <div className={`${isMobile ? 'max-w-full' : 'max-w-xs'} mx-auto`}>
-                  <label className={`block ${isMobile ? 'text-xs' : 'text-xs'} font-medium text-gray-300 ${isMobile ? 'mb-1' : 'mb-1'} text-center`}>
+              <form onSubmit={handleLogin} className="space-y-3 lg:space-y-4">
+                <div className="w-full max-w-xs mx-auto">
+                  <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
                     Email
                   </label>
                   <div className="relative">
-                    <Mail className={`absolute left-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-3 w-3' : 'h-3 w-3'} text-gray-400`} />
-        <input
-          type="email"
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="email"
                       placeholder="tu@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-                      className={`input-premium pl-8 w-full ${isMobile ? 'text-xs py-1.5' : 'text-sm py-2'}`}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="input-premium pl-10 w-full text-sm py-3 lg:py-2"
                       required
                     />
                   </div>
                 </div>
 
-                <div className={`${isMobile ? 'max-w-full' : 'max-w-xs'} mx-auto`}>
-                  <label className={`block ${isMobile ? 'text-xs' : 'text-xs'} font-medium text-gray-300 ${isMobile ? 'mb-1' : 'mb-1'} text-center`}>
+                <div className="w-full max-w-xs mx-auto">
+                  <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
                     Contraseña
                   </label>
                   <div className="relative">
-                    <Lock className={`absolute left-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-3 w-3' : 'h-3 w-3'} text-gray-400`} />
-        <input
-          type="password"
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="password"
                       placeholder="Tu contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-                      className={`input-premium pl-8 w-full ${isMobile ? 'text-xs py-1.5' : 'text-sm py-2'}`}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="input-premium pl-10 w-full text-sm py-3 lg:py-2"
                       required
-        />
+                    />
                   </div>
                 </div>
 
-        <button
-          type="submit"
+                <button
+                  type="submit"
                   disabled={loading}
-                  className={`w-full btn-primary flex items-center justify-center space-x-2 ${isMobile ? 'py-1.5 text-xs' : 'py-2 text-sm'}`}
+                  className="w-full btn-primary flex items-center justify-center space-x-2 py-3 lg:py-2 text-sm"
                 >
                   {loading ? (
-                    <RefreshCw className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} animate-spin`} />
+                    <RefreshCw className="h-4 w-4 animate-spin" />
                   ) : (
-                    <LogIn className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'}`} />
+                    <LogIn className="h-4 w-4" />
                   )}
                   <span>{loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}</span>
-        </button>
-      </form>
+                </button>
+              </form>
 
               {/* Opciones adicionales */}
-              <div className={`${isMobile ? 'mt-3 pt-3' : 'mt-5 pt-5'} border-t border-gray-700 ${isMobile ? 'space-y-2' : 'space-y-3'}`}>
+              <div className="mt-4 lg:mt-5 pt-4 lg:pt-5 border-t border-gray-700 space-y-3">
                 {/* Botón de registro */}
                 <div className="text-center">
-                  <p className={`${isMobile ? 'text-xs' : 'text-xs'} text-gray-400 ${isMobile ? 'mb-1' : 'mb-2'}`}>
+                  <p className="text-xs text-gray-400 mb-2">
                     ¿No tienes cuenta?
                   </p>
                   <button
                     onClick={() => setShowRegisterModal(true)}
-                    className={`w-full flex items-center justify-center space-x-2 px-3 ${isMobile ? 'py-1.5' : 'py-2'} bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors ${isMobile ? 'text-xs' : 'text-sm'}`}
+                    className="w-full flex items-center justify-center space-x-2 px-3 py-3 lg:py-2 bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors text-sm"
                   >
-                    <UserPlus className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'}`} />
+                    <UserPlus className="h-4 w-4" />
                     <span>Crear Cuenta</span>
                   </button>
                 </div>
 
                 {/* Recuperar contraseña */}
                 <div className="text-center">
-                  <p className={`${isMobile ? 'text-xs' : 'text-xs'} text-gray-400 ${isMobile ? 'mb-1' : 'mb-2'}`}>
+                  <p className="text-xs text-gray-400 mb-2">
                     ¿Olvidaste tu contraseña?
                   </p>
                   <button
                     onClick={handlePasswordRecovery}
                     disabled={recoveryLoading || !email}
-                    className={`w-full flex items-center justify-center space-x-2 px-3 ${isMobile ? 'py-1.5' : 'py-2'} bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isMobile ? 'text-xs' : 'text-sm'}`}
+                    className="w-full flex items-center justify-center space-x-2 px-3 py-3 lg:py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                   >
                     {recoveryLoading ? (
-                      <RefreshCw className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} animate-spin`} />
+                      <RefreshCw className="h-4 w-4 animate-spin" />
                     ) : (
-                      <Mail className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'}`} />
+                      <Mail className="h-4 w-4" />
                     )}
                     <span>
                       {recoveryLoading ? 'Enviando...' : 'Recuperar Contraseña'}
@@ -433,8 +428,8 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                   </button>
 
                   {recoveryMessage && (
-                    <div className={`${isMobile ? 'mt-1' : 'mt-2'} p-2 bg-green-900/30 border border-green-600/30 rounded-lg`}>
-                      <p className={`${isMobile ? 'text-xs' : 'text-xs'} text-green-400`}>{recoveryMessage}</p>
+                    <div className="mt-2 p-2 bg-green-900/30 border border-green-600/30 rounded-lg">
+                      <p className="text-xs text-green-400">{recoveryMessage}</p>
                     </div>
                   )}
                 </div>
@@ -445,8 +440,8 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 text-center py-4">
-        <p className="text-sm text-gray-500">
+      <div className="absolute bottom-0 left-0 right-0 text-center py-2 lg:py-4">
+        <p className="text-xs lg:text-sm text-gray-500 px-4">
           © 2025 GrowJou. Diseñado para todos los traders.
         </p>
       </div>
