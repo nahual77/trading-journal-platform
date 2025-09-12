@@ -256,49 +256,10 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         }}
       />
 
-      {/* Contenido principal responsive */}
-      <div className={`flex-1 flex ${isLandscape ? 'flex-row' : 'flex-col lg:flex-row'} pt-20 lg:pt-32 pb-8 lg:pb-0 min-h-screen`}>
-        {/* Panel izquierdo - Información de la empresa */}
-        <div className={`${isLandscape ? 'w-1/2' : 'w-full lg:w-1/2'} flex items-center ${isLandscape ? 'justify-start' : 'justify-center lg:justify-start'} ${isLandscape ? 'p-2' : 'p-2 lg:p-8 lg:pr-4'}`}>
-          <div className={`${isLandscape ? 'text-left' : 'text-center lg:text-left'} max-w-lg lg:max-w-xl px-2 lg:px-4`}>
-            {/* Texto descriptivo */}
-            <div className="space-y-3 lg:space-y-8 text-gray-300">
-              <div className="space-y-2 lg:space-y-6">
-                <p className="text-sm lg:text-2xl leading-relaxed text-center lg:text-left font-light">
-                  La plataforma profesional para traders que buscan
-                  <span className="text-yellow-400 font-semibold"> crecer consistentemente</span> en los mercados.
-                </p>
-                <p className="text-xs lg:text-xl text-center lg:text-left leading-relaxed font-light">
-                  Registra, analiza y optimiza tus operaciones con herramientas
-                  avanzadas de análisis y seguimiento de rendimiento.
-                </p>
-                <p className="text-sm lg:text-2xl text-center lg:text-left leading-relaxed font-bold text-yellow-400">
-                  ¡Crea una cuenta gratuita y regístra tu operativa como un pro!
-                </p>
-              </div>
-
-              {/* Estadísticas - Responsive */}
-              <div className="flex justify-center lg:justify-start space-x-4 lg:space-x-16 mt-4 lg:mt-16">
-                <div className="text-center">
-                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">100%</div>
-                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Gratuito</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">∞</div>
-                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Operaciones</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xl lg:text-5xl font-bold text-yellow-400 mb-1 lg:mb-2">24/7</div>
-                  <div className="text-xs lg:text-lg text-gray-400 font-medium">Disponible</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Panel derecho - Formulario de acceso */}
-        <div className={`${isLandscape ? 'w-1/2' : 'w-full lg:w-1/2'} flex items-center ${isLandscape ? 'justify-center' : 'justify-center lg:justify-end'} ${isLandscape ? 'p-2' : 'p-2 lg:p-8 lg:pl-4'}`}>
-          <div className={`w-full ${isLandscape ? 'max-w-xs' : 'max-w-xs lg:max-w-sm'}`}>
+      {/* Contenido principal - Solo formulario centrado */}
+      <div className="flex-1 flex items-center justify-center pt-20 lg:pt-32 pb-8 lg:pb-0 min-h-screen">
+        {/* Formulario de acceso */}
+        <div className="w-full max-w-sm p-4">
             {/* Formulario de login */}
             <div className={`card-premium ${isLandscape ? 'p-3' : ''}`}>
               <h2 className={`${isLandscape ? 'text-sm mb-2' : 'text-base lg:text-xl mb-3 lg:mb-5'} font-bold text-white text-center`}>Iniciar Sesión</h2>
