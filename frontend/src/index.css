@@ -2,79 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* FORZAR LAYOUT HORIZONTAL EN MÓVILES - ENFOQUE SIMPLE */
+/* Ajustes simples para móviles en horizontal */
 @media (orientation: landscape) and (max-width: 1024px) {
-  /* Contenedor principal - forzar horizontal */
-  .flex-1.flex.flex-col {
-    flex-direction: row !important;
-    height: calc(100vh - 60px) !important;
+  /* Logo más pequeño en horizontal */
+  .login-logo {
+    height: 40px !important;
+    top: 10px !important;
+  }
+  
+  /* Ajustar altura del contenedor principal */
+  .flex-1.flex {
+    height: calc(100vh - 50px) !important;
     padding-top: 10px !important;
     padding-bottom: 10px !important;
-    align-items: stretch !important;
-  }
-  
-  /* Panel izquierdo - texto */
-  .w-full:first-child {
-    width: 50% !important;
-    order: 1 !important;
-    padding: 5px 10px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    overflow-y: auto !important;
-  }
-  
-  /* Panel derecho - formulario */
-  .w-full:last-child {
-    width: 50% !important;
-    order: 2 !important;
-    padding: 5px 15px 5px 5px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    overflow-y: auto !important;
-  }
-  
-  /* Contenedor del formulario */
-  .w-full:last-child > div {
-    width: 100% !important;
-    max-width: 250px !important;
-    margin: 0 auto !important;
-  }
-  
-  /* Ajustar elementos del formulario */
-  .w-full:last-child .card-premium {
-    padding: 12px !important;
-  }
-  
-  .w-full:last-child h2 {
-    font-size: 14px !important;
-    margin-bottom: 8px !important;
-  }
-  
-  .w-full:last-child .space-y-2 > * + * {
-    margin-top: 6px !important;
-  }
-  
-  .w-full:last-child input {
-    padding: 6px 8px !important;
-    font-size: 12px !important;
-  }
-  
-  .w-full:last-child button {
-    padding: 6px 12px !important;
-    font-size: 12px !important;
-  }
-  
-  /* Texto alineado a la izquierda */
-  .text-center {
-    text-align: left !important;
-  }
-  
-  /* Logo más pequeño */
-  .login-logo {
-    height: 35px !important;
-    top: 5px !important;
   }
 }
 
