@@ -35,11 +35,11 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
     // 1. Logo aparece en fade
     const timer1 = setTimeout(() => setShowLogo(true), 100);
     
-    // 2. Logo se mantiene en el centro por 0.5 segundos
-    const timer2 = setTimeout(() => setLogoInCenter(false), 600);
+    // 2. Logo se mantiene en el centro por 0.3 segundos
+    const timer2 = setTimeout(() => setLogoInCenter(false), 400);
     
     // 3. Contenido aparece desde los lados
-    const timer3 = setTimeout(() => setShowContent(true), 1000);
+    const timer3 = setTimeout(() => setShowContent(true), 600);
     
     return () => {
       clearTimeout(timer1);
