@@ -264,6 +264,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         alt="GrowJou - My Trading Journal"
         className={`main-logo block opacity-100 transition-all duration-1000 ease-out ${
           logoInCenter ? 'fixed' : 'absolute'
+        } ${showContent 
+          ? 'opacity-100 transform translate-x-0' 
+          : 'opacity-0 transform -translate-x-12'
         }`}
         style={{ 
           height: isMobile ? '80px' : '200px',
