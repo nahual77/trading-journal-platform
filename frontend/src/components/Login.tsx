@@ -586,8 +586,8 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             justify-content: center;
           }
           
-          /* Orientación horizontal */
-          @media (orientation: landscape) {
+          /* Orientación horizontal - Solo desktop */
+          @media (orientation: landscape) and (min-width: 1024px) {
             .main-logo {
               display: none !important;
             }
@@ -636,6 +636,36 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             
             .landscape-form-container .space-y-4 > * + * {
               margin-top: 1rem !important;
+            }
+          }
+          
+          /* Móvil en orientación horizontal - Mantener layout vertical pero ajustar altura */
+          @media (orientation: landscape) and (max-width: 1023px) {
+            .login-content-container {
+              padding: 0.25rem;
+            }
+            
+            .landscape-form-container {
+              max-height: 85vh !important;
+              overflow-y: auto !important;
+              padding: 0.75rem !important;
+            }
+            
+            .landscape-form-container h2 {
+              margin-bottom: 0.75rem !important;
+              font-size: 1rem !important;
+            }
+            
+            .landscape-form-container .space-y-2 > * + * {
+              margin-top: 0.5rem !important;
+            }
+            
+            .landscape-form-container .space-y-3 > * + * {
+              margin-top: 0.5rem !important;
+            }
+            
+            .landscape-form-container .space-y-4 > * + * {
+              margin-top: 0.75rem !important;
             }
           }
         `
