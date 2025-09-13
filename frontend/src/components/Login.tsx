@@ -278,7 +278,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
           left: '50%',
           transform: logoInCenter 
             ? 'translate(-50%, -50%) scale(1.1)' 
-            : 'translate(-50%, 0) scale(1)',
+            : showContent 
+              ? 'translate(-50%, 0) scale(1)' 
+              : 'translate(-50%, 0) scale(1) translateX(-48px)',
           zIndex: logoInCenter ? 20 : 10,
           transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
         }}
