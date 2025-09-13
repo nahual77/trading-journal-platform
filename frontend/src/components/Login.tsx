@@ -259,32 +259,31 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       background: 'linear-gradient(135deg, #000000 0%, #000000 20%, #111827 40%, #111827 60%, #000000 80%, #000000 100%)'
     }}>
       {/* Logo con animaciones - Responsive */}
-      <img
-        src="/logo-growjou.png"
-        alt="GrowJou - My Trading Journal"
-        className={`main-logo block opacity-100 transition-all duration-1000 ease-out ${
-          logoInCenter ? 'fixed' : 'absolute'
-        } ${showContent 
+      <div className={`main-logo transition-all duration-600 ease-out delay-300 ${
+        showContent 
           ? 'opacity-100 transform translate-x-0' 
           : 'opacity-0 transform -translate-x-12'
-        }`}
-        style={{ 
-          height: isMobile ? '80px' : '200px',
-          width: 'auto',
-          maxWidth: isMobile ? '85%' : '90%',
-          objectFit: 'contain',
-          position: logoInCenter ? 'fixed' : 'absolute',
-          top: logoInCenter ? '50%' : '15px',
-          left: '50%',
-          transform: logoInCenter 
-            ? 'translate(-50%, -50%) scale(1.1)' 
-            : showContent 
-              ? 'translate(-50%, 0) scale(1)' 
-              : 'translate(-50%, 0) scale(1) translateX(-48px)',
-          zIndex: logoInCenter ? 20 : 10,
-          transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-        }}
-      />
+      }`}>
+        <img
+          src="/logo-growjou.png"
+          alt="GrowJou - My Trading Journal"
+          className="block opacity-100"
+          style={{ 
+            height: isMobile ? '80px' : '200px',
+            width: 'auto',
+            maxWidth: isMobile ? '85%' : '90%',
+            objectFit: 'contain',
+            position: logoInCenter ? 'fixed' : 'absolute',
+            top: logoInCenter ? '50%' : '15px',
+            left: '50%',
+            transform: logoInCenter 
+              ? 'translate(-50%, -50%) scale(1.1)' 
+              : 'translate(-50%, 0) scale(1)',
+            zIndex: logoInCenter ? 20 : 10,
+            transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          }}
+        />
+      </div>
 
       {/* Contenido principal responsive */}
       <div className="login-main-container">
