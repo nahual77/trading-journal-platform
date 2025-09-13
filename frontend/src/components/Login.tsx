@@ -300,12 +300,14 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             <img
               src="/logo-growjou.png"
               alt="GrowJou - My Trading Journal"
-              className="block opacity-100 logo-animated"
+              className="block opacity-100 transition-all duration-1000 ease-out"
               style={{ 
                 height: '150px',
                 width: 'auto',
                 maxWidth: '90%',
-                objectFit: 'contain'
+                objectFit: 'contain',
+                transform: 'scale(1.1)',
+                transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               }}
             />
           </div>
@@ -557,23 +559,6 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       {/* Estilos CSS para orientación */}
       <style dangerouslySetInnerHTML={{
         __html: `
-          /* Animación del logo */
-          @keyframes logoPulse {
-            0% {
-              transform: scale(1);
-            }
-            50% {
-              transform: scale(1.1);
-            }
-            100% {
-              transform: scale(1);
-            }
-          }
-          
-          .logo-animated {
-            animation: logoPulse 2s ease-in-out infinite;
-          }
-          
           /* Estilos base */
           .login-main-container {
             height: 100%;
