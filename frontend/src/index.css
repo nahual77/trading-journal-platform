@@ -491,7 +491,7 @@
   }
   
   .language-button-mobile {
-    margin-right: 0.25rem !important;
+    transform: translateX(-0.5rem) !important;
   }
 }
 
