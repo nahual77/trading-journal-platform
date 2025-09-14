@@ -33,7 +33,7 @@ const LanguageSelector: React.FC = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center ${isMobile ? 'space-x-1 px-2 py-1 scale-75' : 'space-x-2 px-3 py-2'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors`}
+        className={`flex items-center ${isMobile ? 'space-x-1 px-2 py-1' : 'space-x-2 px-3 py-2'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors`}
         title="Cambiar idioma"
       >
         <Globe className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-gray-300`} />
