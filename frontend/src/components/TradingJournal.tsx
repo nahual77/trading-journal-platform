@@ -479,7 +479,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 />
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors"
+                  className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors hamburger-button-mobile"
                 >
                   {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                 </button>
