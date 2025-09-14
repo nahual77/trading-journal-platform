@@ -444,11 +444,27 @@
   /* Sin efectos especiales */
 }
 
-/* Reducir solo el logo del header en móvil (vertical y horizontal) */
+/* Reducir todo el header proporcionalmente en móvil (vertical y horizontal) */
 @media (max-width: 640px) {
+  .mobile-header {
+    height: 60px !important;
+  }
+  
+  .mobile-header-content {
+    height: 60px !important;
+  }
+  
   .header-logo {
-    height: 48px !important;
+    height: 36px !important;
     max-width: 85% !important;
+  }
+  
+  .mobile-header .space-x-4 {
+    gap: 0.5rem !important;
+  }
+  
+  .mobile-header .space-x-1 {
+    gap: 0.25rem !important;
   }
 }
 
