@@ -480,10 +480,6 @@
 @media (max-width: 640px) and (orientation: portrait) {
   .user-button-mobile {
     transform: scale(0.8) !important;
-    transform-origin: center !important;
-    pointer-events: auto !important;
-    position: relative !important;
-    z-index: 10 !important;
   }
 }
 

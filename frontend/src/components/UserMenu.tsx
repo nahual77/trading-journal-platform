@@ -37,14 +37,21 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      if (isOpen && !target.closest('.user-menu-container')) {
+      const userMenuContainer = document.querySelector('.user-menu-container');
+      
+      if (isOpen && userMenuContainer && !userMenuContainer.contains(target)) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener('click', handleClickOutside);
+      // Usar un pequeño delay para evitar conflictos
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+      }, 100);
+      
       return () => {
+        clearTimeout(timeoutId);
         document.removeEventListener('click', handleClickOutside);
       };
     }
