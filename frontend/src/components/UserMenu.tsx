@@ -71,7 +71,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
 
       {/* Menú desplegable */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-[9999] overflow-hidden">
           {/* Header del menú */}
           <div className="px-4 py-3 border-b border-gray-700">
             <div className="flex items-center justify-between gap-2">
