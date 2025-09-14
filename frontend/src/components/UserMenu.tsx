@@ -37,7 +37,10 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
       if (isOpen && !target.closest('.user-menu-container')) {
-        setIsOpen(false);
+        // Pequeño delay para evitar conflictos con clicks en botones del menú
+        setTimeout(() => {
+          setIsOpen(false);
+        }, 100);
       }
     };
 
