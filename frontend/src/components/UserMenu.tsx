@@ -24,7 +24,9 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
   };
 
   const toggleMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
+    console.log('🖱️ Toggle menu clicked, current state:', isOpen);
     setIsOpen(!isOpen);
   };
 
@@ -33,6 +35,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
       if (isOpen && !target.closest('.user-menu-container')) {
+        console.log('🖱️ Click outside detected, closing menu');
         setIsOpen(false);
       }
     };
@@ -47,14 +50,18 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
 
   return (
     <div className="relative user-menu-container">
-      {/* Botón principal del menú */}
+      {/* Botón principal del menú - SIN clases problemáticas */}
       <button
         onClick={toggleMenu}
-        className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group my-2 hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50 user-button-mobile"
+        className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg my-2"
+        style={{ 
+          transform: window.innerWidth <= 640 ? 'scale(0.8)' : 'scale(1)',
+          transformOrigin: 'center'
+        }}
       >
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
-            <User className="h-4 w-4 text-white transition-transform duration-200 group-hover:scale-110" />
+          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center">
+            <User className="h-4 w-4 text-white" />
           </div>
           <div className="hidden sm:block text-left">
             <div className="text-sm font-medium text-white truncate max-w-[120px]">
@@ -63,7 +70,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             <div className="text-xs text-gray-400">{t('userMenu.tradingJournal')}</div>
           </div>
         </div>
-        <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`h-4 w-4 text-gray-400 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Menú desplegable */}
@@ -87,7 +94,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 text-gray-400 hover:text-white transition-colors flex-shrink-0"
+                className="p-1 text-gray-400 hover:text-white flex-shrink-0"
                 title="Cerrar menú"
               >
                 <X className="h-4 w-4" />
@@ -99,17 +106,17 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
           <div className="py-2">
             <button
               onClick={handleProfile}
-              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
+              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
             >
-              <Settings className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" />
+              <Settings className="h-4 w-4" />
               <span>{t('userMenu.profile')}</span>
             </button>
             
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200 hover:translate-x-1 group"
+              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-red-600 hover:text-white"
             >
-              <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
+              <LogOut className="h-4 w-4" />
               <span>{t('userMenu.logout')}</span>
             </button>
           </div>
