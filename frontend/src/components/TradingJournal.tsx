@@ -475,7 +475,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 <img
                   src="/logo-growjou.png"
                   alt="GrowJou - My Trading Journal"
-                  className="h-16 w-auto"
+                  className="h-16 w-auto sm:h-16 h-12"
                 />
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -506,7 +506,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               </nav>
 
               {/* Botones de acción - Posición absoluta a la derecha */}
-              <div className="absolute right-0 flex items-center space-x-2">
+              <div className="absolute right-0 flex items-center space-x-1 sm:space-x-2">
                 {/* Selector de idioma */}
                 <LanguageSelector />
                 {/* Menú de usuario */}
