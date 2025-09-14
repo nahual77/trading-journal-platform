@@ -269,9 +269,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
           alt="GrowJou - My Trading Journal"
           className="block opacity-100"
           style={{ 
-            height: isMobile ? '60px' : '200px', // Reducido de 80px a 60px (25% menos)
+            height: '200px',
             width: 'auto',
-            maxWidth: isMobile ? '85%' : '90%',
+            maxWidth: '90%',
             objectFit: 'contain',
             position: logoInCenter ? 'fixed' : 'absolute',
             top: logoInCenter ? '50%' : '15px',
@@ -282,6 +282,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             zIndex: logoInCenter ? 20 : 10,
             transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
           }}
+          className="mobile-logo-responsive"
         />
       </div>
 
@@ -588,6 +589,14 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             display: flex;
             align-items: center;
             justify-content: center;
+          }
+          
+          /* Móvil vertical - Reducir logo */
+          @media (max-width: 768px) and (orientation: portrait) {
+            .mobile-logo-responsive {
+              height: 60px !important;
+              max-width: 85% !important;
+            }
           }
           
           /* Orientación horizontal */
