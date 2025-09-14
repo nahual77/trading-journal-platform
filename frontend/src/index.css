@@ -476,5 +476,10 @@
   }
 }
 
-/* CSS problemático eliminado - causaba conflictos con UserMenu */
+/* Ajustar posición del botón hamburguesa en móvil vertical */
+@media (max-width: 640px) and (orientation: portrait) {
+  .hamburger-button-mobile {
+    transform: translateX(-1rem) !important;
+  }
+}
 
