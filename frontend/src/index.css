@@ -444,3 +444,11 @@
   /* Sin efectos especiales */
 }
 
+/* Reducir solo el logo del header en móvil vertical */
+@media (max-width: 640px) {
+  .header-logo {
+    height: 48px !important;
+    max-width: 85% !important;
+  }
+}
+
