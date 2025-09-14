@@ -13,10 +13,8 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
-    console.log('Iniciando proceso de logout...');
     try {
       await supabase.auth.signOut();
-      console.log('Logout exitoso');
       onLogout();
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
@@ -38,7 +36,6 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
       if (isOpen && !target.closest('.user-menu-container')) {
-        console.log('Cerrando menú por click fuera');
         setIsOpen(false);
       }
     };
@@ -56,7 +53,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
       {/* Botón principal del menú */}
       <button
         onClick={toggleMenu}
-        className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group my-2 hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50 sm:scale-100 scale-75"
+        className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group my-2 hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50"
       >
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
@@ -112,10 +109,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             </button>
             
             <button
-              onClick={() => {
-                console.log('Botón de logout clickeado');
-                handleLogout();
-              }}
+              onClick={handleLogout}
               className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200 hover:translate-x-1 group"
             >
               <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
