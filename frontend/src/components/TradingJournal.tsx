@@ -475,7 +475,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 <img
                   src="/logo-growjou.png"
                   alt="GrowJou - My Trading Journal"
-                  className="h-16 w-auto sm:h-16 h-12"
+                  className="h-16 w-auto sm:h-16 h-12 header-logo-mobile"
                 />
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
