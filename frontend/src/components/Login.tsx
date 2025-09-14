@@ -267,7 +267,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         <img
           src="/logo-growjou.png"
           alt="GrowJou - My Trading Journal"
-          className="block opacity-100"
+          className="block opacity-100 mobile-logo-responsive"
           style={{ 
             height: '200px',
             width: 'auto',
@@ -282,7 +282,6 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             zIndex: logoInCenter ? 20 : 10,
             transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
           }}
-          className="mobile-logo-responsive"
         />
       </div>
 
