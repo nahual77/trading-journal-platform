@@ -493,5 +493,9 @@
   .language-button-mobile {
     transform: translateX(0.5rem) !important;
   }
+  
+  .hamburger-button-mobile {
+    transform: translateX(1rem) !important;
+  }
 }
 
