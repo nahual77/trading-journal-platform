@@ -15,10 +15,9 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
   const handleLogout = async () => {
     console.log('Iniciando logout...');
     try {
-      await supabase.auth.signOut();
-      console.log('Logout exitoso');
       onLogout();
       setIsOpen(false);
+      console.log('Logout exitoso');
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
