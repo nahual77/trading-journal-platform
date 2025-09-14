@@ -329,12 +329,11 @@
     overflow-x: hidden;
   }
 
-  /* Barra de pestañas de diarios - ancho completo solo en PC */
+  /* Arreglar tabla de operaciones en PC */
   @media (min-width: 1024px) {
-    .journal-tabs-full-width {
-      width: calc(100vw - 2rem) !important;
-      margin-left: calc(-1rem) !important;
-      margin-right: calc(-1rem) !important;
+    .table-container {
+      margin-right: 0 !important;
+      padding-right: 0 !important;
     }
   }
 }
