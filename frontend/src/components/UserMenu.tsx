@@ -43,10 +43,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     };
 
     if (isOpen) {
-      // Usar click en lugar de mousedown y agregar delay
-      setTimeout(() => {
-        document.addEventListener('click', handleClickOutside);
-      }, 100);
+      document.addEventListener('click', handleClickOutside);
       return () => {
         document.removeEventListener('click', handleClickOutside);
       };
