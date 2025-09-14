@@ -94,12 +94,12 @@ export function JournalTabs({
   };
 
   return (
-    <div className="border-b border-gray-700 overflow-visible">
-      <div className="flex items-end justify-between pt-2 overflow-visible">
+    <div className="border-b border-gray-700 overflow-visible w-full">
+      <div className="flex items-end justify-between pt-2 overflow-visible w-full">
         {/* Contenedor de pestañas con scroll */}
-        <div className="flex items-end overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 flex-1 overflow-y-visible">
+        <div className="flex items-end overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 flex-1 overflow-y-visible w-full">
           {/* Pestañas de diarios */}
-          <div className="flex space-x-1 px-4">
+          <div className="flex space-x-1 px-2 w-full">
             {journals.map((journal) => {
             const isActive = journal.id === activeJournalId;
             const isEditing = editingTabId === journal.id;
