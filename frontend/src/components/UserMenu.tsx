@@ -12,7 +12,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
-    console.log('🔄 Iniciando logout...');
+    console.log('🔄 Iniciando logout...', { isMobile: window.innerWidth <= 768, isPC: window.innerWidth > 768 });
     try {
       await onLogout();
       console.log('✅ Logout exitoso');
@@ -75,7 +75,14 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
 
       {/* Menú desplegable */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-[9999] overflow-hidden">
+        <div 
+          className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
+          style={{ 
+            zIndex: 99999,
+            position: 'absolute',
+            pointerEvents: 'auto'
+          }}
+        >
           {/* Header del menú */}
           <div className="px-4 py-3 border-b border-gray-700">
             <div className="flex items-center justify-between gap-2">
@@ -114,6 +121,16 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             
             <button
               onClick={handleLogout}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ Logout button mousedown');
+              }}
+              onMouseUp={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ Logout button mouseup');
+              }}
               className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200 hover:translate-x-1 group"
             >
               <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
