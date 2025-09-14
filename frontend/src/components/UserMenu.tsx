@@ -13,8 +13,10 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
+    console.log('Iniciando logout...');
     try {
       await supabase.auth.signOut();
+      console.log('Logout exitoso');
       onLogout();
       setIsOpen(false);
     } catch (error) {
@@ -113,10 +115,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             </button>
             
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleLogout();
-              }}
+              onClick={handleLogout}
               className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200 hover:translate-x-1 group"
             >
               <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
