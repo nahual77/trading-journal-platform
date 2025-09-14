@@ -269,9 +269,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
           alt="GrowJou - My Trading Journal"
           className="block opacity-100"
           style={{ 
-            height: '200px',
+            height: isMobile ? '80px' : '200px',
             width: 'auto',
-            maxWidth: '90%',
+            maxWidth: isMobile ? '85%' : '90%',
             objectFit: 'contain',
             position: logoInCenter ? 'fixed' : 'absolute',
             top: logoInCenter ? '50%' : '15px',
@@ -590,14 +590,6 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             justify-content: center;
           }
           
-          /* Móvil - Reducir logo del header en vertical */
-          @media (max-width: 640px) {
-            .header-logo-mobile {
-              height: 48px !important;
-              max-width: 85% !important;
-            }
-          }
-          
           /* Orientación horizontal */
           @media (orientation: landscape) {
             .main-logo {
@@ -648,6 +640,14 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             
             .landscape-form-container .space-y-4 > * + * {
               margin-top: 1rem !important;
+            }
+          }
+          
+          /* Reducir solo el logo del header en móvil vertical */
+          @media (max-width: 640px) {
+            .header-logo {
+              height: 48px !important;
+              max-width: 85% !important;
             }
           }
         `
