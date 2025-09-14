@@ -269,7 +269,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
           alt="GrowJou - My Trading Journal"
           className="block opacity-100"
           style={{ 
-            height: isMobile ? '80px' : '200px',
+            height: isMobile ? '60px' : '200px', // Reducido de 80px a 60px (25% menos)
             width: 'auto',
             maxWidth: isMobile ? '85%' : '90%',
             objectFit: 'contain',
