@@ -590,8 +590,8 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             justify-content: center;
           }
           
-          /* Móvil vertical - Reducir logo */
-          @media (max-width: 768px) and (orientation: portrait) {
+          /* Móvil - Reducir logo en vertical y horizontal */
+          @media (max-width: 768px) {
             .mobile-logo-responsive {
               height: 60px !important;
               max-width: 85% !important;
