@@ -484,3 +484,10 @@
   }
 }
 
+/* Reducir espaciado entre botones solo en móvil vertical */
+@media (max-width: 640px) and (orientation: portrait) {
+  .mobile-buttons-container {
+    gap: 0.25rem !important;
+  }
+}
+
