@@ -274,12 +274,9 @@ export function JournalTabs({
             <div className="flex items-center justify-between text-sm text-gray-400">
               <div className="flex items-center space-x-4">
                 <span>{t('journalTabs.operations')}: <span className="text-white font-medium">{totalEntries}</span></span>
-                <span>{t('journalTabs.planFollowed')}: <span className="text-green-400 font-medium">{completedPlans}</span></span>
-                <span>{t('journalTabs.withScreenshots')}: <span className="text-blue-400 font-medium">{withScreenshots}</span></span>
               </div>
               
               <div className="flex items-center space-x-2">
-                <span>MT5: {activeJournal.mt5Config.accountNumber}</span>
                 <div className={`h-2 w-2 rounded-full ${
                   activeJournal.mt5Config.connected ? 'bg-green-400' : 'bg-red-400'
                 }`}></div>
