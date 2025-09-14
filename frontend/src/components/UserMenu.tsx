@@ -4,18 +4,23 @@ import { useTranslation } from 'react-i18next';
 
 interface UserMenuProps {
   user: any;
-  onLogout: () => void;
+  onLogout: () => void | Promise<void>;
 }
 
 export function UserMenu({ user, onLogout }: UserMenuProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log('🔄 Iniciando logout...');
-    onLogout();
-    setIsOpen(false);
-    console.log('✅ Logout completado');
+    try {
+      await onLogout();
+      setIsOpen(false);
+      console.log('✅ Logout completado');
+    } catch (error) {
+      console.error('❌ Error en logout:', error);
+      setIsOpen(false);
+    }
   };
 
   const handleProfile = () => {

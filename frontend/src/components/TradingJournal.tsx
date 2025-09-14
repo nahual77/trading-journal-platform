@@ -511,9 +511,14 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 <LanguageSelector />
                 {/* Menú de usuario */}
                 {user && (
-                  <UserMenu user={user} onLogout={() => {
-                    supabase.auth.signOut();
-                    setUser(null);
+                  <UserMenu user={user} onLogout={async () => {
+                    try {
+                      await supabase.auth.signOut();
+                      setUser(null);
+                    } catch (error) {
+                      console.error('Error al cerrar sesión:', error);
+                      setUser(null);
+                    }
                   }} />
                 )}
               </div>
