@@ -304,7 +304,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             <img
               src="/logo-growjou.png"
               alt="GrowJou - My Trading Journal"
-              className="block opacity-100 transition-all duration-1000 ease-out"
+              className="block opacity-100 transition-all duration-1000 ease-out mobile-logo-responsive"
               style={{ 
                 height: '150px',
                 width: 'auto',
