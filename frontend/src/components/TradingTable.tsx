@@ -92,7 +92,7 @@ const SimpleImageField = ({
 
   return (
     <div
-      className={`simple-image-field h-16 sm:h-20 overflow-hidden cursor-pointer border-2 rounded ${activeImageField?.entryId === entryId && activeImageField?.fieldKey === fieldName
+      className={`simple-image-field h-20 overflow-hidden cursor-pointer border-2 rounded ${activeImageField?.entryId === entryId && activeImageField?.fieldKey === fieldName
           ? 'border-blue-500 bg-blue-500/10'
           : 'border-transparent hover:border-gray-500'
         }`}
@@ -111,7 +111,7 @@ const SimpleImageField = ({
             <img
               src={safeImages[0].thumbnail}
               alt={safeImages[0].name}
-              className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded border border-gray-600 cursor-pointer hover:border-blue-500 transition-colors"
+              className="w-16 h-16 object-cover rounded border border-gray-600 cursor-pointer hover:border-blue-500 transition-colors"
               onClick={() => onImageClick(safeImages[0].url, safeImages[0].name)}
               title="Clic para ver en tamaño completo"
             />
@@ -120,18 +120,18 @@ const SimpleImageField = ({
                 e.stopPropagation();
                 onRemove(safeImages[0].id);
               }}
-              className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-red-600 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-700 transition-colors"
+              className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-700 transition-colors"
             >
               ×
             </button>
           </div>
         ) : (
           <div
-            className="w-12 h-12 sm:w-16 sm:h-16 border-2 border-dashed border-gray-600 rounded flex flex-col items-center justify-center text-gray-400 text-xs cursor-pointer hover:border-gray-500 transition-colors"
+            className="w-16 h-16 border-2 border-dashed border-gray-600 rounded flex flex-col items-center justify-center text-gray-400 text-xs cursor-pointer hover:border-gray-500 transition-colors"
             title="Pegar imagen con Ctrl+V"
           >
-            <Plus className="h-3 w-3 sm:h-4 sm:w-4 mb-1" />
-            <span className="text-xs text-gray-500 hidden sm:block">Ctrl+V</span>
+            <Plus className="h-4 w-4 mb-1" />
+            <span className="text-xs text-gray-500">Ctrl+V</span>
           </div>
         )}
       </div>
@@ -608,20 +608,19 @@ function TradingTable({
 
   return (
     <div className="space-y-4" style={{ overflow: 'hidden' }}>
-      {/* Controles responsive */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      {/* Simple controls */}
+      <div className="flex items-center justify-between">
         {/* Botón Nueva Operación */}
         <button
           onClick={onAddEntry}
-          className="flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-base font-medium min-h-[48px] w-full sm:w-auto"
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-4 w-4" />
           <span>{t('tradingJournal.newOperation')}</span>
         </button>
 
-        {/* Filtros responsive */}
-        <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2 w-full lg:w-auto mobile-controls">
-          <div className="flex flex-wrap items-center gap-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700">
+        {/* Filtros centrados */}
+        <div className="flex items-center gap-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700">
           {/* Búsqueda compacta */}
           <div className="flex items-center gap-1">
             <div className="relative">
@@ -632,7 +631,7 @@ function TradingTable({
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 placeholder=""
-                  className="pl-6 pr-2 py-1 bg-gray-700 border border-gray-600 rounded-l text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm w-24 sm:w-32"
+                className="pl-6 pr-2 py-1 bg-gray-700 border border-gray-600 rounded-l text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm w-32"
               />
             </div>
             <button
@@ -640,17 +639,17 @@ function TradingTable({
               className="px-2 py-1 bg-blue-600 text-white rounded-r text-sm hover:bg-blue-700 transition-colors flex items-center gap-1"
             >
               <Search className="h-3 w-3" />
-                <span className="hidden sm:inline">{t('filters.search')}</span>
+              {t('filters.search')}
             </button>
             {isSearching && searchResults.length > 0 && (
-                <span className="text-xs sm:text-sm text-gray-400">
-                  ({searchResults.length})
+              <span className="text-sm text-gray-400">
+                ({searchResults.length} resultados)
               </span>
             )}
           </div>
 
-            {/* Filtros de fecha compactos - Solo en desktop */}
-            <div className="hidden lg:flex items-center gap-1">
+          {/* Filtros de fecha compactos */}
+          <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3 text-gray-400" />
             <TranslatableDatePicker
               value={dateFrom}
@@ -676,8 +675,8 @@ function TradingTable({
             {sortDirection === 'desc' ? t('filters.recent') : t('filters.oldest')}
           </button>
 
-            {/* Filtros rápidos compactos - Solo en desktop */}
-            <div className="hidden lg:flex items-center gap-1">
+          {/* Filtros rápidos compactos */}
+          <div className="flex items-center gap-1">
             <button className="px-1 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-sm transition-colors" title={t('filters.today')}>
               {t('filters.today')}
             </button>
@@ -691,14 +690,14 @@ function TradingTable({
 
           {/* Cantidad por página compacta */}
           <div className="flex items-center gap-1">
-              <span className="text-xs sm:text-sm text-gray-400">{t('filters.show')}:</span>
+            <span className="text-sm text-gray-400">{t('filters.show')}:</span>
             <select
               value={pageSize}
               onChange={(e) => {
                 setPageSize(Number(e.target.value));
                 setCurrentPage(1); // Reset a la primera página al cambiar el tamaño
               }}
-                className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs sm:text-sm"
+              className="bg-gray-700 border border-gray-600 rounded px-1 py-1 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
             >
               <option value={10}>10</option>
               <option value={20}>20</option>
@@ -724,7 +723,7 @@ function TradingTable({
             title="Limpiar filtros"
           >
             <RotateCcw className="h-3 w-3" />
-              <span className="hidden sm:inline text-sm">{t('filters.clearFilters')}</span>
+            <span className="text-sm">{t('filters.clearFilters')}</span>
           </button>
         </div>
 
@@ -732,43 +731,36 @@ function TradingTable({
           columns={columns}
           onToggleColumn={onToggleColumn}
         />
-        </div>
       </div>
 
-      {/* Tabla responsive */}
+      {/* Simple table */}
       <div
-        className="table-container mobile-table-container"
+        className="table-container"
         style={{
           height: `${tableHeight}px`,
           overflowX: 'auto',
           overflowY: 'hidden'
         }}
       >
-        <table className="mobile-table w-full bg-gray-900 rounded-lg" style={{ minWidth: '1200px' }}>
+        <table className="w-full bg-gray-900 rounded-lg" style={{ minWidth: '1800px' }}>
           <thead>
             <tr className="border-b border-gray-700">
-              <th className="px-2 md:px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-12 md:w-16">
+              <th className="px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">
                 #
               </th>
               {visibleColumns.map((column) => (
                 <th
                   key={column.id}
-                  className={`px-2 md:px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider ${column.key === 'fecha' ? 'col-fecha' :
+                  className={`px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider ${column.key === 'fecha' ? 'col-fecha' :
                       column.key === 'hora' ? 'col-hora' :
                         isImageField(column.key) ? 'col-image' : ''
                     }`}
                 >
-                  <span className="hidden sm:inline">
-                  {t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`)}
-                  </span>
-                  <span className="sm:hidden">
-                    {t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`).substring(0, 3)}
-                  </span>
+                  {column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}
                 </th>
               ))}
-              <th className="px-2 md:px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-12 md:w-16">
-                <span className="hidden sm:inline">{t('table.actions')}</span>
-                <span className="sm:hidden">#</span>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">
+                {t('table.actions')}
               </th>
             </tr>
           </thead>
@@ -787,30 +779,30 @@ function TradingTable({
                 <tr
                   key={entry.id}
                   className="hover:bg-gray-800/50 transition-colors"
-                  style={{ height: '80px' }}
+                  style={{ height: '100px' }}
                 >
-                  <td className="px-2 md:px-3 py-2 text-xs text-gray-300">
+                  <td className="px-3 py-2 text-xs text-gray-300">
                     {entry.operationNumber}
                   </td>
                   {visibleColumns.map((column) => (
                     <td
                       key={column.id}
-                      className={`px-2 md:px-3 py-2 text-xs text-gray-300 ${column.key === 'fecha' ? 'col-fecha' :
+                      className={`px-3 py-2 text-xs text-gray-300 ${column.key === 'fecha' ? 'col-fecha' :
                           column.key === 'hora' ? 'col-hora' :
                             isImageField(column.key) ? 'col-image' : ''
                         }`}
-                      style={{ height: '80px', maxHeight: '80px', overflow: 'hidden' }}
+                      style={{ height: '100px', maxHeight: '100px', overflow: 'hidden' }}
                     >
                       {renderCellContent(entry, column)}
                     </td>
                   ))}
-                  <td className="px-2 md:px-3 py-2 text-xs" style={{ height: '80px', maxHeight: '80px' }}>
+                  <td className="px-3 py-2 text-xs" style={{ height: '100px', maxHeight: '100px' }}>
                     <button
                       onClick={() => onDeleteEntry(entry.id)}
                       className="p-1 text-red-400 hover:text-red-300 transition-colors"
                       title="Eliminar operación"
                     >
-                      <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </td>
                 </tr>
@@ -821,101 +813,97 @@ function TradingTable({
       </div>
 
 
-      {/* Paginación responsive */}
+      {/* Paginación */}
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-4">
-          <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
-              className={`px-2 py-1 text-xs sm:text-sm rounded ${currentPage === 1
+              className={`px-2 py-1 text-sm rounded ${currentPage === 1
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
                 }`}
             >
-              <span className="hidden sm:inline">{t('table.first')}</span>
-              <span className="sm:hidden">«</span>
+              {t('table.first')}
             </button>
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              className={`px-2 py-1 text-xs sm:text-sm rounded ${currentPage === 1
+              className={`px-2 py-1 text-sm rounded ${currentPage === 1
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
                 }`}
             >
-              <span className="hidden sm:inline">{t('table.previous')}</span>
-              <span className="sm:hidden">‹</span>
+              {t('table.previous')}
             </button>
-            <span className="text-xs sm:text-sm text-gray-400 px-2">
-              {currentPage} / {totalPages}
+            <span className="text-sm text-gray-400">
+              {t('table.page')} {currentPage} {t('table.of')} {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              className={`px-2 py-1 text-xs sm:text-sm rounded ${currentPage === totalPages
+              className={`px-2 py-1 text-sm rounded ${currentPage === totalPages
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
                 }`}
             >
-              <span className="hidden sm:inline">{t('table.next')}</span>
-              <span className="sm:hidden">›</span>
+              {t('table.next')}
             </button>
             <button
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
-              className={`px-2 py-1 text-xs sm:text-sm rounded ${currentPage === totalPages
+              className={`px-2 py-1 text-sm rounded ${currentPage === totalPages
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 text-white hover:bg-gray-600'
                 }`}
             >
-              <span className="hidden sm:inline">{t('table.last')}</span>
-              <span className="sm:hidden">»</span>
+              {t('table.last')}
             </button>
           </div>
-          <div className="text-xs sm:text-sm text-gray-400 text-center">
-            {t('table.showing')} {displayEntries.length} {t('table.of')} {entries.length}
+          <div className="text-sm text-gray-400">
+            {t('table.showing')} {displayEntries.length} {t('table.of')} {entries.length} {t('table.operations')}
           </div>
         </div>
       )}
 
-      {/* Estadísticas responsive */}
+      {/* Simple statistics */}
       {entries.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mt-4 sm:mt-6">
-          <div className="bg-gray-800/50 p-2 sm:p-3 rounded-lg">
-            <div className="text-xs sm:text-sm text-gray-400 mb-1">{t('tradingJournal.totalOperations')}</div>
-            <div className="text-sm sm:text-base font-bold text-white">{entries.length}</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div className="bg-gray-800/50 p-3 rounded-lg">
+            <div className="text-sm text-gray-400 mb-1">{t('tradingJournal.totalOperations')}</div>
+            <div className="text-sm font-bold text-white">{entries.length}</div>
           </div>
-          <div className="bg-gray-800/50 p-2 sm:p-3 rounded-lg">
-            <div className="text-xs sm:text-sm text-gray-400 mb-1">{t('table.planFollowed')}</div>
-            <div className="text-sm sm:text-base font-bold text-green-400">
+          <div className="bg-gray-800/50 p-3 rounded-lg">
+            <div className="text-sm text-gray-400 mb-1">{t('table.planFollowed')}</div>
+            <div className="text-sm font-bold text-green-400">
               {entries.filter(e => e.seCumplioElPlan).length}
             </div>
           </div>
-          <div className="bg-gray-800/50 p-2 sm:p-3 rounded-lg">
-            <div className="text-xs sm:text-sm text-gray-400 mb-1">{t('table.planNotFollowed')}</div>
-            <div className="text-sm sm:text-base font-bold text-red-400">
+          <div className="bg-gray-800/50 p-3 rounded-lg">
+            <div className="text-sm text-gray-400 mb-1">{t('table.planNotFollowed')}</div>
+            <div className="text-sm font-bold text-red-400">
               {entries.filter(e => !e.seCumplioElPlan).length}
             </div>
           </div>
-          <div className="bg-gray-800/50 p-2 sm:p-3 rounded-lg">
-            <div className="text-xs sm:text-sm text-gray-400 mb-1">{t('table.buysVsSells')}</div>
-            <div className="flex gap-1 sm:gap-2 items-center">
+          <div className="bg-gray-800/50 p-3 rounded-lg">
+            <div className="text-sm text-gray-400 mb-1">{t('table.buysVsSells')}</div>
+            <div className="flex gap-2 items-center">
               <div>
-                <div className="text-xs sm:text-sm text-green-400">{t('table.buy')}</div>
-                <div className="text-xs sm:text-sm font-bold text-green-400">
+                <div className="text-sm text-green-400">{t('table.buy')}</div>
+                <div className="text-sm font-bold text-green-400">
                   {entries.filter(e => e.tipoOperacion === 'compra').length}
                 </div>
               </div>
-              <div className="text-gray-500 text-xs">vs</div>
+              <div className="text-gray-500">vs</div>
               <div>
-                <div className="text-xs sm:text-sm text-red-400">{t('table.sell')}</div>
-                <div className="text-xs sm:text-sm font-bold text-red-400">
+                <div className="text-sm text-red-400">{t('table.sell')}</div>
+                <div className="text-sm font-bold text-red-400">
                   {entries.filter(e => e.tipoOperacion === 'venta').length}
                 </div>
               </div>
             </div>
-            <div className="text-xs text-gray-500 mt-1 hidden sm:block">
+            <div className="text-xs text-gray-500 mt-1">
               {t('table.neutralOperations')}: {entries.filter(e => !e.tipoOperacion || (e.tipoOperacion as string) === '').length}
             </div>
           </div>
