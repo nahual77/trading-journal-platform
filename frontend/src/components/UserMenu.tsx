@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, LogOut, Settings, ChevronDown, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -12,207 +12,118 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
-    console.log('🔄 LOGOUT INICIADO');
+    console.log('🔄 Iniciando logout...');
     try {
       await onLogout();
-      console.log('✅ LOGOUT EXITOSO');
+      console.log('✅ Logout exitoso');
     } catch (error) {
-      console.error('❌ ERROR EN LOGOUT:', error);
+      console.error('❌ Error en logout:', error);
     }
     setIsOpen(false);
   };
 
   const handleProfile = () => {
-    console.log('👤 PROFILE CLICKED');
+    console.log('👤 Abrir perfil del usuario');
     setIsOpen(false);
   };
 
   const toggleMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('🖱️ TOGGLE CLICKED, isOpen:', isOpen);
+    console.log('🖱️ Toggle menu clicked, current state:', isOpen);
     setIsOpen(!isOpen);
   };
 
+  // Cerrar menú al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isOpen && !target.closest('.user-menu-container')) {
+        console.log('🖱️ Click outside detected, closing menu');
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [isOpen]);
+
   return (
-    <div style={{ position: 'relative' }}>
-      {/* Botón principal - SIN CLASES CSS */}
+    <div className="relative user-menu-container">
+      {/* Botón principal del menú */}
       <button
         onClick={toggleMenu}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '8px 12px',
-          backgroundColor: '#1f2937',
-          border: '1px solid #4b5563',
-          borderRadius: '8px',
-          color: 'white',
-          cursor: 'pointer',
-          margin: '8px 0',
-          transform: window.innerWidth <= 640 ? 'scale(0.8)' : 'scale(1)',
-          transformOrigin: 'center'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#374151';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = '#1f2937';
-        }}
+        className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group my-2 hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            background: 'linear-gradient(to right, #2563eb, #f59e0b)',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <User size={16} color="white" />
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
+            <User className="h-4 w-4 text-white transition-transform duration-200 group-hover:scale-110" />
           </div>
-          <div style={{ display: window.innerWidth > 640 ? 'block' : 'none' }}>
-            <div style={{ fontSize: '14px', fontWeight: '500', color: 'white' }}>
+          <div className="hidden sm:block text-left">
+            <div className="text-sm font-medium text-white truncate max-w-[120px]">
               {user?.email?.split('@')[0] || 'Usuario'}
             </div>
-            <div style={{ fontSize: '12px', color: '#9ca3af' }}>
-              {t('userMenu.tradingJournal')}
-            </div>
+            <div className="text-xs text-gray-400">{t('userMenu.tradingJournal')}</div>
           </div>
         </div>
-        <ChevronDown 
-          size={16} 
-          color="#9ca3af" 
-          style={{ 
-            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 0.2s'
-          }} 
-        />
+        <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Menú desplegable */}
       {isOpen && (
-        <div style={{
-          position: 'absolute',
-          right: 0,
-          top: '100%',
-          marginTop: '8px',
-          width: '256px',
-          backgroundColor: '#1f2937',
-          border: '1px solid #4b5563',
-          borderRadius: '8px',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-          zIndex: 9999,
-          overflow: 'hidden'
-        }}>
-          {/* Header */}
-          <div style={{ padding: '12px 16px', borderBottom: '1px solid #374151' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  background: 'linear-gradient(to right, #2563eb, #f59e0b)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}>
-                  <User size={20} color="white" />
+        <div className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-[9999] overflow-hidden">
+          {/* Header del menú */}
+          <div className="px-4 py-3 border-b border-gray-700">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center space-x-3 min-w-0 flex-1">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center flex-shrink-0">
+                  <User className="h-5 w-5 text-white" />
                 </div>
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={{ fontSize: '14px', fontWeight: '500', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-medium text-white truncate">
                     {user?.email?.split('@')[0] || 'Usuario'}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#9ca3af', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div className="text-xs text-gray-400 truncate">
                     {user?.email || 'usuario@ejemplo.com'}
                   </div>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                style={{
-                  padding: '4px',
-                  color: '#9ca3af',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  flexShrink: 0
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = 'white';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = '#9ca3af';
-                }}
+                className="p-1 text-gray-400 hover:text-white transition-colors flex-shrink-0"
+                title="Cerrar menú"
               >
-                <X size={16} />
+                <X className="h-4 w-4" />
               </button>
             </div>
           </div>
 
-          {/* Opciones */}
-          <div style={{ padding: '8px 0' }}>
+          {/* Opciones del menú */}
+          <div className="py-2">
             <button
               onClick={handleProfile}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '8px 16px',
-                fontSize: '14px',
-                color: '#d1d5db',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#374151';
-                e.currentTarget.style.color = 'white';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = '#d1d5db';
-              }}
+              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
             >
-              <Settings size={16} />
+              <Settings className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" />
               <span>{t('userMenu.profile')}</span>
             </button>
             
             <button
               onClick={handleLogout}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '8px 16px',
-                fontSize: '14px',
-                color: '#d1d5db',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#dc2626';
-                e.currentTarget.style.color = 'white';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = '#d1d5db';
-              }}
+              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200 hover:translate-x-1 group"
             >
-              <LogOut size={16} />
+              <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
               <span>{t('userMenu.logout')}</span>
             </button>
           </div>
 
-          {/* Footer */}
-          <div style={{ padding: '8px 16px', borderTop: '1px solid #374151', backgroundColor: 'rgba(17, 24, 39, 0.5)' }}>
-            <div style={{ fontSize: '12px', color: '#6b7280', textAlign: 'center' }}>
+          {/* Footer del menú */}
+          <div className="px-4 py-2 border-t border-gray-700 bg-gray-900/50">
+            <div className="text-xs text-gray-500 text-center">
               {t('userMenu.version')}
             </div>
           </div>
