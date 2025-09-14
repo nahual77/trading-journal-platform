@@ -16,6 +16,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     try {
       await supabase.auth.signOut();
       onLogout();
+      setIsOpen(false);
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
