@@ -37,17 +37,17 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
       if (isOpen && !target.closest('.user-menu-container')) {
-        // Pequeño delay para evitar conflictos con clicks en botones del menú
-        setTimeout(() => {
-          setIsOpen(false);
-        }, 100);
+        setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      // Usar click en lugar de mousedown y agregar delay
+      setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+      }, 100);
       return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('click', handleClickOutside);
       };
     }
   }, [isOpen]);
@@ -113,7 +113,10 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             </button>
             
             <button
-              onClick={handleLogout}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleLogout();
+              }}
               className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200 hover:translate-x-1 group"
             >
               <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
