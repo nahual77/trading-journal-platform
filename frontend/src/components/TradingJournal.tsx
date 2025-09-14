@@ -466,9 +466,9 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
     <div className="app-container bg-gradient-to-br from-black via-gray-900 to-black text-white">
       <div className="content-area">
         {/* Header */}
-        <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-40">
+        <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-40 mobile-header">
           <div className="full-width-container">
-            <div className="flex items-center h-20 relative">
+            <div className="flex items-center h-20 relative mobile-header-content">
               {/* Logo y título - Posición absoluta a la izquierda */}
               <div className="absolute left-0 flex items-center space-x-4">
                 {/* Logo GrowJou */}
