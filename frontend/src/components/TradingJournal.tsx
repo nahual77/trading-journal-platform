@@ -506,7 +506,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               </nav>
 
               {/* Botones de acción - Posición absoluta a la derecha */}
-              <div className="absolute right-0 flex items-center space-x-2">
+              <div className="absolute right-0 flex items-center space-x-2 mobile-buttons-container">
                 {/* Selector de idioma */}
                 <LanguageSelector />
                 {/* Menú de usuario */}
