@@ -495,7 +495,7 @@
   }
   
   .hamburger-button-mobile {
-    transform: translateX(1rem) !important;
+    transform: translateX(-1rem) !important;
   }
 }
 
