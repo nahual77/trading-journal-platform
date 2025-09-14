@@ -260,8 +260,14 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
   }
 
   // Función para manejar logout
-  const handleLogout = () => {
-    setUser(null);
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      setUser(null);
+    }
   };
 
   const navigationItems = [
@@ -511,15 +517,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
                 <LanguageSelector />
                 {/* Menú de usuario */}
                 {user && (
-                  <UserMenu user={user} onLogout={async () => {
-                    try {
-                      await supabase.auth.signOut();
-                      setUser(null);
-                    } catch (error) {
-                      console.error('Error al cerrar sesión:', error);
-                      setUser(null);
-                    }
-                  }} />
+                  <UserMenu user={user} onLogout={handleLogout} />
                 )}
               </div>
             </div>
