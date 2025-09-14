@@ -445,7 +445,7 @@
 }
 
 /* Reducir todo el header proporcionalmente en móvil (vertical y horizontal) */
-@media (max-width: 640px) {
+@media (max-width: 640px), (max-width: 896px) and (orientation: landscape) {
   .mobile-header {
     height: 60px !important;
   }
