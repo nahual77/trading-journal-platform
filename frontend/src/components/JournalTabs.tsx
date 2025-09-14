@@ -94,7 +94,7 @@ export function JournalTabs({
   };
 
   return (
-    <div className="border-b border-gray-700 overflow-visible w-full -mx-4">
+    <div className="border-b border-gray-700 overflow-visible w-screen -mx-4">
       <div className="flex items-end justify-between pt-2 overflow-visible w-full">
         {/* Contenedor de pestañas con scroll */}
         <div className="flex items-end overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 flex-1 overflow-y-visible w-full">
