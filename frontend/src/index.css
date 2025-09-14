@@ -475,3 +475,12 @@
   }
 }
 
+/* Ajustar altura del botón de idiomas en móvil para justificar con botón usuario */
+@media (max-width: 640px), (max-width: 896px) and (orientation: landscape) {
+  .language-button-mobile {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    min-height: 2.5rem !important;
+  }
+}
+
