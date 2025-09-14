@@ -468,3 +468,10 @@
   }
 }
 
+/* Reducir botón de usuario solo en móvil vertical */
+@media (max-width: 640px) and (orientation: portrait) {
+  .user-button-mobile {
+    transform: scale(0.8) !important;
+  }
+}
+
