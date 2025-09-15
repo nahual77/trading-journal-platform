@@ -776,7 +776,7 @@ const FlightPlanBoard = () => {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onInit={setReactFlowInstance}
-          onViewportChange={setViewport}
+          onMove={(event, viewport) => setViewport(viewport)}
           nodeTypes={nodeTypes}
           defaultEdgeOptions={defaultEdgeOptions}
           connectionLineStyle={connectionLineStyle}
