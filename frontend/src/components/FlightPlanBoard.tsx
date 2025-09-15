@@ -469,6 +469,7 @@ const FlightPlanBoard = () => {
 
   // Función para cambiar modo de dibujo
   const changeDrawingMode = (newMode: 'none' | 'line' | 'rectangle' | 'circle' | 'text') => {
+    console.log('Changing drawing mode from', drawingMode, 'to', newMode); // Debug
     // Cancelar dibujo actual si está en progreso
     if (isDrawing) {
       setCurrentElement(null);
@@ -744,6 +745,11 @@ const FlightPlanBoard = () => {
                 <span>Desactivar dibujo</span>
               </button>
             )}
+            
+            {/* Debug info */}
+            <div className="text-xs text-gray-500 mt-2">
+              Modo actual: {drawingMode}
+            </div>
             
             <button
               onClick={clearDrawing}
