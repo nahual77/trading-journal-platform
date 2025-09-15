@@ -930,7 +930,7 @@ const FlightPlanBoard = () => {
         
         {/* Capa de dibujo */}
         <svg
-          className="absolute inset-0 pointer-events-auto"
+          className="absolute inset-0 pointer-events-none"
           style={{ zIndex: 15 }}
           width="100%"
           height="100%"
@@ -964,20 +964,8 @@ const FlightPlanBoard = () => {
                         stroke={strokeColor}
                         strokeWidth={strokeWidth}
                         strokeDasharray="5,5"
-                        onClick={() => selectDrawing(element.id)}
-                        style={{ cursor: 'pointer' }}
                       />
                     )}
-                    <line
-                      x1={element.x1}
-                      y1={element.y1}
-                      x2={element.x2}
-                      y2={element.y2}
-                      stroke="transparent"
-                      strokeWidth={Math.max(8, strokeWidth)}
-                      onClick={() => selectDrawing(element.id)}
-                      style={{ cursor: 'pointer' }}
-                    />
                   </g>
                 );
               } else if (element.type === 'rectangle') {
@@ -1006,21 +994,8 @@ const FlightPlanBoard = () => {
                         strokeWidth={strokeWidth}
                         fill="none"
                         strokeDasharray="5,5"
-                        onClick={() => selectDrawing(element.id)}
-                        style={{ cursor: 'pointer' }}
                       />
                     )}
-                    <rect
-                      x={x}
-                      y={y}
-                      width={width}
-                      height={height}
-                      stroke="transparent"
-                      strokeWidth={Math.max(8, strokeWidth)}
-                      fill="none"
-                      onClick={() => selectDrawing(element.id)}
-                      style={{ cursor: 'pointer' }}
-                    />
                   </g>
                 );
               } else if (element.type === 'circle') {
@@ -1046,20 +1021,8 @@ const FlightPlanBoard = () => {
                         strokeWidth={strokeWidth}
                         fill="none"
                         strokeDasharray="5,5"
-                        onClick={() => selectDrawing(element.id)}
-                        style={{ cursor: 'pointer' }}
                       />
                     )}
-                    <circle
-                      cx={element.x1}
-                      cy={element.y1}
-                      r={radius}
-                      stroke="transparent"
-                      strokeWidth={Math.max(8, strokeWidth)}
-                      fill="none"
-                      onClick={() => selectDrawing(element.id)}
-                      style={{ cursor: 'pointer' }}
-                    />
                   </g>
                 );
               } else if (element.type === 'text') {
@@ -1083,23 +1046,10 @@ const FlightPlanBoard = () => {
                         fontFamily="Arial, sans-serif"
                         stroke={strokeColor}
                         strokeWidth={1}
-                        onClick={() => selectDrawing(element.id)}
-                        style={{ cursor: 'pointer' }}
                       >
                         {element.text}
                       </text>
                     )}
-                    <text
-                      x={element.x1}
-                      y={element.y1}
-                      fill="transparent"
-                      fontSize={Math.max(20, 14 / viewport.zoom)}
-                      fontFamily="Arial, sans-serif"
-                      onClick={() => selectDrawing(element.id)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {element.text}
-                    </text>
                   </g>
                 );
               }
@@ -1150,6 +1100,113 @@ const FlightPlanBoard = () => {
             )}
           </g>
         </svg>
+        
+        {/* Capa de selección de dibujos */}
+        <div
+          className="absolute inset-0 pointer-events-auto"
+          style={{ zIndex: 16 }}
+          onClick={(e) => {
+            // Si se hace click en el fondo, deseleccionar
+            if (e.target === e.currentTarget) {
+              deselectAllDrawings();
+            }
+          }}
+        >
+          {drawingElements.map((element) => {
+            const isSelected = element.selected || selectedDrawingId === element.id;
+            if (!isSelected) return null;
+            
+            // Convertir coordenadas del viewport a coordenadas de pantalla
+            const screenPos1 = reactFlowInstance?.flowToScreenPosition({
+              x: element.x1,
+              y: element.y1
+            });
+            const screenPos2 = reactFlowInstance?.flowToScreenPosition({
+              x: element.x2,
+              y: element.y2
+            });
+            
+            if (!screenPos1 || !screenPos2) return null;
+            
+            if (element.type === 'line') {
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: Math.min(screenPos1.x, screenPos2.x) - 4,
+                    top: Math.min(screenPos1.y, screenPos2.y) - 4,
+                    width: Math.abs(screenPos2.x - screenPos1.x) + 8,
+                    height: Math.abs(screenPos2.y - screenPos1.y) + 8,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => selectDrawing(element.id)}
+                />
+              );
+            } else if (element.type === 'rectangle') {
+              const width = Math.abs(element.x2 - element.x1);
+              const height = Math.abs(element.y2 - element.y1);
+              const x = Math.min(element.x1, element.x2);
+              const y = Math.min(element.y1, element.y2);
+              const screenPos = reactFlowInstance?.flowToScreenPosition({ x, y });
+              const screenWidth = width * viewport.zoom;
+              const screenHeight = height * viewport.zoom;
+              
+              if (!screenPos) return null;
+              
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: screenPos.x - 4,
+                    top: screenPos.y - 4,
+                    width: screenWidth + 8,
+                    height: screenHeight + 8,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => selectDrawing(element.id)}
+                />
+              );
+            } else if (element.type === 'circle') {
+              const radius = Math.sqrt(
+                Math.pow(element.x2 - element.x1, 2) + Math.pow(element.y2 - element.y1, 2)
+              );
+              const screenRadius = radius * viewport.zoom;
+              
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto rounded-full"
+                  style={{
+                    left: screenPos1.x - screenRadius - 4,
+                    top: screenPos1.y - screenRadius - 4,
+                    width: (screenRadius * 2) + 8,
+                    height: (screenRadius * 2) + 8,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => selectDrawing(element.id)}
+                />
+              );
+            } else if (element.type === 'text') {
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: screenPos1.x - 4,
+                    top: screenPos1.y - 20,
+                    width: 100,
+                    height: 30,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => selectDrawing(element.id)}
+                />
+              );
+            }
+            return null;
+          })}
+        </div>
       </div>
     </div>
   );
