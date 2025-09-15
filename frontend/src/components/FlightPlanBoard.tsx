@@ -470,9 +470,14 @@ const FlightPlanBoard = () => {
   const handleMouseDown = (event: React.MouseEvent) => {
     if (drawingMode === 'none') return;
     
+    event.preventDefault();
+    event.stopPropagation();
+    
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
+    
+    console.log('Mouse down:', { drawingMode, x, y }); // Debug
     
     const newElement = {
       id: `draw-${Date.now()}`,
@@ -492,6 +497,9 @@ const FlightPlanBoard = () => {
   const handleMouseMove = (event: React.MouseEvent) => {
     if (!isDrawing || !currentElement) return;
     
+    event.preventDefault();
+    event.stopPropagation();
+    
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
@@ -503,8 +511,13 @@ const FlightPlanBoard = () => {
     });
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (event: React.MouseEvent) => {
     if (!isDrawing || !currentElement) return;
+    
+    event.preventDefault();
+    event.stopPropagation();
+    
+    console.log('Mouse up:', currentElement); // Debug
     
     setDrawingElements(prev => [...prev, currentElement]);
     setCurrentElement(null);
@@ -645,6 +658,9 @@ const FlightPlanBoard = () => {
             <h3 className="text-xs font-semibold text-gray-300 flex items-center space-x-1">
               <span>✏️</span>
               <span>Dibujo</span>
+              {drawingMode !== 'none' && (
+                <span className="text-green-400 text-xs">●</span>
+              )}
             </h3>
             
             <div className="grid grid-cols-2 gap-1">
@@ -729,9 +745,6 @@ const FlightPlanBoard = () => {
           fitView
           attributionPosition="bottom-left"
           connectionMode={ConnectionMode.Loose}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
         >
           <Controls />
           <Background variant={BackgroundVariant.Dots} />
@@ -758,10 +771,30 @@ const FlightPlanBoard = () => {
           />
         </ReactFlow>
         
+        {/* Overlay para dibujo */}
+        {drawingMode !== 'none' && (
+          <div
+            className="absolute inset-0 z-20 cursor-crosshair"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            style={{ pointerEvents: 'auto' }}
+          >
+            {/* Indicador visual del modo de dibujo */}
+            <div className="absolute top-4 right-4 bg-blue-600/90 text-white px-3 py-1 rounded-lg text-sm font-medium">
+              Modo: {drawingMode === 'line' ? 'Línea' : 
+                     drawingMode === 'rectangle' ? 'Rectángulo' :
+                     drawingMode === 'circle' ? 'Círculo' : 'Texto'}
+            </div>
+          </div>
+        )}
+        
         {/* Capa de dibujo */}
         <svg
           className="absolute inset-0 pointer-events-none"
           style={{ zIndex: 10 }}
+          width="100%"
+          height="100%"
         >
           {/* Elementos dibujados */}
           {drawingElements.map((element) => {
