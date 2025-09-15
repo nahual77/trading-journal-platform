@@ -207,12 +207,12 @@ const connectionLineStyle = {
 
 const defaultEdgeOptions = {
   style: { strokeWidth: 2, stroke: '#3b82f6' },
-  type: 'smoothstep',
+  type: 'smoothstep' as const,
   pathOptions: {
     borderRadius: 20,
   },
   markerEnd: {
-    type: 'arrowclosed',
+    type: 'arrowclosed' as const,
     color: '#3b82f6',
   },
   selected: {
@@ -441,7 +441,7 @@ const FlightPlanBoard = () => {
           connectionLineStyle={connectionLineStyle}
           fitView
           attributionPosition="bottom-left"
-          connectionMode="loose"
+          connectionMode="loose" as const
         >
           <Controls />
           <Background variant={BackgroundVariant.Dots} />
