@@ -392,6 +392,9 @@ const FlightPlanBoard = () => {
   } | null>(null);
   const [drawingColor, setDrawingColor] = useState('#3b82f6');
   const [selectedDrawingId, setSelectedDrawingId] = useState<string | null>(null);
+  const [isDraggingDrawing, setIsDraggingDrawing] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [originalDrawingPos, setOriginalDrawingPos] = useState({ x1: 0, y1: 0, x2: 0, y2: 0 });
 
   // Función para agregar un nuevo nodo
   const addNode = useCallback((type: CustomNodeData['type']) => {
@@ -598,6 +601,44 @@ const FlightPlanBoard = () => {
     }
   };
 
+  // Función para iniciar el arrastre de un dibujo
+  const startDraggingDrawing = (elementId: string, clientX: number, clientY: number) => {
+    const element = drawingElements.find(el => el.id === elementId);
+    if (!element || !reactFlowInstance) return;
+
+    setIsDraggingDrawing(true);
+    setSelectedDrawingId(elementId);
+    setDragStart({ x: clientX, y: clientY });
+    setOriginalDrawingPos({ x1: element.x1, y1: element.y1, x2: element.x2, y2: element.y2 });
+  };
+
+  // Función para mover un dibujo durante el arrastre
+  const moveDrawing = (clientX: number, clientY: number) => {
+    if (!isDraggingDrawing || !reactFlowInstance) return;
+
+    const deltaX = (clientX - dragStart.x) / viewport.zoom;
+    const deltaY = (clientY - dragStart.y) / viewport.zoom;
+
+    setDrawingElements(prev => 
+      prev.map(el => 
+        el.id === selectedDrawingId 
+          ? {
+              ...el,
+              x1: originalDrawingPos.x1 + deltaX,
+              y1: originalDrawingPos.y1 + deltaY,
+              x2: originalDrawingPos.x2 + deltaX,
+              y2: originalDrawingPos.y2 + deltaY
+            }
+          : el
+      )
+    );
+  };
+
+  // Función para finalizar el arrastre
+  const endDraggingDrawing = () => {
+    setIsDraggingDrawing(false);
+  };
+
   // Cargar tablero al montar el componente
   React.useEffect(() => {
     loadBoard();
@@ -627,6 +668,31 @@ const FlightPlanBoard = () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [deleteSelected, drawingMode, isDrawing, changeDrawingMode]);
+
+  // Event listeners para arrastre de dibujos
+  React.useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (isDraggingDrawing) {
+        moveDrawing(event.clientX, event.clientY);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDraggingDrawing) {
+        endDraggingDrawing();
+      }
+    };
+
+    if (isDraggingDrawing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDraggingDrawing, moveDrawing]);
 
   return (
     <div className="h-full w-full bg-gray-900 relative">
@@ -933,16 +999,10 @@ const FlightPlanBoard = () => {
         
         {/* Capa de dibujo */}
         <svg
-          className="absolute inset-0 pointer-events-auto"
+          className="absolute inset-0 pointer-events-none"
           style={{ zIndex: 15 }}
           width="100%"
           height="100%"
-          onClick={(e) => {
-            // Si se hace click en el fondo del SVG, deseleccionar dibujos
-            if (e.target === e.currentTarget) {
-              deselectAllDrawings();
-            }
-          }}
         >
           <g
             transform={`translate(${viewport.x}, ${viewport.y}) scale(${viewport.zoom})`}
@@ -1168,6 +1228,137 @@ const FlightPlanBoard = () => {
           </g>
         </svg>
         
+        {/* Capa de selección de dibujos - transparente */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ zIndex: 16 }}
+        >
+          {drawingElements.map((element) => {
+            if (!reactFlowInstance) return null;
+            
+            // Convertir coordenadas del viewport a coordenadas de pantalla
+            const screenPos1 = reactFlowInstance.flowToScreenPosition({
+              x: element.x1,
+              y: element.y1
+            });
+            const screenPos2 = reactFlowInstance.flowToScreenPosition({
+              x: element.x2,
+              y: element.y2
+            });
+            
+            if (element.type === 'line') {
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: Math.min(screenPos1.x, screenPos2.x) - 6,
+                    top: Math.min(screenPos1.y, screenPos2.y) - 6,
+                    width: Math.abs(screenPos2.x - screenPos1.x) + 12,
+                    height: Math.abs(screenPos2.y - screenPos1.y) + 12,
+                    cursor: 'pointer'
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    startDraggingDrawing(element.id, e.clientX, e.clientY);
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isDraggingDrawing) {
+                      selectDrawing(element.id);
+                    }
+                  }}
+                />
+              );
+            } else if (element.type === 'rectangle') {
+              const width = Math.abs(element.x2 - element.x1);
+              const height = Math.abs(element.y2 - element.y1);
+              const x = Math.min(element.x1, element.x2);
+              const y = Math.min(element.y1, element.y2);
+              const screenPos = reactFlowInstance.flowToScreenPosition({ x, y });
+              const screenWidth = width * viewport.zoom;
+              const screenHeight = height * viewport.zoom;
+              
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: screenPos.x - 6,
+                    top: screenPos.y - 6,
+                    width: screenWidth + 12,
+                    height: screenHeight + 12,
+                    cursor: 'pointer'
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    startDraggingDrawing(element.id, e.clientX, e.clientY);
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isDraggingDrawing) {
+                      selectDrawing(element.id);
+                    }
+                  }}
+                />
+              );
+            } else if (element.type === 'circle') {
+              const radius = Math.sqrt(
+                Math.pow(element.x2 - element.x1, 2) + Math.pow(element.y2 - element.y1, 2)
+              );
+              const screenRadius = radius * viewport.zoom;
+              
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto rounded-full"
+                  style={{
+                    left: screenPos1.x - screenRadius - 6,
+                    top: screenPos1.y - screenRadius - 6,
+                    width: (screenRadius * 2) + 12,
+                    height: (screenRadius * 2) + 12,
+                    cursor: 'pointer'
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    startDraggingDrawing(element.id, e.clientX, e.clientY);
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isDraggingDrawing) {
+                      selectDrawing(element.id);
+                    }
+                  }}
+                />
+              );
+            } else if (element.type === 'text') {
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: screenPos1.x - 6,
+                    top: screenPos1.y - 25,
+                    width: 120,
+                    height: 35,
+                    cursor: 'pointer'
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    startDraggingDrawing(element.id, e.clientX, e.clientY);
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isDraggingDrawing) {
+                      selectDrawing(element.id);
+                    }
+                  }}
+                />
+              );
+            }
+            return null;
+          })}
+        </div>
         
         {/* Popup para dibujo seleccionado */}
         {selectedDrawingId && (
