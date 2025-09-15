@@ -129,12 +129,14 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
   };
 
   const handlePasteImage = (e: React.ClipboardEvent) => {
+    e.preventDefault();
     const items = e.clipboardData.items;
     for (let i = 0; i < items.length; i++) {
       if (items[i].type.indexOf('image') !== -1) {
         const file = items[i].getAsFile();
         if (file) {
           handleImageUpload(file);
+          setShowImageOptions(false); // Ocultar opciones después de pegar
         }
         break;
       }
@@ -175,7 +177,10 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
       />
 
       {isEditing ? (
-        <div className="space-y-3">
+        <div 
+          className="space-y-3"
+          onPaste={data.type === 'image' ? handlePasteImage : undefined}
+        >
           <input
             type="text"
             value={editLabel}
@@ -213,6 +218,13 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
                     placeholder="Pega URL de imagen o Ctrl+V para pegar imagen"
                     onPaste={handlePasteImage}
                   />
+                )}
+                
+                {/* Indicador de Ctrl+V */}
+                {data.type === 'image' && !showImageOptions && (
+                  <div className="text-xs text-gray-400 text-center py-1">
+                    💡 También puedes usar <kbd className="bg-gray-600 px-1 rounded">Ctrl+V</kbd> para pegar imagen
+                  </div>
                 )}
                 
                 <input
