@@ -4,6 +4,7 @@ import { useTradingJournalState } from '../hooks/useTradingJournalState';
 import { JournalTabs } from './JournalTabs';
 import { TradingTableWithFilters } from './TradingTableWithFilters';
 import { TradingPlan } from './TradingPlan';
+import FlightPlanBoard from './FlightPlanBoard';
 import StatisticsNew from './StatisticsNew';
 import Backtesting from './Backtesting';
 import { MT5Panel } from './MT5Panel';
@@ -21,10 +22,11 @@ import {
   Upload,
   Menu,
   X,
-  TestTube
+  TestTube,
+  Plane
 } from 'lucide-react';
 
-type ActiveView = 'journals' | 'plan' | 'statistics' | 'backtesting' | 'mt5';
+type ActiveView = 'journals' | 'plan' | 'flightPlan' | 'statistics' | 'backtesting' | 'mt5';
 
 interface TradingJournalProps {
   isNewUser?: boolean;
@@ -284,6 +286,12 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
       description: t('tradingJournal.planDescription'),
     },
     {
+      id: 'flightPlan' as ActiveView,
+      name: 'Plan de Vuelo',
+      icon: Plane,
+      description: 'Tablero visual interactivo para estrategias de trading',
+    },
+    {
       id: 'statistics' as ActiveView,
       name: t('navigation.statistics'),
       icon: BarChart3,
@@ -418,6 +426,13 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
               onUpdatePlanPoint={updatePlanPoint}
               onDeletePlanPoint={deletePlanPoint}
             />
+          </div>
+        );
+
+      case 'flightPlan':
+        return (
+          <div className="h-full">
+            <FlightPlanBoard />
           </div>
         );
 
