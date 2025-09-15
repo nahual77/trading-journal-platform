@@ -56,6 +56,9 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(data.content || '');
   const [editLabel, setEditLabel] = useState(data.label);
+  const [imageUrl, setImageUrl] = useState(data.imageUrl || '');
+  const [showImageOptions, setShowImageOptions] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const getNodeStyle = () => {
     const baseStyle = "px-4 py-3 rounded-lg border-2 min-w-[200px] max-w-[300px] transition-all duration-200 group";
@@ -110,7 +113,44 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
   const handleCancel = () => {
     setEditLabel(data.label);
     setEditContent(data.content || '');
+    setImageUrl(data.imageUrl || '');
     setIsEditing(false);
+  };
+
+  // Funciones para manejo de imágenes
+  const handleImageUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      setImageUrl(result);
+      data.imageUrl = result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handlePasteImage = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          handleImageUpload(file);
+        }
+        break;
+      }
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleImageUpload(file);
+    }
+  };
+
+  const handleImageUrlChange = (url: string) => {
+    setImageUrl(url);
+    data.imageUrl = url;
   };
 
   return (
@@ -135,7 +175,7 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
       />
 
       {isEditing ? (
-        <div className="space-y-2">
+        <div className="space-y-3">
           <input
             type="text"
             value={editLabel}
@@ -144,13 +184,82 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
             placeholder="Título del nodo"
             autoFocus
           />
-          <textarea
-            value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
-            className="w-full bg-gray-700 border border-blue-500 rounded px-2 py-1 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
-            placeholder="Contenido del nodo"
-            rows={3}
-          />
+          
+          {data.type === 'image' ? (
+            <div className="space-y-3">
+              {/* Opciones de imagen */}
+              <div className="space-y-2">
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs transition-colors"
+                  >
+                    📁 Cargar archivo
+                  </button>
+                  <button
+                    onClick={() => setShowImageOptions(!showImageOptions)}
+                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs transition-colors"
+                  >
+                    🔗 URL
+                  </button>
+                </div>
+                
+                {showImageOptions && (
+                  <input
+                    type="url"
+                    value={imageUrl}
+                    onChange={(e) => handleImageUrlChange(e.target.value)}
+                    className="w-full bg-gray-700 border border-blue-500 rounded px-2 py-1 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                    placeholder="Pega URL de imagen o Ctrl+V para pegar imagen"
+                    onPaste={handlePasteImage}
+                  />
+                )}
+                
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+              </div>
+              
+              {/* Vista previa de imagen */}
+              {imageUrl && (
+                <div className="relative">
+                  <img
+                    src={imageUrl}
+                    alt="Preview"
+                    className="w-full h-32 object-cover rounded border border-gray-600"
+                    onError={() => setImageUrl('')}
+                  />
+                  <button
+                    onClick={() => handleImageUrlChange('')}
+                    className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+              
+              <textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                className="w-full bg-gray-700 border border-blue-500 rounded px-2 py-1 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
+                placeholder="Descripción de la imagen (opcional)"
+                rows={2}
+              />
+            </div>
+          ) : (
+            <textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              className="w-full bg-gray-700 border border-blue-500 rounded px-2 py-1 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
+              placeholder="Contenido del nodo"
+              rows={3}
+            />
+          )}
+          
           <div className="flex space-x-2">
             <button
               onClick={handleSave}
@@ -179,15 +288,25 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
               <Edit3 className="h-3 w-3" />
             </button>
           </div>
-          {data.content && (
-            <p className="text-gray-300 text-xs">{data.content}</p>
-          )}
-          {data.imageUrl && (
-            <img 
-              src={data.imageUrl} 
-              alt={data.label}
-              className="w-full h-20 object-cover rounded mt-2"
-            />
+          {data.type === 'image' && data.imageUrl ? (
+            <div className="space-y-2">
+              <img
+                src={data.imageUrl}
+                alt={data.label}
+                className="w-full h-24 object-cover rounded border border-gray-600"
+                onError={() => {
+                  // Si la imagen falla al cargar, la removemos
+                  data.imageUrl = '';
+                }}
+              />
+              {data.content && (
+                <p className="text-gray-300 text-xs">{data.content}</p>
+              )}
+            </div>
+          ) : (
+            data.content && (
+              <p className="text-gray-300 text-xs">{data.content}</p>
+            )
           )}
         </div>
       )}
