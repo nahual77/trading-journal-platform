@@ -466,6 +466,16 @@ const FlightPlanBoard = () => {
     }
   }, [setNodes, setEdges]);
 
+  // Función para cambiar modo de dibujo
+  const changeDrawingMode = (newMode: 'none' | 'line' | 'rectangle' | 'circle' | 'text') => {
+    // Cancelar dibujo actual si está en progreso
+    if (isDrawing) {
+      setCurrentElement(null);
+      setIsDrawing(false);
+    }
+    setDrawingMode(newMode);
+  };
+
   // Funciones para herramientas de dibujo
   const handleMouseDown = (event: React.MouseEvent) => {
     if (drawingMode === 'none') return;
@@ -546,12 +556,22 @@ const FlightPlanBoard = () => {
     loadBoard();
   }, [loadBoard]);
 
-  // Función para manejar teclas de eliminación
+  // Función para manejar teclas de eliminación y escape
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Delete' || event.key === 'Backspace') {
         event.preventDefault();
         deleteSelected();
+      } else if (event.key === 'Escape') {
+        // Cancelar modo de dibujo
+        if (drawingMode !== 'none') {
+          changeDrawingMode('none');
+        }
+        // Cancelar dibujo en progreso
+        if (isDrawing) {
+          setCurrentElement(null);
+          setIsDrawing(false);
+        }
       }
     };
 
@@ -559,7 +579,7 @@ const FlightPlanBoard = () => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [deleteSelected]);
+  }, [deleteSelected, drawingMode, isDrawing, changeDrawingMode]);
 
   return (
     <div className="h-full w-full bg-gray-900 relative">
@@ -665,7 +685,7 @@ const FlightPlanBoard = () => {
             
             <div className="grid grid-cols-2 gap-1">
               <button
-                onClick={() => setDrawingMode(drawingMode === 'line' ? 'none' : 'line')}
+                onClick={() => changeDrawingMode(drawingMode === 'line' ? 'none' : 'line')}
                 className={`px-2 py-1.5 rounded text-xs transition-all duration-200 ${
                   drawingMode === 'line' 
                     ? 'bg-blue-600 text-white' 
@@ -676,7 +696,7 @@ const FlightPlanBoard = () => {
               </button>
               
               <button
-                onClick={() => setDrawingMode(drawingMode === 'rectangle' ? 'none' : 'rectangle')}
+                onClick={() => changeDrawingMode(drawingMode === 'rectangle' ? 'none' : 'rectangle')}
                 className={`px-2 py-1.5 rounded text-xs transition-all duration-200 ${
                   drawingMode === 'rectangle' 
                     ? 'bg-blue-600 text-white' 
@@ -687,7 +707,7 @@ const FlightPlanBoard = () => {
               </button>
               
               <button
-                onClick={() => setDrawingMode(drawingMode === 'circle' ? 'none' : 'circle')}
+                onClick={() => changeDrawingMode(drawingMode === 'circle' ? 'none' : 'circle')}
                 className={`px-2 py-1.5 rounded text-xs transition-all duration-200 ${
                   drawingMode === 'circle' 
                     ? 'bg-blue-600 text-white' 
@@ -698,7 +718,7 @@ const FlightPlanBoard = () => {
               </button>
               
               <button
-                onClick={() => setDrawingMode(drawingMode === 'text' ? 'none' : 'text')}
+                onClick={() => changeDrawingMode(drawingMode === 'text' ? 'none' : 'text')}
                 className={`px-2 py-1.5 rounded text-xs transition-all duration-200 ${
                   drawingMode === 'text' 
                     ? 'bg-blue-600 text-white' 
@@ -708,6 +728,17 @@ const FlightPlanBoard = () => {
                 📝 Texto
               </button>
             </div>
+            
+            {/* Botón para desactivar modo de dibujo */}
+            {drawingMode !== 'none' && (
+              <button
+                onClick={() => changeDrawingMode('none')}
+                className="w-full flex items-center justify-center space-x-1 bg-red-600/80 hover:bg-red-600 text-white px-2 py-1.5 rounded text-xs transition-all duration-200"
+              >
+                <X className="h-3 w-3" />
+                <span>Desactivar dibujo</span>
+              </button>
+            )}
             
             <button
               onClick={clearDrawing}
@@ -725,6 +756,7 @@ const FlightPlanBoard = () => {
               <li>• Doble clic: editar</li>
               <li>• Arrastra: conectar</li>
               <li>• Delete: eliminar</li>
+              <li>• Escape: cancelar dibujo</li>
             </ul>
           </div>
         </div>
