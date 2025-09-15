@@ -61,27 +61,33 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const getNodeStyle = () => {
-    const baseStyle = "px-4 py-3 rounded-lg border-2 min-w-[200px] max-w-[300px] transition-all duration-200 group";
+    const baseStyle = "px-4 py-3 rounded-lg border-2 transition-all duration-200 group";
+    
+    // Ajustar tamaño según el tipo de nodo
+    let sizeStyle = "min-w-[200px] max-w-[300px]";
+    if (data.type === 'image' && data.imageUrl) {
+      sizeStyle = "min-w-[200px] max-w-[400px]"; // Más ancho para imágenes
+    }
     
     if (selected) {
-      return `${baseStyle} shadow-lg shadow-blue-500/50 border-blue-400`;
+      return `${baseStyle} ${sizeStyle} shadow-lg shadow-blue-500/50 border-blue-400`;
     }
 
     switch (data.type) {
       case 'trigger':
-        return `${baseStyle} bg-blue-900/50 border-blue-500 hover:border-blue-400`;
+        return `${baseStyle} ${sizeStyle} bg-blue-900/50 border-blue-500 hover:border-blue-400`;
       case 'analysis':
-        return `${baseStyle} bg-green-900/50 border-green-500 hover:border-green-400`;
+        return `${baseStyle} ${sizeStyle} bg-green-900/50 border-green-500 hover:border-green-400`;
       case 'decision':
-        return `${baseStyle} bg-yellow-900/50 border-yellow-500 hover:border-yellow-400`;
+        return `${baseStyle} ${sizeStyle} bg-yellow-900/50 border-yellow-500 hover:border-yellow-400`;
       case 'action':
-        return `${baseStyle} bg-red-900/50 border-red-500 hover:border-red-400`;
+        return `${baseStyle} ${sizeStyle} bg-red-900/50 border-red-500 hover:border-red-400`;
       case 'image':
-        return `${baseStyle} bg-purple-900/50 border-purple-500 hover:border-purple-400`;
+        return `${baseStyle} ${sizeStyle} bg-purple-900/50 border-purple-500 hover:border-purple-400`;
       case 'note':
-        return `${baseStyle} bg-gray-800/50 border-gray-500 hover:border-gray-400`;
+        return `${baseStyle} ${sizeStyle} bg-gray-800/50 border-gray-500 hover:border-gray-400`;
       default:
-        return `${baseStyle} bg-gray-800/50 border-gray-500`;
+        return `${baseStyle} ${sizeStyle} bg-gray-800/50 border-gray-500`;
     }
   };
 
@@ -242,7 +248,7 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
                   <img
                     src={imageUrl}
                     alt="Preview"
-                    className="w-full h-32 object-cover rounded border border-gray-600"
+                    className="w-full max-h-32 object-contain rounded border border-gray-600"
                     onError={() => setImageUrl('')}
                   />
                   <button
@@ -302,15 +308,17 @@ const CustomNode = ({ data, selected }: { data: CustomNodeData; selected: boolea
           </div>
           {data.type === 'image' && data.imageUrl ? (
             <div className="space-y-2">
-              <img
-                src={data.imageUrl}
-                alt={data.label}
-                className="w-full h-24 object-cover rounded border border-gray-600"
-                onError={() => {
-                  // Si la imagen falla al cargar, la removemos
-                  data.imageUrl = '';
-                }}
-              />
+              <div className="relative">
+                <img
+                  src={data.imageUrl}
+                  alt={data.label}
+                  className="w-full max-h-48 object-contain rounded border border-gray-600"
+                  onError={() => {
+                    // Si la imagen falla al cargar, la removemos
+                    data.imageUrl = '';
+                  }}
+                />
+              </div>
               {data.content && (
                 <p className="text-gray-300 text-xs">{data.content}</p>
               )}
