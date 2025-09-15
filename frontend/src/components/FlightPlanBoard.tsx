@@ -21,6 +21,8 @@ import ReactFlow, {
   NodeMouseHandler,
   Handle,
   Position,
+  MarkerType,
+  ConnectionMode,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { 
@@ -212,7 +214,7 @@ const defaultEdgeOptions = {
     borderRadius: 20,
   },
   markerEnd: {
-    type: 'arrowclosed' as const,
+    type: MarkerType.ArrowClosed,
     color: '#3b82f6',
   },
   selected: {
@@ -441,7 +443,7 @@ const FlightPlanBoard = () => {
           connectionLineStyle={connectionLineStyle}
           fitView
           attributionPosition="bottom-left"
-          connectionMode="loose" as const
+          connectionMode={ConnectionMode.Loose}
         >
           <Controls />
           <Background variant={BackgroundVariant.Dots} />
