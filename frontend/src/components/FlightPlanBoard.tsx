@@ -392,6 +392,7 @@ const FlightPlanBoard = () => {
   } | null>(null);
   const [drawingColor, setDrawingColor] = useState('#3b82f6');
   const [selectedDrawingId, setSelectedDrawingId] = useState<string | null>(null);
+  const [selectionMode, setSelectionMode] = useState(false);
 
   // Función para agregar un nuevo nodo
   const addNode = useCallback((type: CustomNodeData['type']) => {
@@ -479,6 +480,8 @@ const FlightPlanBoard = () => {
       setIsDrawing(false);
     }
     setDrawingMode(newMode);
+    // Desactivar modo de selección al cambiar modo de dibujo
+    setSelectionMode(false);
   };
 
   // Funciones para herramientas de dibujo
@@ -846,23 +849,38 @@ const FlightPlanBoard = () => {
               Modo actual: {drawingMode}
             </div>
             
-            <button
-              onClick={clearDrawing}
-              className="w-full flex items-center space-x-1 bg-red-600/80 hover:bg-red-600 text-white px-2 py-1.5 rounded text-xs transition-all duration-200"
-            >
-              <X className="h-3 w-3" />
-              <span>Limpiar dibujo</span>
-            </button>
+            <div className="grid grid-cols-2 gap-1">
+              <button
+                onClick={() => setSelectionMode(!selectionMode)}
+                className={`flex items-center justify-center space-x-1 px-2 py-1.5 rounded text-xs transition-all duration-200 ${
+                  selectionMode 
+                    ? 'bg-yellow-600/80 hover:bg-yellow-600 text-white' 
+                    : 'bg-gray-600/80 hover:bg-gray-600 text-white'
+                }`}
+              >
+                <span>🎯</span>
+                <span>Seleccionar</span>
+              </button>
+              
+              <button
+                onClick={clearDrawing}
+                className="flex items-center justify-center space-x-1 bg-red-600/80 hover:bg-red-600 text-white px-2 py-1.5 rounded text-xs transition-all duration-200"
+              >
+                <X className="h-3 w-3" />
+                <span>Limpiar</span>
+              </button>
+            </div>
           </div>
 
           {/* Consejos compactos */}
           <div className="bg-gray-900/30 rounded p-2">
             <h4 className="text-xs font-semibold text-gray-300 mb-1">💡</h4>
             <ul className="text-xs text-gray-400 space-y-0.5">
-              <li>• Doble clic: editar</li>
-              <li>• Arrastra: conectar</li>
-              <li>• Delete: eliminar</li>
+              <li>• Doble clic: editar nodo</li>
+              <li>• Arrastra: conectar nodos</li>
+              <li>• Delete: eliminar seleccionado</li>
               <li>• Escape: cancelar dibujo</li>
+              <li>• 🎯 Seleccionar: activar modo selección</li>
             </ul>
           </div>
         </div>
@@ -1101,112 +1119,108 @@ const FlightPlanBoard = () => {
           </g>
         </svg>
         
-        {/* Capa de selección de dibujos */}
-        <div
-          className="absolute inset-0 pointer-events-auto"
-          style={{ zIndex: 16 }}
-          onClick={(e) => {
-            // Si se hace click en el fondo, deseleccionar
-            if (e.target === e.currentTarget) {
-              deselectAllDrawings();
-            }
-          }}
-        >
-          {drawingElements.map((element) => {
-            const isSelected = element.selected || selectedDrawingId === element.id;
-            if (!isSelected) return null;
-            
-            // Convertir coordenadas del viewport a coordenadas de pantalla
-            const screenPos1 = reactFlowInstance?.flowToScreenPosition({
-              x: element.x1,
-              y: element.y1
-            });
-            const screenPos2 = reactFlowInstance?.flowToScreenPosition({
-              x: element.x2,
-              y: element.y2
-            });
-            
-            if (!screenPos1 || !screenPos2) return null;
-            
-            if (element.type === 'line') {
-              return (
-                <div
-                  key={`select-${element.id}`}
-                  className="absolute pointer-events-auto"
-                  style={{
-                    left: Math.min(screenPos1.x, screenPos2.x) - 4,
-                    top: Math.min(screenPos1.y, screenPos2.y) - 4,
-                    width: Math.abs(screenPos2.x - screenPos1.x) + 8,
-                    height: Math.abs(screenPos2.y - screenPos1.y) + 8,
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => selectDrawing(element.id)}
-                />
-              );
-            } else if (element.type === 'rectangle') {
-              const width = Math.abs(element.x2 - element.x1);
-              const height = Math.abs(element.y2 - element.y1);
-              const x = Math.min(element.x1, element.x2);
-              const y = Math.min(element.y1, element.y2);
-              const screenPos = reactFlowInstance?.flowToScreenPosition({ x, y });
-              const screenWidth = width * viewport.zoom;
-              const screenHeight = height * viewport.zoom;
+        {/* Capa de selección de dibujos - solo en modo selección */}
+        {selectionMode && (
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ zIndex: 16 }}
+          >
+            {drawingElements.map((element) => {
+              const isSelected = element.selected || selectedDrawingId === element.id;
+              if (!isSelected) return null;
               
-              if (!screenPos) return null;
+              // Convertir coordenadas del viewport a coordenadas de pantalla
+              const screenPos1 = reactFlowInstance?.flowToScreenPosition({
+                x: element.x1,
+                y: element.y1
+              });
+              const screenPos2 = reactFlowInstance?.flowToScreenPosition({
+                x: element.x2,
+                y: element.y2
+              });
               
-              return (
-                <div
-                  key={`select-${element.id}`}
-                  className="absolute pointer-events-auto"
-                  style={{
-                    left: screenPos.x - 4,
-                    top: screenPos.y - 4,
-                    width: screenWidth + 8,
-                    height: screenHeight + 8,
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => selectDrawing(element.id)}
-                />
-              );
-            } else if (element.type === 'circle') {
-              const radius = Math.sqrt(
-                Math.pow(element.x2 - element.x1, 2) + Math.pow(element.y2 - element.y1, 2)
-              );
-              const screenRadius = radius * viewport.zoom;
+              if (!screenPos1 || !screenPos2) return null;
               
-              return (
-                <div
-                  key={`select-${element.id}`}
-                  className="absolute pointer-events-auto rounded-full"
-                  style={{
-                    left: screenPos1.x - screenRadius - 4,
-                    top: screenPos1.y - screenRadius - 4,
-                    width: (screenRadius * 2) + 8,
-                    height: (screenRadius * 2) + 8,
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => selectDrawing(element.id)}
-                />
-              );
-            } else if (element.type === 'text') {
-              return (
-                <div
-                  key={`select-${element.id}`}
-                  className="absolute pointer-events-auto"
-                  style={{
-                    left: screenPos1.x - 4,
-                    top: screenPos1.y - 20,
-                    width: 100,
-                    height: 30,
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => selectDrawing(element.id)}
-                />
-              );
-            }
-            return null;
-          })}
-        </div>
+              if (element.type === 'line') {
+                return (
+                  <div
+                    key={`select-${element.id}`}
+                    className="absolute pointer-events-auto"
+                    style={{
+                      left: Math.min(screenPos1.x, screenPos2.x) - 4,
+                      top: Math.min(screenPos1.y, screenPos2.y) - 4,
+                      width: Math.abs(screenPos2.x - screenPos1.x) + 8,
+                      height: Math.abs(screenPos2.y - screenPos1.y) + 8,
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => selectDrawing(element.id)}
+                  />
+                );
+              } else if (element.type === 'rectangle') {
+                const width = Math.abs(element.x2 - element.x1);
+                const height = Math.abs(element.y2 - element.y1);
+                const x = Math.min(element.x1, element.x2);
+                const y = Math.min(element.y1, element.y2);
+                const screenPos = reactFlowInstance?.flowToScreenPosition({ x, y });
+                const screenWidth = width * viewport.zoom;
+                const screenHeight = height * viewport.zoom;
+                
+                if (!screenPos) return null;
+                
+                return (
+                  <div
+                    key={`select-${element.id}`}
+                    className="absolute pointer-events-auto"
+                    style={{
+                      left: screenPos.x - 4,
+                      top: screenPos.y - 4,
+                      width: screenWidth + 8,
+                      height: screenHeight + 8,
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => selectDrawing(element.id)}
+                  />
+                );
+              } else if (element.type === 'circle') {
+                const radius = Math.sqrt(
+                  Math.pow(element.x2 - element.x1, 2) + Math.pow(element.y2 - element.y1, 2)
+                );
+                const screenRadius = radius * viewport.zoom;
+                
+                return (
+                  <div
+                    key={`select-${element.id}`}
+                    className="absolute pointer-events-auto rounded-full"
+                    style={{
+                      left: screenPos1.x - screenRadius - 4,
+                      top: screenPos1.y - screenRadius - 4,
+                      width: (screenRadius * 2) + 8,
+                      height: (screenRadius * 2) + 8,
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => selectDrawing(element.id)}
+                  />
+                );
+              } else if (element.type === 'text') {
+                return (
+                  <div
+                    key={`select-${element.id}`}
+                    className="absolute pointer-events-auto"
+                    style={{
+                      left: screenPos1.x - 4,
+                      top: screenPos1.y - 20,
+                      width: 100,
+                      height: 30,
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => selectDrawing(element.id)}
+                  />
+                );
+              }
+              return null;
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
