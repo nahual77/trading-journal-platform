@@ -217,9 +217,6 @@ const defaultEdgeOptions = {
     type: MarkerType.ArrowClosed,
     color: '#3b82f6',
   },
-  selected: {
-    style: { strokeWidth: 3, stroke: '#f59e0b' },
-  },
 };
 
 // Componente principal del tablero
