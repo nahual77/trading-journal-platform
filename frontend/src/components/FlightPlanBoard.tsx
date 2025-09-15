@@ -933,7 +933,7 @@ const FlightPlanBoard = () => {
         
         {/* Capa de dibujo */}
         <svg
-          className="absolute inset-0 pointer-events-auto"
+          className="absolute inset-0 pointer-events-none"
           style={{ zIndex: 15 }}
           width="100%"
           height="100%"
@@ -1150,8 +1150,104 @@ const FlightPlanBoard = () => {
           </g>
         </svg>
         
+        {/* Capa de selección de dibujos */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ zIndex: 16 }}
+        >
+          {drawingElements.map((element) => {
+            if (!reactFlowInstance) return null;
+            
+            // Convertir coordenadas del viewport a coordenadas de pantalla
+            const screenPos1 = reactFlowInstance.flowToScreenPosition({
+              x: element.x1,
+              y: element.y1
+            });
+            const screenPos2 = reactFlowInstance.flowToScreenPosition({
+              x: element.x2,
+              y: element.y2
+            });
+            
+            if (element.type === 'line') {
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: Math.min(screenPos1.x, screenPos2.x) - 4,
+                    top: Math.min(screenPos1.y, screenPos2.y) - 4,
+                    width: Math.abs(screenPos2.x - screenPos1.x) + 8,
+                    height: Math.abs(screenPos2.y - screenPos1.y) + 8,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => selectDrawing(element.id)}
+                />
+              );
+            } else if (element.type === 'rectangle') {
+              const width = Math.abs(element.x2 - element.x1);
+              const height = Math.abs(element.y2 - element.y1);
+              const x = Math.min(element.x1, element.x2);
+              const y = Math.min(element.y1, element.y2);
+              const screenPos = reactFlowInstance.flowToScreenPosition({ x, y });
+              const screenWidth = width * viewport.zoom;
+              const screenHeight = height * viewport.zoom;
+              
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: screenPos.x - 4,
+                    top: screenPos.y - 4,
+                    width: screenWidth + 8,
+                    height: screenHeight + 8,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => selectDrawing(element.id)}
+                />
+              );
+            } else if (element.type === 'circle') {
+              const radius = Math.sqrt(
+                Math.pow(element.x2 - element.x1, 2) + Math.pow(element.y2 - element.y1, 2)
+              );
+              const screenRadius = radius * viewport.zoom;
+              
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto rounded-full"
+                  style={{
+                    left: screenPos1.x - screenRadius - 4,
+                    top: screenPos1.y - screenRadius - 4,
+                    width: (screenRadius * 2) + 8,
+                    height: (screenRadius * 2) + 8,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => selectDrawing(element.id)}
+                />
+              );
+            } else if (element.type === 'text') {
+              return (
+                <div
+                  key={`select-${element.id}`}
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: screenPos1.x - 4,
+                    top: screenPos1.y - 20,
+                    width: 100,
+                    height: 30,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => selectDrawing(element.id)}
+                />
+              );
+            }
+            return null;
+          })}
+        </div>
+        
         {/* Popup para dibujo seleccionado */}
-        {selectedDrawingId && reactFlowInstance && (
+        {selectedDrawingId && (
           <div
             className="absolute pointer-events-auto z-50"
             style={{
