@@ -364,6 +364,30 @@ const FlightPlanBoard = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [selectedNodeType, setSelectedNodeType] = useState<CustomNodeData['type']>('trigger');
+  
+  // Estados para herramientas de dibujo
+  const [drawingMode, setDrawingMode] = useState<'none' | 'line' | 'rectangle' | 'circle' | 'text'>('none');
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [drawingElements, setDrawingElements] = useState<Array<{
+    id: string;
+    type: 'line' | 'rectangle' | 'circle' | 'text';
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    text?: string;
+    color: string;
+  }>>([]);
+  const [currentElement, setCurrentElement] = useState<{
+    id: string;
+    type: 'line' | 'rectangle' | 'circle' | 'text';
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    text?: string;
+    color: string;
+  } | null>(null);
 
   // Función para agregar un nuevo nodo
   const addNode = useCallback((type: CustomNodeData['type']) => {
@@ -436,10 +460,73 @@ const FlightPlanBoard = () => {
     if (confirm('¿Estás seguro de que quieres limpiar todo el tablero?')) {
       setNodes([]);
       setEdges([]);
+      setDrawingElements([]);
       localStorage.removeItem('flightPlanBoard');
       alert('Tablero limpiado');
     }
   }, [setNodes, setEdges]);
+
+  // Funciones para herramientas de dibujo
+  const handleMouseDown = (event: React.MouseEvent) => {
+    if (drawingMode === 'none') return;
+    
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    const newElement = {
+      id: `draw-${Date.now()}`,
+      type: drawingMode,
+      x1: x,
+      y1: y,
+      x2: x,
+      y2: y,
+      text: drawingMode === 'text' ? 'Texto' : undefined,
+      color: '#3b82f6'
+    };
+    
+    setCurrentElement(newElement);
+    setIsDrawing(true);
+  };
+
+  const handleMouseMove = (event: React.MouseEvent) => {
+    if (!isDrawing || !currentElement) return;
+    
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    setCurrentElement({
+      ...currentElement,
+      x2: x,
+      y2: y
+    });
+  };
+
+  const handleMouseUp = () => {
+    if (!isDrawing || !currentElement) return;
+    
+    setDrawingElements(prev => [...prev, currentElement]);
+    setCurrentElement(null);
+    setIsDrawing(false);
+    
+    if (drawingMode === 'text') {
+      const text = prompt('Ingresa el texto:');
+      if (text) {
+        setDrawingElements(prev => 
+          prev.map(el => 
+            el.id === currentElement.id 
+              ? { ...el, text }
+              : el
+          )
+        );
+      }
+    }
+  };
+
+  const clearDrawing = () => {
+    setDrawingElements([]);
+  };
 
   // Cargar tablero al montar el componente
   React.useEffect(() => {
@@ -553,6 +640,68 @@ const FlightPlanBoard = () => {
             </button>
           </div>
 
+          {/* Herramientas de dibujo */}
+          <div className="space-y-2">
+            <h3 className="text-xs font-semibold text-gray-300 flex items-center space-x-1">
+              <span>✏️</span>
+              <span>Dibujo</span>
+            </h3>
+            
+            <div className="grid grid-cols-2 gap-1">
+              <button
+                onClick={() => setDrawingMode(drawingMode === 'line' ? 'none' : 'line')}
+                className={`px-2 py-1.5 rounded text-xs transition-all duration-200 ${
+                  drawingMode === 'line' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50'
+                }`}
+              >
+                📏 Línea
+              </button>
+              
+              <button
+                onClick={() => setDrawingMode(drawingMode === 'rectangle' ? 'none' : 'rectangle')}
+                className={`px-2 py-1.5 rounded text-xs transition-all duration-200 ${
+                  drawingMode === 'rectangle' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50'
+                }`}
+              >
+                ⬜ Rectángulo
+              </button>
+              
+              <button
+                onClick={() => setDrawingMode(drawingMode === 'circle' ? 'none' : 'circle')}
+                className={`px-2 py-1.5 rounded text-xs transition-all duration-200 ${
+                  drawingMode === 'circle' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50'
+                }`}
+              >
+                ⭕ Círculo
+              </button>
+              
+              <button
+                onClick={() => setDrawingMode(drawingMode === 'text' ? 'none' : 'text')}
+                className={`px-2 py-1.5 rounded text-xs transition-all duration-200 ${
+                  drawingMode === 'text' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50'
+                }`}
+              >
+                📝 Texto
+              </button>
+            </div>
+            
+            <button
+              onClick={clearDrawing}
+              className="w-full flex items-center space-x-1 bg-red-600/80 hover:bg-red-600 text-white px-2 py-1.5 rounded text-xs transition-all duration-200"
+            >
+              <X className="h-3 w-3" />
+              <span>Limpiar dibujo</span>
+            </button>
+          </div>
+
           {/* Consejos compactos */}
           <div className="bg-gray-900/30 rounded p-2">
             <h4 className="text-xs font-semibold text-gray-300 mb-1">💡</h4>
@@ -566,7 +715,7 @@ const FlightPlanBoard = () => {
       </div>
 
       {/* Tablero React Flow */}
-      <div className="h-full w-full">
+      <div className="h-full w-full relative">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -580,6 +729,9 @@ const FlightPlanBoard = () => {
           fitView
           attributionPosition="bottom-left"
           connectionMode={ConnectionMode.Loose}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
         >
           <Controls />
           <Background variant={BackgroundVariant.Dots} />
@@ -605,6 +757,118 @@ const FlightPlanBoard = () => {
             pannable
           />
         </ReactFlow>
+        
+        {/* Capa de dibujo */}
+        <svg
+          className="absolute inset-0 pointer-events-none"
+          style={{ zIndex: 10 }}
+        >
+          {/* Elementos dibujados */}
+          {drawingElements.map((element) => {
+            if (element.type === 'line') {
+              return (
+                <line
+                  key={element.id}
+                  x1={element.x1}
+                  y1={element.y1}
+                  x2={element.x2}
+                  y2={element.y2}
+                  stroke={element.color}
+                  strokeWidth="2"
+                />
+              );
+            } else if (element.type === 'rectangle') {
+              const width = Math.abs(element.x2 - element.x1);
+              const height = Math.abs(element.y2 - element.y1);
+              const x = Math.min(element.x1, element.x2);
+              const y = Math.min(element.y1, element.y2);
+              return (
+                <rect
+                  key={element.id}
+                  x={x}
+                  y={y}
+                  width={width}
+                  height={height}
+                  stroke={element.color}
+                  strokeWidth="2"
+                  fill="none"
+                />
+              );
+            } else if (element.type === 'circle') {
+              const radius = Math.sqrt(
+                Math.pow(element.x2 - element.x1, 2) + Math.pow(element.y2 - element.y1, 2)
+              );
+              return (
+                <circle
+                  key={element.id}
+                  cx={element.x1}
+                  cy={element.y1}
+                  r={radius}
+                  stroke={element.color}
+                  strokeWidth="2"
+                  fill="none"
+                />
+              );
+            } else if (element.type === 'text') {
+              return (
+                <text
+                  key={element.id}
+                  x={element.x1}
+                  y={element.y1}
+                  fill={element.color}
+                  fontSize="14"
+                  fontFamily="Arial, sans-serif"
+                >
+                  {element.text}
+                </text>
+              );
+            }
+            return null;
+          })}
+          
+          {/* Elemento actual siendo dibujado */}
+          {currentElement && (
+            <>
+              {currentElement.type === 'line' && (
+                <line
+                  x1={currentElement.x1}
+                  y1={currentElement.y1}
+                  x2={currentElement.x2}
+                  y2={currentElement.y2}
+                  stroke={currentElement.color}
+                  strokeWidth="2"
+                  strokeDasharray="5,5"
+                />
+              )}
+              {currentElement.type === 'rectangle' && (
+                <rect
+                  x={Math.min(currentElement.x1, currentElement.x2)}
+                  y={Math.min(currentElement.y1, currentElement.y2)}
+                  width={Math.abs(currentElement.x2 - currentElement.x1)}
+                  height={Math.abs(currentElement.y2 - currentElement.y1)}
+                  stroke={currentElement.color}
+                  strokeWidth="2"
+                  fill="none"
+                  strokeDasharray="5,5"
+                />
+              )}
+              {currentElement.type === 'circle' && (
+                <circle
+                  cx={currentElement.x1}
+                  cy={currentElement.y1}
+                  r={Math.sqrt(
+                    Math.pow(currentElement.x2 - currentElement.x1, 2) + 
+                    Math.pow(currentElement.y2 - currentElement.y1, 2)
+                  )}
+                  stroke={currentElement.color}
+                  strokeWidth="2"
+                  fill="none"
+                  strokeDasharray="5,5"
+                />
+              )}
+            </>
+          )}
+        </svg>
       </div>
     </div>
   );
