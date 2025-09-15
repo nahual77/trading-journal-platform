@@ -378,6 +378,7 @@ const FlightPlanBoard = () => {
     y2: number;
     text?: string;
     color: string;
+    selected?: boolean;
   }>>([]);
   const [currentElement, setCurrentElement] = useState<{
     id: string;
@@ -389,6 +390,8 @@ const FlightPlanBoard = () => {
     text?: string;
     color: string;
   } | null>(null);
+  const [drawingColor, setDrawingColor] = useState('#3b82f6');
+  const [selectedDrawingId, setSelectedDrawingId] = useState<string | null>(null);
 
   // Función para agregar un nuevo nodo
   const addNode = useCallback((type: CustomNodeData['type']) => {
@@ -501,7 +504,7 @@ const FlightPlanBoard = () => {
       x2: position.x,
       y2: position.y,
       text: drawingMode === 'text' ? 'Texto' : undefined,
-      color: '#3b82f6'
+      color: drawingColor
     };
     
     setCurrentElement(newElement);
@@ -555,6 +558,42 @@ const FlightPlanBoard = () => {
 
   const clearDrawing = () => {
     setDrawingElements([]);
+    setSelectedDrawingId(null);
+  };
+
+  // Función para seleccionar un dibujo
+  const selectDrawing = (id: string) => {
+    setSelectedDrawingId(id);
+    setDrawingElements(prev => 
+      prev.map(el => ({ ...el, selected: el.id === id }))
+    );
+  };
+
+  // Función para deseleccionar todos los dibujos
+  const deselectAllDrawings = () => {
+    setSelectedDrawingId(null);
+    setDrawingElements(prev => 
+      prev.map(el => ({ ...el, selected: false }))
+    );
+  };
+
+  // Función para eliminar dibujo seleccionado
+  const deleteSelectedDrawing = () => {
+    if (selectedDrawingId) {
+      setDrawingElements(prev => prev.filter(el => el.id !== selectedDrawingId));
+      setSelectedDrawingId(null);
+    }
+  };
+
+  // Función para cambiar color del dibujo seleccionado
+  const changeSelectedDrawingColor = (color: string) => {
+    if (selectedDrawingId) {
+      setDrawingElements(prev => 
+        prev.map(el => 
+          el.id === selectedDrawingId ? { ...el, color } : el
+        )
+      );
+    }
   };
 
   // Cargar tablero al montar el componente
@@ -590,7 +629,7 @@ const FlightPlanBoard = () => {
   return (
     <div className="h-full w-full bg-gray-900 relative">
       {/* Panel flotante izquierdo compacto */}
-      <div className="absolute left-3 top-3 z-10 w-64">
+      <div className="absolute left-3 top-3 z-50 w-64">
         <div className="bg-black/40 backdrop-blur-md border border-gray-700/30 rounded-lg shadow-2xl p-4">
           {/* Título compacto */}
           <div className="flex items-center space-x-2 mb-4">
@@ -689,6 +728,24 @@ const FlightPlanBoard = () => {
               )}
             </h3>
             
+            {/* Selector de color */}
+            <div className="space-y-1">
+              <label className="text-xs text-gray-400">Color:</label>
+              <div className="flex space-x-1">
+                {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#6b7280'].map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => setDrawingColor(color)}
+                    className={`w-6 h-6 rounded border-2 ${
+                      drawingColor === color ? 'border-white' : 'border-gray-600'
+                    }`}
+                    style={{ backgroundColor: color }}
+                    title={color}
+                  />
+                ))}
+              </div>
+            </div>
+            
             <div className="grid grid-cols-2 gap-1">
               <button
                 onClick={() => changeDrawingMode(drawingMode === 'line' ? 'none' : 'line')}
@@ -744,6 +801,44 @@ const FlightPlanBoard = () => {
                 <X className="h-3 w-3" />
                 <span>Desactivar dibujo</span>
               </button>
+            )}
+            
+            {/* Controles para dibujo seleccionado */}
+            {selectedDrawingId && (
+              <div className="space-y-2 p-2 bg-gray-800/50 rounded">
+                <div className="text-xs text-gray-300">Dibujo seleccionado:</div>
+                <div className="flex space-x-1">
+                  <button
+                    onClick={deleteSelectedDrawing}
+                    className="flex-1 bg-red-600/80 hover:bg-red-600 text-white px-2 py-1 rounded text-xs"
+                  >
+                    Eliminar
+                  </button>
+                  <button
+                    onClick={deselectAllDrawings}
+                    className="flex-1 bg-gray-600/80 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs"
+                  >
+                    Deseleccionar
+                  </button>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs text-gray-400">Cambiar color:</label>
+                  <div className="flex space-x-1">
+                    {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#6b7280'].map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => changeSelectedDrawingColor(color)}
+                        className={`w-4 h-4 rounded border ${
+                          drawingElements.find(el => el.id === selectedDrawingId)?.color === color 
+                            ? 'border-white' : 'border-gray-600'
+                        }`}
+                        style={{ backgroundColor: color }}
+                        title={color}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             )}
             
             {/* Debug info */}
@@ -835,8 +930,8 @@ const FlightPlanBoard = () => {
         
         {/* Capa de dibujo */}
         <svg
-          className="absolute inset-0 pointer-events-none"
-          style={{ zIndex: 10 }}
+          className="absolute inset-0 pointer-events-auto"
+          style={{ zIndex: 15 }}
           width="100%"
           height="100%"
         >
@@ -845,17 +940,45 @@ const FlightPlanBoard = () => {
           >
             {/* Elementos dibujados */}
             {drawingElements.map((element) => {
+              const isSelected = element.selected || selectedDrawingId === element.id;
+              const strokeWidth = (2 / viewport.zoom) + (isSelected ? 2 : 0);
+              const strokeColor = isSelected ? '#f59e0b' : element.color;
+              
               if (element.type === 'line') {
                 return (
-                  <line
-                    key={element.id}
-                    x1={element.x1}
-                    y1={element.y1}
-                    x2={element.x2}
-                    y2={element.y2}
-                    stroke={element.color}
-                    strokeWidth={2 / viewport.zoom}
-                  />
+                  <g key={element.id}>
+                    <line
+                      x1={element.x1}
+                      y1={element.y1}
+                      x2={element.x2}
+                      y2={element.y2}
+                      stroke={element.color}
+                      strokeWidth={2 / viewport.zoom}
+                    />
+                    {isSelected && (
+                      <line
+                        x1={element.x1}
+                        y1={element.y1}
+                        x2={element.x2}
+                        y2={element.y2}
+                        stroke={strokeColor}
+                        strokeWidth={strokeWidth}
+                        strokeDasharray="5,5"
+                        onClick={() => selectDrawing(element.id)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                    <line
+                      x1={element.x1}
+                      y1={element.y1}
+                      x2={element.x2}
+                      y2={element.y2}
+                      stroke="transparent"
+                      strokeWidth={Math.max(8, strokeWidth)}
+                      onClick={() => selectDrawing(element.id)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </g>
                 );
               } else if (element.type === 'rectangle') {
                 const width = Math.abs(element.x2 - element.x1);
@@ -863,44 +986,121 @@ const FlightPlanBoard = () => {
                 const x = Math.min(element.x1, element.x2);
                 const y = Math.min(element.y1, element.y2);
                 return (
-                  <rect
-                    key={element.id}
-                    x={x}
-                    y={y}
-                    width={width}
-                    height={height}
-                    stroke={element.color}
-                    strokeWidth={2 / viewport.zoom}
-                    fill="none"
-                  />
+                  <g key={element.id}>
+                    <rect
+                      x={x}
+                      y={y}
+                      width={width}
+                      height={height}
+                      stroke={element.color}
+                      strokeWidth={2 / viewport.zoom}
+                      fill="none"
+                    />
+                    {isSelected && (
+                      <rect
+                        x={x}
+                        y={y}
+                        width={width}
+                        height={height}
+                        stroke={strokeColor}
+                        strokeWidth={strokeWidth}
+                        fill="none"
+                        strokeDasharray="5,5"
+                        onClick={() => selectDrawing(element.id)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                    <rect
+                      x={x}
+                      y={y}
+                      width={width}
+                      height={height}
+                      stroke="transparent"
+                      strokeWidth={Math.max(8, strokeWidth)}
+                      fill="none"
+                      onClick={() => selectDrawing(element.id)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </g>
                 );
               } else if (element.type === 'circle') {
                 const radius = Math.sqrt(
                   Math.pow(element.x2 - element.x1, 2) + Math.pow(element.y2 - element.y1, 2)
                 );
                 return (
-                  <circle
-                    key={element.id}
-                    cx={element.x1}
-                    cy={element.y1}
-                    r={radius}
-                    stroke={element.color}
-                    strokeWidth={2 / viewport.zoom}
-                    fill="none"
-                  />
+                  <g key={element.id}>
+                    <circle
+                      cx={element.x1}
+                      cy={element.y1}
+                      r={radius}
+                      stroke={element.color}
+                      strokeWidth={2 / viewport.zoom}
+                      fill="none"
+                    />
+                    {isSelected && (
+                      <circle
+                        cx={element.x1}
+                        cy={element.y1}
+                        r={radius}
+                        stroke={strokeColor}
+                        strokeWidth={strokeWidth}
+                        fill="none"
+                        strokeDasharray="5,5"
+                        onClick={() => selectDrawing(element.id)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                    <circle
+                      cx={element.x1}
+                      cy={element.y1}
+                      r={radius}
+                      stroke="transparent"
+                      strokeWidth={Math.max(8, strokeWidth)}
+                      fill="none"
+                      onClick={() => selectDrawing(element.id)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </g>
                 );
               } else if (element.type === 'text') {
                 return (
-                  <text
-                    key={element.id}
-                    x={element.x1}
-                    y={element.y1}
-                    fill={element.color}
-                    fontSize={14 / viewport.zoom}
-                    fontFamily="Arial, sans-serif"
-                  >
-                    {element.text}
-                  </text>
+                  <g key={element.id}>
+                    <text
+                      x={element.x1}
+                      y={element.y1}
+                      fill={element.color}
+                      fontSize={14 / viewport.zoom}
+                      fontFamily="Arial, sans-serif"
+                    >
+                      {element.text}
+                    </text>
+                    {isSelected && (
+                      <text
+                        x={element.x1}
+                        y={element.y1}
+                        fill={strokeColor}
+                        fontSize={14 / viewport.zoom}
+                        fontFamily="Arial, sans-serif"
+                        stroke={strokeColor}
+                        strokeWidth={1}
+                        onClick={() => selectDrawing(element.id)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {element.text}
+                      </text>
+                    )}
+                    <text
+                      x={element.x1}
+                      y={element.y1}
+                      fill="transparent"
+                      fontSize={Math.max(20, 14 / viewport.zoom)}
+                      fontFamily="Arial, sans-serif"
+                      onClick={() => selectDrawing(element.id)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {element.text}
+                    </text>
+                  </g>
                 );
               }
               return null;
