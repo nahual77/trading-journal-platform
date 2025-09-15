@@ -392,7 +392,6 @@ const FlightPlanBoard = () => {
   } | null>(null);
   const [drawingColor, setDrawingColor] = useState('#3b82f6');
   const [selectedDrawingId, setSelectedDrawingId] = useState<string | null>(null);
-  const [selectionMode, setSelectionMode] = useState(false);
 
   // Función para agregar un nuevo nodo
   const addNode = useCallback((type: CustomNodeData['type']) => {
@@ -480,8 +479,8 @@ const FlightPlanBoard = () => {
       setIsDrawing(false);
     }
     setDrawingMode(newMode);
-    // Desactivar modo de selección al cambiar modo de dibujo
-    setSelectionMode(false);
+    // Deseleccionar dibujos al cambiar modo de dibujo
+    deselectAllDrawings();
   };
 
   // Funciones para herramientas de dibujo
@@ -849,27 +848,13 @@ const FlightPlanBoard = () => {
               Modo actual: {drawingMode}
             </div>
             
-            <div className="grid grid-cols-2 gap-1">
-              <button
-                onClick={() => setSelectionMode(!selectionMode)}
-                className={`flex items-center justify-center space-x-1 px-2 py-1.5 rounded text-xs transition-all duration-200 ${
-                  selectionMode 
-                    ? 'bg-yellow-600/80 hover:bg-yellow-600 text-white' 
-                    : 'bg-gray-600/80 hover:bg-gray-600 text-white'
-                }`}
-              >
-                <span>🎯</span>
-                <span>Seleccionar</span>
-              </button>
-              
-              <button
-                onClick={clearDrawing}
-                className="flex items-center justify-center space-x-1 bg-red-600/80 hover:bg-red-600 text-white px-2 py-1.5 rounded text-xs transition-all duration-200"
-              >
-                <X className="h-3 w-3" />
-                <span>Limpiar</span>
-              </button>
-            </div>
+            <button
+              onClick={clearDrawing}
+              className="w-full flex items-center justify-center space-x-1 bg-red-600/80 hover:bg-red-600 text-white px-2 py-1.5 rounded text-xs transition-all duration-200"
+            >
+              <X className="h-3 w-3" />
+              <span>Limpiar dibujos</span>
+            </button>
           </div>
 
           {/* Consejos compactos */}
@@ -880,7 +865,7 @@ const FlightPlanBoard = () => {
               <li>• Arrastra: conectar nodos</li>
               <li>• Delete: eliminar seleccionado</li>
               <li>• Escape: cancelar dibujo</li>
-              <li>• 🎯 Seleccionar: activar modo selección</li>
+              <li>• Click: seleccionar dibujo</li>
             </ul>
           </div>
         </div>
@@ -948,7 +933,7 @@ const FlightPlanBoard = () => {
         
         {/* Capa de dibujo */}
         <svg
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-auto"
           style={{ zIndex: 15 }}
           width="100%"
           height="100%"
@@ -984,6 +969,17 @@ const FlightPlanBoard = () => {
                         strokeDasharray="5,5"
                       />
                     )}
+                    {/* Área de click transparente */}
+                    <line
+                      x1={element.x1}
+                      y1={element.y1}
+                      x2={element.x2}
+                      y2={element.y2}
+                      stroke="transparent"
+                      strokeWidth={Math.max(8, 8 / viewport.zoom)}
+                      onClick={() => selectDrawing(element.id)}
+                      style={{ cursor: 'pointer' }}
+                    />
                   </g>
                 );
               } else if (element.type === 'rectangle') {
@@ -1014,6 +1010,18 @@ const FlightPlanBoard = () => {
                         strokeDasharray="5,5"
                       />
                     )}
+                    {/* Área de click transparente */}
+                    <rect
+                      x={x}
+                      y={y}
+                      width={width}
+                      height={height}
+                      stroke="transparent"
+                      strokeWidth={Math.max(8, 8 / viewport.zoom)}
+                      fill="none"
+                      onClick={() => selectDrawing(element.id)}
+                      style={{ cursor: 'pointer' }}
+                    />
                   </g>
                 );
               } else if (element.type === 'circle') {
@@ -1041,6 +1049,17 @@ const FlightPlanBoard = () => {
                         strokeDasharray="5,5"
                       />
                     )}
+                    {/* Área de click transparente */}
+                    <circle
+                      cx={element.x1}
+                      cy={element.y1}
+                      r={radius}
+                      stroke="transparent"
+                      strokeWidth={Math.max(8, 8 / viewport.zoom)}
+                      fill="none"
+                      onClick={() => selectDrawing(element.id)}
+                      style={{ cursor: 'pointer' }}
+                    />
                   </g>
                 );
               } else if (element.type === 'text') {
@@ -1068,6 +1087,18 @@ const FlightPlanBoard = () => {
                         {element.text}
                       </text>
                     )}
+                    {/* Área de click transparente */}
+                    <text
+                      x={element.x1}
+                      y={element.y1}
+                      fill="transparent"
+                      fontSize={Math.max(20, 20 / viewport.zoom)}
+                      fontFamily="Arial, sans-serif"
+                      onClick={() => selectDrawing(element.id)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {element.text}
+                    </text>
                   </g>
                 );
               }
@@ -1119,106 +1150,55 @@ const FlightPlanBoard = () => {
           </g>
         </svg>
         
-        {/* Capa de selección de dibujos - solo en modo selección */}
-        {selectionMode && (
+        {/* Popup para dibujo seleccionado */}
+        {selectedDrawingId && reactFlowInstance && (
           <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ zIndex: 16 }}
+            className="absolute pointer-events-auto z-50"
+            style={{
+              left: '50%',
+              top: '20px',
+              transform: 'translateX(-50%)',
+              zIndex: 50
+            }}
           >
-            {drawingElements.map((element) => {
-              const isSelected = element.selected || selectedDrawingId === element.id;
-              if (!isSelected) return null;
-              
-              // Convertir coordenadas del viewport a coordenadas de pantalla
-              const screenPos1 = reactFlowInstance?.flowToScreenPosition({
-                x: element.x1,
-                y: element.y1
-              });
-              const screenPos2 = reactFlowInstance?.flowToScreenPosition({
-                x: element.x2,
-                y: element.y2
-              });
-              
-              if (!screenPos1 || !screenPos2) return null;
-              
-              if (element.type === 'line') {
-                return (
-                  <div
-                    key={`select-${element.id}`}
-                    className="absolute pointer-events-auto"
-                    style={{
-                      left: Math.min(screenPos1.x, screenPos2.x) - 4,
-                      top: Math.min(screenPos1.y, screenPos2.y) - 4,
-                      width: Math.abs(screenPos2.x - screenPos1.x) + 8,
-                      height: Math.abs(screenPos2.y - screenPos1.y) + 8,
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => selectDrawing(element.id)}
-                  />
-                );
-              } else if (element.type === 'rectangle') {
-                const width = Math.abs(element.x2 - element.x1);
-                const height = Math.abs(element.y2 - element.y1);
-                const x = Math.min(element.x1, element.x2);
-                const y = Math.min(element.y1, element.y2);
-                const screenPos = reactFlowInstance?.flowToScreenPosition({ x, y });
-                const screenWidth = width * viewport.zoom;
-                const screenHeight = height * viewport.zoom;
-                
-                if (!screenPos) return null;
-                
-                return (
-                  <div
-                    key={`select-${element.id}`}
-                    className="absolute pointer-events-auto"
-                    style={{
-                      left: screenPos.x - 4,
-                      top: screenPos.y - 4,
-                      width: screenWidth + 8,
-                      height: screenHeight + 8,
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => selectDrawing(element.id)}
-                  />
-                );
-              } else if (element.type === 'circle') {
-                const radius = Math.sqrt(
-                  Math.pow(element.x2 - element.x1, 2) + Math.pow(element.y2 - element.y1, 2)
-                );
-                const screenRadius = radius * viewport.zoom;
-                
-                return (
-                  <div
-                    key={`select-${element.id}`}
-                    className="absolute pointer-events-auto rounded-full"
-                    style={{
-                      left: screenPos1.x - screenRadius - 4,
-                      top: screenPos1.y - screenRadius - 4,
-                      width: (screenRadius * 2) + 8,
-                      height: (screenRadius * 2) + 8,
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => selectDrawing(element.id)}
-                  />
-                );
-              } else if (element.type === 'text') {
-                return (
-                  <div
-                    key={`select-${element.id}`}
-                    className="absolute pointer-events-auto"
-                    style={{
-                      left: screenPos1.x - 4,
-                      top: screenPos1.y - 20,
-                      width: 100,
-                      height: 30,
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => selectDrawing(element.id)}
-                  />
-                );
-              }
-              return null;
-            })}
+            <div className="bg-black/80 backdrop-blur-md border border-gray-700/30 rounded-lg shadow-2xl p-3">
+              <div className="flex items-center space-x-3">
+                <div className="text-white text-sm font-medium">
+                  Dibujo seleccionado
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={deleteSelectedDrawing}
+                    className="bg-red-600/80 hover:bg-red-600 text-white px-2 py-1 rounded text-xs transition-colors"
+                  >
+                    Eliminar
+                  </button>
+                  <button
+                    onClick={deselectAllDrawings}
+                    className="bg-gray-600/80 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+              <div className="mt-2">
+                <div className="text-xs text-gray-400 mb-1">Cambiar color:</div>
+                <div className="flex space-x-1">
+                  {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#6b7280'].map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => changeSelectedDrawingColor(color)}
+                      className={`w-6 h-6 rounded border-2 ${
+                        drawingElements.find(el => el.id === selectedDrawingId)?.color === color 
+                          ? 'border-white' : 'border-gray-600'
+                      }`}
+                      style={{ backgroundColor: color }}
+                      title={color}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
