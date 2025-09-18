@@ -216,11 +216,14 @@ const EducatorDashboard: React.FC = () => {
                 alt="Growjou" 
                 className="h-12 w-auto"
               />
-              <div className="text-center">
-                <h1 className="text-2xl font-bold text-white">Dashboard del Educador</h1>
-                <p className="text-gray-400 text-sm">Gestiona tus módulos y estudiantes</p>
-              </div>
             </div>
+            
+            {/* Título centrado */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
+              <h1 className="text-2xl font-bold text-white">Dashboard del Educador</h1>
+              <p className="text-gray-400 text-sm">Gestiona tus módulos y estudiantes</p>
+            </div>
+            
             <div className="flex items-center space-x-4">
               <Button 
                 variant="ghost" 
