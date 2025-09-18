@@ -223,18 +223,18 @@ const EducatorDashboard: React.FC = () => {
             </div>
             <div className="flex items-center space-x-4">
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="sm" 
-                className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                className="text-gray-300 hover:bg-gray-700"
                 onClick={handleCommonArea}
               >
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Área Común
               </Button>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="sm" 
-                className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                className="text-gray-300 hover:bg-gray-700"
                 onClick={handleSettings}
               >
                 <Settings className="h-4 w-4 mr-2" />
