@@ -216,187 +216,107 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
       {/* Header */}
       <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Layout responsive */}
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center py-4 space-y-4 lg:space-y-0">
-            {/* Logo y título en móvil */}
-            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 lg:hidden">
+          <div className="flex justify-between items-center py-4">
+            {/* Logo */}
+            <div className="flex items-center space-x-4">
               <img 
                 src="/logo-growjou.png" 
                 alt="Growjou" 
-                className="h-10 w-auto mx-auto sm:mx-0"
+                className="h-12 w-auto"
               />
-              <div className="text-center sm:text-left">
-                <h1 className="text-xl font-bold text-white">Dashboard del Educador</h1>
-                <p className="text-gray-400 text-sm">Gestiona tus módulos y estudiantes</p>
-              </div>
             </div>
             
-            {/* Layout desktop */}
-            <div className="hidden lg:flex lg:justify-between lg:items-center w-full">
-              <div className="flex items-center space-x-4">
-                <img 
-                  src="/logo-growjou.png" 
-                  alt="Growjou" 
-                  className="h-12 w-auto"
-                />
-              </div>
-              
-              {/* Título centrado en desktop */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
-                <h1 className="text-2xl font-bold text-white">Dashboard del Educador</h1>
-                <p className="text-gray-400 text-sm">Gestiona tus módulos y estudiantes</p>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-gray-300 hover:bg-gray-700"
-                  onClick={handleCommonArea}
-                >
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Área Común
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-gray-300 hover:bg-gray-700"
-                  onClick={handleSettings}
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Configuración
-                </Button>
-                
-                {/* Menú desplegable del usuario */}
-                <div className="relative educator-menu-container">
-                  <button
-                    onClick={toggleUserMenu}
-                    className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
-                        <User className="h-4 w-4 text-white transition-transform duration-200 group-hover:scale-110" />
-                      </div>
-                      <div className="text-left">
-                        <div className="text-sm font-medium text-white">
-                          Educador
-                        </div>
-                        <div className="text-xs text-gray-400">Mi Perfil</div>
-                      </div>
-                    </div>
-                    <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
-                  </button>
-
-                  {/* Menú desplegable */}
-                  {isUserMenuOpen && (
-                    <div 
-                      className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
-                      style={{ 
-                        zIndex: 99999,
-                        position: 'absolute',
-                        pointerEvents: 'auto'
-                      }}
-                    >
-                      {/* Header del menú */}
-                      <div className="px-4 py-3 border-b border-gray-700">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center space-x-3 min-w-0 flex-1">
-                            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center flex-shrink-0">
-                              <User className="h-5 w-5 text-white" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <div className="text-sm font-medium text-white truncate">
-                                Educador
-                              </div>
-                              <div className="text-xs text-gray-400 truncate">
-                                Dashboard del Educador
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Opciones del menú */}
-                      <div className="py-2">
-                        <button
-                          onClick={handleProfile}
-                          className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
-                        >
-                          <User className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
-                          <span>Mi Perfil</span>
-                        </button>
-                        
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200 hover:translate-x-1 group"
-                        >
-                          <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
-                          <span>Cerrar Sesión</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+            {/* Título centrado */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
+              <h1 className="text-2xl font-bold text-white">Dashboard del Educador</h1>
+              <p className="text-gray-400 text-sm">Gestiona tus módulos y estudiantes</p>
             </div>
             
-            {/* Botones para móvil */}
-            <div className="flex flex-wrap justify-center gap-2 lg:hidden">
+            {/* Botones de acción */}
+            <div className="flex items-center space-x-4">
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-gray-300 hover:bg-gray-700 text-xs"
+                className="text-gray-300 hover:bg-gray-700"
                 onClick={handleCommonArea}
               >
-                <MessageSquare className="h-3 w-3 mr-1" />
+                <MessageSquare className="h-4 w-4 mr-2" />
                 Área Común
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-gray-300 hover:bg-gray-700 text-xs"
+                className="text-gray-300 hover:bg-gray-700"
                 onClick={handleSettings}
               >
-                <Settings className="h-3 w-3 mr-1" />
+                <Settings className="h-4 w-4 mr-2" />
                 Configuración
               </Button>
               
-              {/* Menú desplegable del usuario para móvil */}
+              {/* Menú desplegable del usuario */}
               <div className="relative educator-menu-container">
                 <button
                   onClick={toggleUserMenu}
-                  className="flex items-center space-x-1 px-2 py-1 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group"
+                  className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50"
                 >
-                  <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center">
-                    <User className="h-3 w-3 text-white" />
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
+                      <User className="h-4 w-4 text-white transition-transform duration-200 group-hover:scale-110" />
+                    </div>
+                    <div className="text-left">
+                      <div className="text-sm font-medium text-white">
+                        Educador
+                      </div>
+                      <div className="text-xs text-gray-400">Mi Perfil</div>
+                    </div>
                   </div>
-                  <ChevronDown className={`h-3 w-3 text-gray-400 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                {/* Menú desplegable para móvil */}
+                {/* Menú desplegable */}
                 {isUserMenuOpen && (
                   <div 
-                    className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
+                    className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
                     style={{ 
                       zIndex: 99999,
                       position: 'absolute',
                       pointerEvents: 'auto'
                     }}
                   >
+                    {/* Header del menú */}
+                    <div className="px-4 py-3 border-b border-gray-700">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center space-x-3 min-w-0 flex-1">
+                          <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center flex-shrink-0">
+                            <User className="h-5 w-5 text-white" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium text-white truncate">
+                              Educador
+                            </div>
+                            <div className="text-xs text-gray-400 truncate">
+                              Dashboard del Educador
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Opciones del menú */}
                     <div className="py-2">
                       <button
                         onClick={handleProfile}
-                        className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
                       >
-                        <User className="h-3 w-3" />
+                        <User className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
                         <span>Mi Perfil</span>
                       </button>
                       
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200"
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200 hover:translate-x-1 group"
                       >
-                        <LogOut className="h-3 w-3" />
+                        <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
                         <span>Cerrar Sesión</span>
                       </button>
                     </div>
