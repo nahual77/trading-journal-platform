@@ -13,32 +13,46 @@ function App() {
   useEffect(() => {
     console.log('App: Iniciando useEffect');
     
+    // Agregar timeout para evitar cierre prematuro en móviles
+    const timeoutId = setTimeout(() => {
+      console.log('App: Timeout alcanzado, estableciendo loading=false');
+      setLoading(false);
+    }, 3000);
+    
     supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('App: getSession result', { session, error });
+      console.log('App: getSession result', { session, error, hasUser: !!session?.user });
+      clearTimeout(timeoutId);
       setUser(session?.user ?? null);
       
       // Detectar tipo de usuario desde localStorage
       if (session?.user) {
         const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
+        console.log('App: UserType desde localStorage:', storedUserType);
         setUserType(storedUserType as 'individual' | 'educator' || 'individual');
+      } else {
+        console.log('App: No hay sesión, estableciendo userType=null');
+        setUserType(null);
       }
       
       setLoading(false);
     }).catch((error) => {
       console.error('App: Error en getSession', error);
+      clearTimeout(timeoutId);
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('App: Auth state change', { event, session, user: session?.user });
+      console.log('App: Auth state change', { event, session, user: session?.user, hasUser: !!session?.user });
       setUser(session?.user ?? null);
       setLoading(false);
       
       // Detectar tipo de usuario
       if (session?.user) {
         const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
+        console.log('App: onAuthStateChange - UserType desde localStorage:', storedUserType);
         setUserType(storedUserType as 'individual' | 'educator' || 'individual');
       } else {
+        console.log('App: onAuthStateChange - No hay sesión, estableciendo userType=null');
         setUserType(null);
       }
       
@@ -80,7 +94,15 @@ function App() {
   console.log('App: Render state', { loading, user, isNewUser, userType });
 
   if (loading) {
-    return <div>Cargando...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-white text-lg">Cargando...</p>
+          <p className="text-gray-400 text-sm mt-2">Verificando autenticación</p>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
