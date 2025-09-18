@@ -12,6 +12,25 @@ let currentUser = null;
 let currentSession = null;
 let authCallbacks = [];
 
+// Cargar sesión persistente desde localStorage
+const loadPersistedSession = () => {
+  try {
+    const storedUser = localStorage.getItem('supabase-mock-user');
+    const storedSession = localStorage.getItem('supabase-mock-session');
+    
+    if (storedUser && storedSession) {
+      currentUser = JSON.parse(storedUser);
+      currentSession = JSON.parse(storedSession);
+      console.log('Mock: Sesión cargada desde localStorage', { currentUser, currentSession });
+    }
+  } catch (error) {
+    console.error('Mock: Error cargando sesión persistente:', error);
+  }
+};
+
+// Cargar sesión al inicializar
+loadPersistedSession();
+
 export const supabase = {
   auth: {
     getSession: () => Promise.resolve({ data: { session: currentSession }, error: null }),
@@ -28,6 +47,11 @@ export const supabase = {
       console.log('🔄 Cerrando sesión...');
       currentUser = null;
       currentSession = null;
+      
+      // Limpiar sesión de localStorage
+      localStorage.removeItem('supabase-mock-user');
+      localStorage.removeItem('supabase-mock-session');
+      console.log('Mock: Sesión eliminada de localStorage');
       
       // Notificar a todos los callbacks del cambio de estado
       authCallbacks.forEach(callback => {
@@ -51,6 +75,11 @@ export const supabase = {
       
       currentUser = user;
       currentSession = session;
+      
+      // Guardar sesión en localStorage para persistencia
+      localStorage.setItem('supabase-mock-user', JSON.stringify(user));
+      localStorage.setItem('supabase-mock-session', JSON.stringify(session));
+      console.log('Mock: Sesión guardada en localStorage');
       
       // Notificar a todos los callbacks del cambio de estado
       authCallbacks.forEach(callback => {
@@ -77,6 +106,11 @@ export const supabase = {
       
       currentUser = user;
       currentSession = session;
+      
+      // Guardar sesión en localStorage para persistencia
+      localStorage.setItem('supabase-mock-user', JSON.stringify(user));
+      localStorage.setItem('supabase-mock-session', JSON.stringify(session));
+      console.log('Mock: Sesión guardada en localStorage');
       
       // Notificar a todos los callbacks del cambio de estado
       authCallbacks.forEach(callback => {
