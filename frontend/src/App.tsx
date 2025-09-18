@@ -13,42 +13,42 @@ function App() {
   useEffect(() => {
     console.log('App: Iniciando useEffect');
     
-    // Obtener sesión inicial
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('App: getSession result', { session, error, hasUser: !!session?.user });
-      
-      setUser(session?.user ?? null);
-      setLoading(false);
-      
-      // Detectar tipo de usuario
-      if (session?.user) {
-        const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
-        console.log('App: UserType desde localStorage:', storedUserType);
-        setUserType(storedUserType as 'individual' | 'educator' || 'individual');
-      } else {
-        console.log('App: No hay sesión, estableciendo userType=null');
-        setUserType(null);
-      }
-    });
-    
-    // Escuchar cambios de autenticación
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('App: Auth state change', { event, session, user: session?.user, hasUser: !!session?.user });
-      
-      // Solo procesar cambios reales de autenticación, no la carga inicial
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+    // Función para cargar sesión
+    const loadSession = () => {
+      supabase.auth.getSession().then(({ data: { session }, error }) => {
+        console.log('App: getSession result', { session, error, hasUser: !!session?.user });
+        
         setUser(session?.user ?? null);
         setLoading(false);
         
         // Detectar tipo de usuario
         if (session?.user) {
           const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
-          console.log('App: onAuthStateChange - UserType desde localStorage:', storedUserType);
+          console.log('App: UserType desde localStorage:', storedUserType);
           setUserType(storedUserType as 'individual' | 'educator' || 'individual');
         } else {
-          console.log('App: onAuthStateChange - No hay sesión, estableciendo userType=null');
+          console.log('App: No hay sesión, estableciendo userType=null');
           setUserType(null);
         }
+      });
+    };
+    
+    // Cargar sesión inicial
+    loadSession();
+    
+    // Escuchar cambios de autenticación solo para logout
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('App: Auth state change', { event, session, user: session?.user, hasUser: !!session?.user });
+      
+      // Solo procesar logout explícito
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setUserType(null);
+        setLoading(false);
+      }
+      // Para login, recargar la sesión
+      else if (event === 'SIGNED_IN') {
+        loadSession();
       }
       
       // Detectar si es un nuevo usuario que se acaba de registrar
