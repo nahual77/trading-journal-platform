@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import TwoFactorModal from './TwoFactorModal';
 import { 
   User, 
   Mail, 
@@ -44,6 +45,7 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
     confirm: false
   });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [show2FAModal, setShow2FAModal] = useState(false);
 
   // Datos del perfil (en un futuro vendrán de la API)
   const [profileData, setProfileData] = useState({
@@ -166,8 +168,24 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
   };
 
   const handle2FAToggle = () => {
-    // TODO: Implementar 2FA
-    alert('Funcionalidad de 2FA - Próximamente');
+    if (profileData.twoFactorEnabled) {
+      // Desactivar 2FA
+      if (confirm('¿Estás seguro de que quieres desactivar la autenticación de dos factores? Esto reduce la seguridad de tu cuenta.')) {
+        // TODO: Implementar desactivación 2FA
+        console.log('Desactivando 2FA...');
+        setProfileData({...profileData, twoFactorEnabled: false});
+        alert('2FA desactivado correctamente');
+      }
+    } else {
+      // Activar 2FA
+      setShow2FAModal(true);
+    }
+  };
+
+  const handle2FASuccess = () => {
+    setProfileData({...profileData, twoFactorEnabled: true});
+    setShow2FAModal(false);
+    alert('2FA activado correctamente');
   };
 
   const handleViewSessions = () => {
@@ -642,6 +660,13 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
           </div>
         </div>
       )}
+
+      {/* Modal de 2FA */}
+      <TwoFactorModal
+        isOpen={show2FAModal}
+        onClose={() => setShow2FAModal(false)}
+        onSuccess={handle2FASuccess}
+      />
     </div>
   );
 }
