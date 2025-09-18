@@ -14,11 +14,13 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
   const handleLogout = async () => {
     console.log('🔄 Iniciando logout...', { isMobile: window.innerWidth <= 768, isPC: window.innerWidth > 768 });
     try {
+      console.log('🔄 Llamando a onLogout...');
       await onLogout();
       console.log('✅ Logout exitoso');
     } catch (error) {
       console.error('❌ Error en logout:', error);
     }
+    console.log('🔄 Cerrando menú...');
     setIsOpen(false);
   };
 
@@ -57,11 +59,11 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
       {/* Botón principal del menú */}
       <button
         onClick={toggleMenu}
-        className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group my-2 hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50"
+        className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group my-2 hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50 min-w-[2.5rem] h-[2.5rem] sm:min-w-auto sm:h-auto"
       >
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
-            <User className="h-4 w-4 text-white transition-transform duration-200 group-hover:scale-110" />
+          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
+            <User className="h-3 w-3 sm:h-4 sm:w-4 text-white transition-transform duration-200 group-hover:scale-110" />
           </div>
           <div className="hidden sm:block text-left">
             <div className="text-sm font-medium text-white truncate max-w-[120px]">
@@ -70,7 +72,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             <div className="text-xs text-gray-400">{t('userMenu.tradingJournal')}</div>
           </div>
         </div>
-        <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''} hidden sm:block`} />
       </button>
 
       {/* Menú desplegable */}
@@ -120,7 +122,12 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             </button>
             
             <button
-              onClick={handleLogout}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ Logout button clicked');
+                handleLogout();
+              }}
               onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

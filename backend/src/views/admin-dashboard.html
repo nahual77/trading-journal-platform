@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Trading Journal</title>
+    <link rel="stylesheet" href="/assets/css/admin-styles.css">
+    <style>
+      /* Fallback styles en caso de que el CSS no cargue */
+      .loading-skeleton {
+        background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+      }
+      @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <!-- Logo GrowJou a la izquierda -->
+            <div class="logo-section">
+                <img src="/assets/logo-growjou.png" alt="GrowJou" class="admin-logo">
+    </div>
+    
+            <!-- Título centrado -->
+            <div class="header-title">
+                <h1>Panel de Control</h1>
+        </div>
+        
+            <!-- Acciones a la derecha -->
+            <div class="header-actions">
+                <button id="refreshBtn" class="btn btn-primary">
+                    <span class="nav-icon">🔄</span>
+                    Actualizar
+                </button>
+                <div class="text-right">
+                    <div id="currentTime" class="font-medium"></div>
+                    <div class="text-sm text-muted">Última actualización</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="admin-nav">
+        <div class="nav-content">
+            <a href="#" class="nav-item active" data-view="overview">
+                <span class="nav-icon">📊</span>
+                Resumen
+            </a>
+            
+            <!-- Usuarios Dropdown -->
+            <div class="nav-dropdown">
+                <a href="#" class="nav-item dropdown-trigger" data-dropdown="users">
+                    <span class="nav-icon">👥</span>
+                    Usuarios
+                    <span class="dropdown-arrow">▼</span>
+                </a>
+                <div class="dropdown-menu" id="users-dropdown">
+                    <a href="#" class="dropdown-item" data-view="users-overview">
+                        <span class="nav-icon">📊</span>
+                        Resumen General
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="users-free">
+                        <span class="nav-icon">🆓</span>
+                        Usuarios Gratuitos
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="users-premium">
+                        <span class="nav-icon">⭐</span>
+                        Usuarios Premium
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="users-pro">
+                        <span class="nav-icon">💎</span>
+                        Usuarios Pro
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="educators">
+                        <span class="nav-icon">🎓</span>
+                        Educadores
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="students">
+                        <span class="nav-icon">🎒</span>
+                        Estudiantes
+                    </a>
+            </div>
+        </div>
+        
+            <!-- Analytics Dropdown -->
+            <div class="nav-dropdown">
+                <a href="#" class="nav-item dropdown-trigger" data-dropdown="analytics">
+                    <span class="nav-icon">📈</span>
+                    Analytics
+                    <span class="dropdown-arrow">▼</span>
+                </a>
+                <div class="dropdown-menu" id="analytics-dropdown">
+                    <a href="#" class="dropdown-item" data-view="analytics">
+                        <span class="nav-icon">📊</span>
+                        Métricas Generales
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="performance">
+                        <span class="nav-icon">⚡</span>
+                        Rendimiento
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="reports">
+                        <span class="nav-icon">📄</span>
+                        Reportes
+                    </a>
+            </div>
+        </div>
+        
+            <!-- Suscripciones -->
+            <div class="nav-dropdown">
+                <a href="#" class="nav-item dropdown-trigger" data-dropdown="subscriptions">
+                    <span class="nav-icon">💳</span>
+                    Suscripciones
+                    <span class="dropdown-arrow">▼</span>
+                </a>
+                <div class="dropdown-menu" id="subscriptions-dropdown">
+                    <a href="#" class="dropdown-item" data-view="subscriptions">
+                        <span class="nav-icon">📋</span>
+                        Gestión de Suscripciones
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="plans">
+                        <span class="nav-icon">🎯</span>
+                        Planes y Precios
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="payments">
+                        <span class="nav-icon">💰</span>
+                        Pagos y Facturación
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="affiliates">
+                        <span class="nav-icon">🤝</span>
+                        Red de Afiliados
+                    </a>
+            </div>
+        </div>
+        
+            <!-- Sistema -->
+            <div class="nav-dropdown">
+                <a href="#" class="nav-item dropdown-trigger" data-dropdown="system">
+                    <span class="nav-icon">⚙️</span>
+                    Sistema
+                    <span class="dropdown-arrow">▼</span>
+                </a>
+                <div class="dropdown-menu" id="system-dropdown">
+                    <a href="#" class="dropdown-item" data-view="settings">
+                        <span class="nav-icon">⚙️</span>
+                        Configuración
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="logs">
+                        <span class="nav-icon">📋</span>
+                        Logs del Sistema
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="security">
+                        <span class="nav-icon">🔒</span>
+                        Seguridad
+                    </a>
+                    <a href="#" class="dropdown-item" data-view="backup">
+                        <span class="nav-icon">💾</span>
+                        Respaldos
+                    </a>
+                    </div>
+                </div>
+            </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="mainContent">
+            <!-- Content will be loaded dynamically -->
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="/assets/js/admin-dashboard.js"></script>
+</body>
+</html>
