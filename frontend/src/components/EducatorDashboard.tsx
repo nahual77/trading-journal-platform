@@ -15,7 +15,8 @@ import {
   Star,
   ArrowRight,
   LogOut,
-  User
+  User,
+  ChevronDown
 } from 'lucide-react';
 
 interface EducatorStats {
@@ -58,6 +59,7 @@ const EducatorDashboard: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [recentStudents, setRecentStudents] = useState<Student[]>([]);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   // Simular carga de datos
   useEffect(() => {
@@ -136,6 +138,23 @@ const EducatorDashboard: React.FC = () => {
     ]);
   }, []);
 
+  // Cerrar menú al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isUserMenuOpen && !target.closest('.educator-menu-container')) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    if (isUserMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [isUserMenuOpen]);
+
   const getPerformanceColor = (performance: string) => {
     switch (performance) {
       case 'excellent': return 'bg-green-500';
@@ -167,6 +186,7 @@ const EducatorDashboard: React.FC = () => {
   const handleProfile = () => {
     // TODO: Implementar perfil del educador
     alert('Perfil del educador - Próximamente');
+    setIsUserMenuOpen(false);
   };
 
   const handleLogout = () => {
@@ -175,6 +195,13 @@ const EducatorDashboard: React.FC = () => {
       alert('Cerrando sesión...');
       // Aquí iría la lógica de logout
     }
+    setIsUserMenuOpen(false);
+  };
+
+  const toggleUserMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsUserMenuOpen(!isUserMenuOpen);
   };
 
   return (
@@ -213,23 +240,77 @@ const EducatorDashboard: React.FC = () => {
                 <Settings className="h-4 w-4 mr-2" />
                 Configuración
               </Button>
-              <Button 
-                size="sm" 
-                className="bg-blue-600 hover:bg-blue-700"
-                onClick={handleProfile}
-              >
-                <User className="h-4 w-4 mr-2" />
-                Mi Perfil
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="text-red-300 border-red-600 hover:bg-red-700"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Cerrar Sesión
-              </Button>
+              
+              {/* Menú desplegable del usuario */}
+              <div className="relative educator-menu-container">
+                <button
+                  onClick={toggleUserMenu}
+                  className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50"
+                >
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
+                      <User className="h-4 w-4 text-white transition-transform duration-200 group-hover:scale-110" />
+                    </div>
+                    <div className="text-left">
+                      <div className="text-sm font-medium text-white">
+                        Educador
+                      </div>
+                      <div className="text-xs text-gray-400">Mi Perfil</div>
+                    </div>
+                  </div>
+                  <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Menú desplegable */}
+                {isUserMenuOpen && (
+                  <div 
+                    className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
+                    style={{ 
+                      zIndex: 99999,
+                      position: 'absolute',
+                      pointerEvents: 'auto'
+                    }}
+                  >
+                    {/* Header del menú */}
+                    <div className="px-4 py-3 border-b border-gray-700">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center space-x-3 min-w-0 flex-1">
+                          <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center flex-shrink-0">
+                            <User className="h-5 w-5 text-white" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium text-white truncate">
+                              Educador
+                            </div>
+                            <div className="text-xs text-gray-400 truncate">
+                              Dashboard del Educador
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Opciones del menú */}
+                    <div className="py-2">
+                      <button
+                        onClick={handleProfile}
+                        className="w-full px-4 py-3 text-left text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 flex items-center space-x-3"
+                      >
+                        <User className="h-4 w-4 text-gray-400" />
+                        <span>Mi Perfil</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-4 py-3 text-left text-sm text-red-300 hover:bg-red-900/20 hover:text-red-200 transition-colors duration-200 flex items-center space-x-3"
+                      >
+                        <LogOut className="h-4 w-4 text-red-400" />
+                        <span>Cerrar Sesión</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
