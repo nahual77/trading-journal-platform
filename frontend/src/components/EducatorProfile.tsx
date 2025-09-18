@@ -19,7 +19,9 @@ import {
   History,
   Save,
   Edit,
-  Camera
+  Camera,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 interface EducatorProfileProps {
@@ -29,6 +31,18 @@ interface EducatorProfileProps {
 export default function EducatorProfile({ onClose }: EducatorProfileProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false
+  });
 
   // Datos del perfil (en un futuro vendrán de la API)
   const [profileData, setProfileData] = useState({
@@ -59,8 +73,71 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
   };
 
   const handlePasswordChange = () => {
-    // TODO: Implementar cambio de contraseña
-    alert('Funcionalidad de cambio de contraseña - Próximamente');
+    setShowPasswordModal(true);
+    setPasswordData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setPasswordErrors([]);
+  };
+
+  const validatePassword = () => {
+    const errors: string[] = [];
+    
+    if (!passwordData.currentPassword) {
+      errors.push('La contraseña actual es requerida');
+    }
+    
+    if (!passwordData.newPassword) {
+      errors.push('La nueva contraseña es requerida');
+    } else if (passwordData.newPassword.length < 8) {
+      errors.push('La nueva contraseña debe tener al menos 8 caracteres');
+    }
+    
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      errors.push('Las contraseñas nuevas no coinciden');
+    }
+    
+    if (passwordData.currentPassword === passwordData.newPassword) {
+      errors.push('La nueva contraseña debe ser diferente a la actual');
+    }
+    
+    return errors;
+  };
+
+  const handlePasswordSubmit = () => {
+    const errors = validatePassword();
+    
+    if (errors.length > 0) {
+      setPasswordErrors(errors);
+      return;
+    }
+    
+    // TODO: Implementar llamada a la API para cambiar contraseña
+    console.log('Cambiando contraseña:', {
+      currentPassword: passwordData.currentPassword,
+      newPassword: passwordData.newPassword
+    });
+    
+    alert('Contraseña actualizada correctamente');
+    setShowPasswordModal(false);
+    setPasswordData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setPasswordErrors([]);
+  };
+
+  const handlePasswordCancel = () => {
+    setShowPasswordModal(false);
+    setPasswordData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setPasswordErrors([]);
   };
 
   const handle2FAToggle = () => {
@@ -398,6 +475,138 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
           </Tabs>
         </div>
       </div>
+
+      {/* Modal de cambio de contraseña */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center">
+                    <Key className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">Cambiar Contraseña</h3>
+                    <p className="text-gray-400 text-sm">Actualiza tu contraseña de forma segura</p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePasswordCancel}
+                  className="text-gray-400 hover:text-white"
+                >
+                  ✕
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                {/* Errores de validación */}
+                {passwordErrors.length > 0 && (
+                  <div className="bg-red-600/20 border border-red-500/50 rounded-lg p-3">
+                    <ul className="text-red-300 text-sm space-y-1">
+                      {passwordErrors.map((error, index) => (
+                        <li key={index}>• {error}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Contraseña actual */}
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword" className="text-gray-300">Contraseña actual</Label>
+                  <div className="relative">
+                    <Input
+                      id="currentPassword"
+                      type={showPasswords.current ? "text" : "password"}
+                      value={passwordData.currentPassword}
+                      onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                      className="bg-gray-700 border-gray-600 text-white pr-10"
+                      placeholder="Ingresa tu contraseña actual"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                      onClick={() => setShowPasswords({...showPasswords, current: !showPasswords.current})}
+                    >
+                      {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Nueva contraseña */}
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword" className="text-gray-300">Nueva contraseña</Label>
+                  <div className="relative">
+                    <Input
+                      id="newPassword"
+                      type={showPasswords.new ? "text" : "password"}
+                      value={passwordData.newPassword}
+                      onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                      className="bg-gray-700 border-gray-600 text-white pr-10"
+                      placeholder="Mínimo 8 caracteres"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                      onClick={() => setShowPasswords({...showPasswords, new: !showPasswords.new})}
+                    >
+                      {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Confirmar nueva contraseña */}
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-gray-300">Confirmar nueva contraseña</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showPasswords.confirm ? "text" : "password"}
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                      className="bg-gray-700 border-gray-600 text-white pr-10"
+                      placeholder="Repite la nueva contraseña"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                      onClick={() => setShowPasswords({...showPasswords, confirm: !showPasswords.confirm})}
+                    >
+                      {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Botones */}
+                <div className="flex justify-end space-x-3 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={handlePasswordCancel}
+                    className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handlePasswordSubmit}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Key className="h-4 w-4 mr-2" />
+                    Cambiar Contraseña
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
