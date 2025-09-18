@@ -247,6 +247,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                 <p className="text-gray-400 text-sm">Gestiona tus módulos y estudiantes</p>
               </div>
               
+              <div className="flex items-center space-x-4">
                 <Button 
                   variant="ghost" 
                   size="sm" 
