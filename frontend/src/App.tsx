@@ -13,78 +13,21 @@ function App() {
   useEffect(() => {
     console.log('App: Iniciando useEffect');
     
-    // Agregar timeout para evitar cierre prematuro en móviles
-    const timeoutId = setTimeout(() => {
-      console.log('App: Timeout alcanzado, estableciendo loading=false');
-      setLoading(false);
-    }, 10000);
-    
-    // Verificar si ya hay una sesión activa en localStorage
-    const checkExistingSession = () => {
-      supabase.auth.getSession().then(({ data: { session }, error }) => {
-        if (session?.user && !error) {
-          console.log('App: Usuario encontrado en localStorage, manteniendo sesión');
-          const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
-          setUser(session.user);
-          setUserType(storedUserType as 'individual' | 'educator' || 'individual');
-          setLoading(false);
-          clearTimeout(timeoutId);
-        }
-      });
-    };
-    
-    checkExistingSession();
-    
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('App: getSession result', { session, error, hasUser: !!session?.user });
-      clearTimeout(timeoutId);
-      
-      if (error) {
-        console.error('App: Error en getSession:', error);
-        setUser(null);
-        setUserType(null);
-        setLoading(false);
-        return;
-      }
-      
-      setUser(session?.user ?? null);
-      
-      // Detectar tipo de usuario desde localStorage
-      if (session?.user) {
-        const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
-        console.log('App: UserType desde localStorage:', storedUserType);
-        setUserType(storedUserType as 'individual' | 'educator' || 'individual');
-      } else {
-        console.log('App: No hay sesión, estableciendo userType=null');
-        setUserType(null);
-      }
-      
-      setLoading(false);
-    }).catch((error) => {
-      console.error('App: Error en getSession', error);
-      clearTimeout(timeoutId);
-      setUser(null);
-      setUserType(null);
-      setLoading(false);
-    });
-
+    // Solo usar onAuthStateChange para manejar la autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('App: Auth state change', { event, session, user: session?.user, hasUser: !!session?.user });
       
-      // Solo procesar cambios de autenticación, no la carga inicial
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
-        setUser(session?.user ?? null);
-        setLoading(false);
-        
-        // Detectar tipo de usuario
-        if (session?.user) {
-          const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
-          console.log('App: onAuthStateChange - UserType desde localStorage:', storedUserType);
-          setUserType(storedUserType as 'individual' | 'educator' || 'individual');
-        } else {
-          console.log('App: onAuthStateChange - No hay sesión, estableciendo userType=null');
-          setUserType(null);
-        }
+      setUser(session?.user ?? null);
+      setLoading(false);
+      
+      // Detectar tipo de usuario
+      if (session?.user) {
+        const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
+        console.log('App: onAuthStateChange - UserType desde localStorage:', storedUserType);
+        setUserType(storedUserType as 'individual' | 'educator' || 'individual');
+      } else {
+        console.log('App: onAuthStateChange - No hay sesión, estableciendo userType=null');
+        setUserType(null);
       }
       
       // Detectar si es un nuevo usuario que se acaba de registrar
