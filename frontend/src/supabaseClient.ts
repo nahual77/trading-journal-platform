@@ -12,6 +12,23 @@ let currentUser = null;
 let currentSession = null;
 let authCallbacks = [];
 
+// Almacén de contraseñas de usuarios (en un proyecto real esto estaría en la base de datos)
+const getUserPasswords = () => {
+  try {
+    const stored = localStorage.getItem('mock-user-passwords');
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+};
+
+const saveUserPassword = (email: string, password: string) => {
+  const passwords = getUserPasswords();
+  passwords[email] = password;
+  localStorage.setItem('mock-user-passwords', JSON.stringify(passwords));
+  console.log('Mock: Contraseña guardada para', email);
+};
+
 // Cargar sesión persistente desde localStorage
 const loadPersistedSession = () => {
   try {
@@ -62,7 +79,23 @@ export const supabase = {
     },
     signInWithPassword: (credentials: any) => {
       console.log('Intentando iniciar sesión:', credentials.email);
-      // Simular login exitoso
+      
+      const passwords = getUserPasswords();
+      const storedPassword = passwords[credentials.email];
+      
+      // Si no existe el usuario, crear uno con la contraseña proporcionada
+      if (!storedPassword) {
+        console.log('Mock: Usuario nuevo, creando cuenta');
+        saveUserPassword(credentials.email, credentials.password);
+      } else if (storedPassword !== credentials.password) {
+        console.log('Mock: Contraseña incorrecta');
+        return Promise.resolve({ 
+          data: { user: null, session: null }, 
+          error: { message: 'Contraseña incorrecta' } 
+        });
+      }
+      
+      // Login exitoso
       const user = { 
         id: 'mock-user-id', 
         email: credentials.email,
@@ -93,6 +126,10 @@ export const supabase = {
     },
     signUp: (credentials: any) => {
       console.log('Intentando crear cuenta:', credentials.email);
+      
+      // Guardar la contraseña del nuevo usuario
+      saveUserPassword(credentials.email, credentials.password);
+      
       // Simular registro exitoso
       const user = { 
         id: 'mock-user-id', 
@@ -125,13 +162,15 @@ export const supabase = {
     updateUser: (updates: any) => {
       console.log('Mock: Actualizando usuario:', updates);
       
-      if (updates.password) {
-        // Simular actualización exitosa (ya se validó la contraseña actual en el frontend)
-        if (currentUser) {
-          currentUser.updated_at = new Date().toISOString();
-          localStorage.setItem('supabase-mock-user', JSON.stringify(currentUser));
-          console.log('Mock: Usuario actualizado en localStorage');
-        }
+      if (updates.password && currentUser) {
+        // Actualizar la contraseña del usuario actual
+        saveUserPassword(currentUser.email, updates.password);
+        console.log('Mock: Contraseña actualizada para', currentUser.email);
+        
+        // Actualizar timestamp del usuario
+        currentUser.updated_at = new Date().toISOString();
+        localStorage.setItem('supabase-mock-user', JSON.stringify(currentUser));
+        console.log('Mock: Usuario actualizado en localStorage');
         
         return Promise.resolve({ 
           data: { user: currentUser }, 
