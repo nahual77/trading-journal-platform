@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import EducatorProfile from './EducatorProfile';
 import { 
   Users, 
   GraduationCap, 
@@ -64,6 +65,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
   const [recentStudents, setRecentStudents] = useState<Student[]>([]);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   // Simular carga de datos
   useEffect(() => {
@@ -188,8 +190,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
   };
 
   const handleProfile = () => {
-    // TODO: Implementar perfil del educador
-    alert('Perfil del educador - Próximamente');
+    setShowProfile(true);
     setIsUserMenuOpen(false);
   };
 
@@ -627,6 +628,11 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Modal de Perfil */}
+      {showProfile && (
+        <EducatorProfile onClose={() => setShowProfile(false)} />
+      )}
     </div>
   );
 };
