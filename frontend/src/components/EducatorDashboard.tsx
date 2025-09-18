@@ -13,7 +13,9 @@ import {
   BarChart3,
   Clock,
   Star,
-  ArrowRight
+  ArrowRight,
+  LogOut,
+  User
 } from 'lucide-react';
 
 interface EducatorStats {
@@ -152,6 +154,29 @@ const EducatorDashboard: React.FC = () => {
     }
   };
 
+  const handleCommonArea = () => {
+    // TODO: Implementar navegación al área común con estudiantes
+    alert('Área común con estudiantes - Próximamente');
+  };
+
+  const handleSettings = () => {
+    // TODO: Implementar configuración del educador
+    alert('Configuración del educador - Próximamente');
+  };
+
+  const handleProfile = () => {
+    // TODO: Implementar perfil del educador
+    alert('Perfil del educador - Próximamente');
+  };
+
+  const handleLogout = () => {
+    // TODO: Implementar cerrar sesión
+    if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+      alert('Cerrando sesión...');
+      // Aquí iría la lógica de logout
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       {/* Header */}
@@ -162,21 +187,48 @@ const EducatorDashboard: React.FC = () => {
               <img 
                 src="/logo-growjou.png" 
                 alt="Growjou" 
-                className="h-10 w-auto"
+                className="h-12 w-auto"
               />
-              <div>
+              <div className="text-center">
                 <h1 className="text-2xl font-bold text-white">Dashboard del Educador</h1>
-                <p className="text-gray-400 text-sm">Gestiona tus academias y estudiantes</p>
+                <p className="text-gray-400 text-sm">Gestiona tus módulos y estudiantes</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm" className="text-gray-300 border-gray-600 hover:bg-gray-700">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                onClick={handleCommonArea}
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Área Común
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                onClick={handleSettings}
+              >
                 <Settings className="h-4 w-4 mr-2" />
                 Configuración
               </Button>
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="h-4 w-4 mr-2" />
-                Nueva Academia
+              <Button 
+                size="sm" 
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={handleProfile}
+              >
+                <User className="h-4 w-4 mr-2" />
+                Mi Perfil
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-red-300 border-red-600 hover:bg-red-700"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Cerrar Sesión
               </Button>
             </div>
           </div>
