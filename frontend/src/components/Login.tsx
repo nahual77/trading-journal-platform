@@ -104,14 +104,12 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
     setRecoveryLoading(true);
     setRecoveryMessage('');
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-
-    if (error) {
-      alert(error.message);
-    } else {
-      setRecoveryMessage('Se ha enviado un enlace de recuperación a tu email');
+    // Función de recuperación simplificada - por implementar
+    try {
+      // TODO: Implementar recuperación de contraseña
+      setRecoveryMessage('Función de recuperación de contraseña en desarrollo');
+    } catch (error) {
+      alert('Error al procesar la recuperación de contraseña');
     }
 
     setRecoveryLoading(false);
@@ -121,19 +119,9 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
     try {
       console.log('🔄 Iniciando login con Google');
       
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: 'http://localhost:5173'
-        }
-      });
-
-      if (error) {
-        console.error('Error en login con Google:', error);
-        setRegisterError('Error al iniciar sesión con Google. Intenta nuevamente.');
-      } else {
-        console.log('✅ Redirigiendo a Google:', data);
-      }
+      // Función de OAuth simplificada - por implementar
+      alert('Login con Google en desarrollo');
+      
     } catch (error: any) {
       console.error('Error general en login con Google:', error);
       setRegisterError('Error inesperado al iniciar sesión con Google.');
@@ -230,12 +218,8 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       if (data.user && data.user.id) {
         console.log('✅ Usuario registrado exitosamente:', data.user);
         
-        // Verificar si el usuario necesita confirmación de email
-        if (data.user.email_confirmed_at) {
-          setRegisterMessage('¡Cuenta creada y confirmada exitosamente!');
-        } else {
-          setRegisterMessage('¡Cuenta creada exitosamente! Revisa tu email para confirmar tu cuenta.');
-        }
+        // Usuario registrado exitosamente
+        setRegisterMessage('¡Cuenta creada exitosamente!');
         
         // Cerrar modal después de 8 segundos
         setTimeout(() => {
