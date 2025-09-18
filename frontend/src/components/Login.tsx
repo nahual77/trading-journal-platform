@@ -25,6 +25,11 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   const [registerError, setRegisterError] = useState('');
   const [registerMessage, setRegisterMessage] = useState('');
   
+  // Estados para el toggle switch
+  const [userType, setUserType] = useState<'individual' | 'academy'>('individual');
+  const [academyRole, setAcademyRole] = useState<'educator' | 'student'>('educator');
+  const [academyCode, setAcademyCode] = useState('');
+  
   // Estados para animaciones
   const [showLogo, setShowLogo] = useState(true);
   const [logoInCenter, setLogoInCenter] = useState(true);
@@ -327,6 +332,84 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             {/* Formulario de login */}
             <div className="card-premium landscape-form-container">
               <h2 className="text-base lg:text-xl font-bold text-white mb-3 lg:mb-5 text-center">Iniciar Sesión</h2>
+
+              {/* Toggle Switch para tipo de usuario */}
+              <div className="flex justify-center mb-4">
+                <div className="bg-gray-700 rounded-lg p-1 flex">
+                  <button
+                    type="button"
+                    className={`px-3 py-1.5 rounded-md transition-all text-xs lg:text-sm font-medium ${
+                      userType === 'individual'
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-600'
+                    }`}
+                    onClick={() => setUserType('individual')}
+                  >
+                    Usuario Individual
+                  </button>
+                  <button
+                    type="button"
+                    className={`px-3 py-1.5 rounded-md transition-all text-xs lg:text-sm font-medium ${
+                      userType === 'academy'
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-600'
+                    }`}
+                    onClick={() => setUserType('academy')}
+                  >
+                    Academia
+                  </button>
+                </div>
+              </div>
+
+              {/* Selector de rol para academia */}
+              {userType === 'academy' && (
+                <div className="mb-4 p-3 bg-gray-800/50 rounded-lg border border-gray-600">
+                  <label className="block text-xs font-medium text-gray-300 mb-2 text-center">
+                    Tipo de Usuario
+                  </label>
+                  <div className="flex space-x-4 justify-center">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        value="educator"
+                        checked={academyRole === 'educator'}
+                        onChange={(e) => setAcademyRole(e.target.value as 'educator')}
+                        className="mr-2 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-xs text-gray-300">Soy Educador</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        value="student"
+                        checked={academyRole === 'student'}
+                        onChange={(e) => setAcademyRole(e.target.value as 'student')}
+                        className="mr-2 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-xs text-gray-300">Soy Alumno</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Campo de código de academia para alumnos */}
+              {userType === 'academy' && academyRole === 'student' && (
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
+                    Código de Academia
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Ingresa el código de tu academia"
+                      value={academyCode}
+                      onChange={(e) => setAcademyCode(e.target.value)}
+                      className="input-premium w-full text-xs lg:text-sm py-2 lg:py-2 text-center"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
 
               <form onSubmit={handleLogin} className="space-y-2 lg:space-y-4">
                 <div className="w-full mx-auto">
