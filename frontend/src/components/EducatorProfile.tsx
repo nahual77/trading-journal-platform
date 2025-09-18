@@ -43,6 +43,7 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
     new: false,
     confirm: false
   });
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   // Datos del perfil (en un futuro vendrán de la API)
   const [profileData, setProfileData] = useState({
@@ -106,7 +107,7 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
     return errors;
   };
 
-  const handlePasswordSubmit = () => {
+  const handlePasswordSubmit = async () => {
     const errors = validatePassword();
     
     if (errors.length > 0) {
@@ -114,20 +115,44 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
       return;
     }
     
-    // TODO: Implementar llamada a la API para cambiar contraseña
-    console.log('Cambiando contraseña:', {
-      currentPassword: passwordData.currentPassword,
-      newPassword: passwordData.newPassword
-    });
-    
-    alert('Contraseña actualizada correctamente');
-    setShowPasswordModal(false);
-    setPasswordData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    });
+    setIsChangingPassword(true);
     setPasswordErrors([]);
+    
+    try {
+      // Importar supabase dinámicamente para evitar problemas de importación
+      const { supabase } = await import('../supabaseClient');
+      
+      console.log('Cambiando contraseña...');
+      
+      // Llamar a la API de Supabase para cambiar la contraseña
+      const { data, error } = await supabase.auth.updateUser({
+        password: passwordData.newPassword
+      });
+      
+      if (error) {
+        console.error('Error al cambiar contraseña:', error);
+        setPasswordErrors([error.message || 'Error al cambiar la contraseña']);
+        return;
+      }
+      
+      console.log('Contraseña actualizada exitosamente:', data);
+      alert('Contraseña actualizada correctamente');
+      
+      // Cerrar modal y limpiar datos
+      setShowPasswordModal(false);
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+      setPasswordErrors([]);
+      
+    } catch (error) {
+      console.error('Error inesperado:', error);
+      setPasswordErrors(['Error inesperado al cambiar la contraseña']);
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   const handlePasswordCancel = () => {
@@ -596,10 +621,20 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
                   </Button>
                   <Button
                     onClick={handlePasswordSubmit}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    disabled={isChangingPassword}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Key className="h-4 w-4 mr-2" />
-                    Cambiar Contraseña
+                    {isChangingPassword ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Cambiando...
+                      </>
+                    ) : (
+                      <>
+                        <Key className="h-4 w-4 mr-2" />
+                        Cambiar Contraseña
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
