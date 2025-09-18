@@ -26,6 +26,10 @@ interface EducatorStats {
   monthlyGrowth: number;
 }
 
+interface EducatorDashboardProps {
+  onLogout: () => void | Promise<void>;
+}
+
 interface Module {
   id: string;
   name: string;
@@ -48,7 +52,7 @@ interface Student {
   progress: number; // Porcentaje de progreso en el módulo
 }
 
-const EducatorDashboard: React.FC = () => {
+const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
   const [stats, setStats] = useState<EducatorStats>({
     totalStudents: 0,
     totalModules: 0,
@@ -189,11 +193,14 @@ const EducatorDashboard: React.FC = () => {
     setIsUserMenuOpen(false);
   };
 
-  const handleLogout = () => {
-    // TODO: Implementar cerrar sesión
+  const handleLogout = async () => {
     if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-      alert('Cerrando sesión...');
-      // Aquí iría la lógica de logout
+      try {
+        await onLogout();
+        console.log('✅ Logout exitoso desde EducatorDashboard');
+      } catch (error) {
+        console.error('❌ Error en logout desde EducatorDashboard:', error);
+      }
     }
     setIsUserMenuOpen(false);
   };
