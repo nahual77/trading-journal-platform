@@ -35,17 +35,20 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('App: Auth state change', { event, session, user: session?.user, hasUser: !!session?.user });
       
-      setUser(session?.user ?? null);
-      setLoading(false);
-      
-      // Detectar tipo de usuario
-      if (session?.user) {
-        const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
-        console.log('App: onAuthStateChange - UserType desde localStorage:', storedUserType);
-        setUserType(storedUserType as 'individual' | 'educator' || 'individual');
-      } else {
-        console.log('App: onAuthStateChange - No hay sesión, estableciendo userType=null');
-        setUserType(null);
+      // Solo procesar cambios reales de autenticación, no la carga inicial
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+        setUser(session?.user ?? null);
+        setLoading(false);
+        
+        // Detectar tipo de usuario
+        if (session?.user) {
+          const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
+          console.log('App: onAuthStateChange - UserType desde localStorage:', storedUserType);
+          setUserType(storedUserType as 'individual' | 'educator' || 'individual');
+        } else {
+          console.log('App: onAuthStateChange - No hay sesión, estableciendo userType=null');
+          setUserType(null);
+        }
       }
       
       // Detectar si es un nuevo usuario que se acaba de registrar
