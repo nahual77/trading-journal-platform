@@ -18,75 +18,85 @@ import {
 
 interface EducatorStats {
   totalStudents: number;
-  totalAcademies: number;
+  totalModules: number;
   activeStudents: number;
   monthlyGrowth: number;
 }
 
-interface Academy {
+interface Module {
   id: string;
   name: string;
+  description: string;
   studentCount: number;
   status: 'active' | 'inactive';
   createdAt: string;
   lastActivity: string;
+  order: number; // Para el orden de progresión
 }
 
 interface Student {
   id: string;
   name: string;
   email: string;
-  academy: string;
+  module: string;
   lastLogin: string;
   status: 'active' | 'inactive';
   performance: 'excellent' | 'good' | 'needs_improvement';
+  progress: number; // Porcentaje de progreso en el módulo
 }
 
 const EducatorDashboard: React.FC = () => {
   const [stats, setStats] = useState<EducatorStats>({
     totalStudents: 0,
-    totalAcademies: 0,
+    totalModules: 0,
     activeStudents: 0,
     monthlyGrowth: 0
   });
 
-  const [academies, setAcademies] = useState<Academy[]>([]);
+  const [modules, setModules] = useState<Module[]>([]);
   const [recentStudents, setRecentStudents] = useState<Student[]>([]);
+  const [selectedModule, setSelectedModule] = useState<string | null>(null);
 
   // Simular carga de datos
   useEffect(() => {
     // TODO: Implementar carga real de datos desde la API
     setStats({
       totalStudents: 45,
-      totalAcademies: 3,
+      totalModules: 3,
       activeStudents: 38,
       monthlyGrowth: 12.5
     });
 
-    setAcademies([
+    setModules([
       {
         id: '1',
-        name: 'Academia de Trading Avanzado',
+        name: 'Trading Básico',
+        description: 'Fundamentos del trading y conceptos básicos',
         studentCount: 25,
         status: 'active',
         createdAt: '2024-01-15',
-        lastActivity: '2024-01-18'
+        lastActivity: '2024-01-18',
+        order: 1
       },
       {
         id: '2',
-        name: 'Curso de Análisis Técnico',
+        name: 'Análisis Técnico',
+        description: 'Indicadores técnicos y análisis de gráficos',
         studentCount: 15,
         status: 'active',
         createdAt: '2024-01-10',
-        lastActivity: '2024-01-17'
+        lastActivity: '2024-01-17',
+        order: 2
       },
       {
         id: '3',
-        name: 'Trading para Principiantes',
+        name: 'Gestión de Riesgo',
+        description: 'Control de riesgo y gestión de capital',
         studentCount: 5,
-        status: 'inactive',
+        status: 'active',
         createdAt: '2024-01-05',
-        lastActivity: '2024-01-12'
+        lastActivity: '2024-01-16',
+        order: 3
       }
     ]);
 
@@ -95,28 +105,31 @@ const EducatorDashboard: React.FC = () => {
         id: '1',
         name: 'María González',
         email: 'maria@email.com',
-        academy: 'Academia de Trading Avanzado',
+        module: 'Trading Básico',
         lastLogin: '2024-01-18',
         status: 'active',
-        performance: 'excellent'
+        performance: 'excellent',
+        progress: 85
       },
       {
         id: '2',
         name: 'Carlos Rodríguez',
         email: 'carlos@email.com',
-        academy: 'Curso de Análisis Técnico',
+        module: 'Análisis Técnico',
         lastLogin: '2024-01-17',
         status: 'active',
-        performance: 'good'
+        performance: 'good',
+        progress: 60
       },
       {
         id: '3',
         name: 'Ana Martínez',
         email: 'ana@email.com',
-        academy: 'Trading para Principiantes',
+        module: 'Trading Básico',
         lastLogin: '2024-01-16',
         status: 'inactive',
-        performance: 'needs_improvement'
+        performance: 'needs_improvement',
+        progress: 30
       }
     ]);
   }, []);
@@ -189,13 +202,13 @@ const EducatorDashboard: React.FC = () => {
 
           <Card className="bg-gray-800/50 border-gray-700">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Academias</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-300">Módulos</CardTitle>
               <GraduationCap className="h-4 w-4 text-green-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{stats.totalAcademies}</div>
+              <div className="text-2xl font-bold text-white">{stats.totalModules}</div>
               <p className="text-xs text-gray-400">
-                {academies.filter(a => a.status === 'active').length} activas
+                {modules.filter(m => m.status === 'active').length} activos
               </p>
             </CardContent>
           </Card>
@@ -228,10 +241,10 @@ const EducatorDashboard: React.FC = () => {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="academies" className="space-y-6">
+        <Tabs defaultValue="modules" className="space-y-6">
           <TabsList className="bg-gray-800/50 border-gray-700">
-            <TabsTrigger value="academies" className="data-[state=active]:bg-blue-600">
-              Mis Academias
+            <TabsTrigger value="modules" className="data-[state=active]:bg-blue-600">
+              Mis Módulos
             </TabsTrigger>
             <TabsTrigger value="students" className="data-[state=active]:bg-blue-600">
               Estudiantes
@@ -241,50 +254,58 @@ const EducatorDashboard: React.FC = () => {
             </TabsTrigger>
           </TabsList>
 
-          {/* Academias Tab */}
-          <TabsContent value="academies" className="space-y-6">
+          {/* Módulos Tab */}
+          <TabsContent value="modules" className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold text-white">Mis Academias</h2>
+              <h2 className="text-xl font-semibold text-white">Mis Módulos</h2>
               <Button className="bg-blue-600 hover:bg-blue-700">
                 <Plus className="h-4 w-4 mr-2" />
-                Crear Academia
+                Crear Módulo
               </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {academies.map((academy) => (
-                <Card key={academy.id} className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors">
+              {modules.sort((a, b) => a.order - b.order).map((module) => (
+                <Card key={module.id} className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors">
                   <CardHeader>
                     <div className="flex justify-between items-start">
-                      <CardTitle className="text-white">{academy.name}</CardTitle>
+                      <CardTitle className="text-white">{module.name}</CardTitle>
                       <Badge 
-                        variant={academy.status === 'active' ? 'default' : 'secondary'}
-                        className={academy.status === 'active' ? 'bg-green-600' : 'bg-gray-600'}
+                        variant={module.status === 'active' ? 'default' : 'secondary'}
+                        className={module.status === 'active' ? 'bg-green-600' : 'bg-gray-600'}
                       >
-                        {academy.status === 'active' ? 'Activa' : 'Inactiva'}
+                        {module.status === 'active' ? 'Activo' : 'Inactivo'}
                       </Badge>
                     </div>
                     <CardDescription className="text-gray-400">
-                      Creada el {new Date(academy.createdAt).toLocaleDateString()}
+                      {module.description}
                     </CardDescription>
+                    <div className="text-xs text-gray-500">
+                      Creado el {new Date(module.createdAt).toLocaleDateString()}
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-400">Estudiantes:</span>
-                        <span className="text-white font-medium">{academy.studentCount}</span>
+                        <span className="text-white font-medium">{module.studentCount}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-400">Orden:</span>
+                        <span className="text-white text-sm">#{module.order}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-400">Última actividad:</span>
-                        <span className="text-white text-sm">{new Date(academy.lastActivity).toLocaleDateString()}</span>
+                        <span className="text-white text-sm">{new Date(module.lastActivity).toLocaleDateString()}</span>
                       </div>
                       <Button 
                         variant="outline" 
                         size="sm" 
                         className="w-full text-gray-300 border-gray-600 hover:bg-gray-700"
+                        onClick={() => setSelectedModule(module.id)}
                       >
                         <ArrowRight className="h-4 w-4 mr-2" />
-                        Ver Academia
+                        Ver Módulo
                       </Button>
                     </div>
                   </CardContent>
@@ -309,7 +330,8 @@ const EducatorDashboard: React.FC = () => {
                     <thead className="border-b border-gray-700">
                       <tr>
                         <th className="text-left p-4 text-gray-300 font-medium">Estudiante</th>
-                        <th className="text-left p-4 text-gray-300 font-medium">Academia</th>
+                        <th className="text-left p-4 text-gray-300 font-medium">Módulo</th>
+                        <th className="text-left p-4 text-gray-300 font-medium">Progreso</th>
                         <th className="text-left p-4 text-gray-300 font-medium">Último Acceso</th>
                         <th className="text-left p-4 text-gray-300 font-medium">Rendimiento</th>
                         <th className="text-left p-4 text-gray-300 font-medium">Estado</th>
@@ -324,7 +346,18 @@ const EducatorDashboard: React.FC = () => {
                               <div className="text-gray-400 text-sm">{student.email}</div>
                             </div>
                           </td>
-                          <td className="p-4 text-gray-300">{student.academy}</td>
+                          <td className="p-4 text-gray-300">{student.module}</td>
+                          <td className="p-4">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-16 bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                  style={{ width: `${student.progress}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-gray-300 text-sm">{student.progress}%</span>
+                            </div>
+                          </td>
                           <td className="p-4 text-gray-300">{new Date(student.lastLogin).toLocaleDateString()}</td>
                           <td className="p-4">
                             <div className="flex items-center space-x-2">
