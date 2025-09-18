@@ -54,6 +54,7 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
   const handleSave = () => {
     // TODO: Implementar guardado en API
     console.log('Guardando perfil:', profileData);
+    alert('Perfil actualizado correctamente');
     setIsEditing(false);
   };
 
@@ -138,6 +139,18 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                  {/* Mensaje de modo edición */}
+                  {isEditing && (
+                    <div className="bg-blue-600/20 border border-blue-500/50 rounded-lg p-3">
+                      <div className="flex items-center space-x-2">
+                        <Edit className="h-4 w-4 text-blue-400" />
+                        <span className="text-blue-300 text-sm font-medium">
+                          Modo edición activo - Puedes modificar los campos resaltados
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Foto de perfil */}
                   <div className="flex items-center space-x-4">
                     <div className="relative">
@@ -168,7 +181,11 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
                         value={profileData.name}
                         onChange={(e) => setProfileData({...profileData, name: e.target.value})}
                         disabled={!isEditing}
-                        className="bg-gray-700 border-gray-600 text-white"
+                        className={`bg-gray-700 border-gray-600 text-white ${
+                          isEditing 
+                            ? 'border-blue-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20' 
+                            : 'opacity-60 cursor-not-allowed'
+                        }`}
                       />
                     </div>
                     <div className="space-y-2">
@@ -178,7 +195,11 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
                         value={profileData.email}
                         onChange={(e) => setProfileData({...profileData, email: e.target.value})}
                         disabled={!isEditing}
-                        className="bg-gray-700 border-gray-600 text-white"
+                        className={`bg-gray-700 border-gray-600 text-white ${
+                          isEditing 
+                            ? 'border-blue-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20' 
+                            : 'opacity-60 cursor-not-allowed'
+                        }`}
                       />
                     </div>
                     <div className="space-y-2">
@@ -188,7 +209,11 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
                         value={profileData.phone}
                         onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
                         disabled={!isEditing}
-                        className="bg-gray-700 border-gray-600 text-white"
+                        className={`bg-gray-700 border-gray-600 text-white ${
+                          isEditing 
+                            ? 'border-blue-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20' 
+                            : 'opacity-60 cursor-not-allowed'
+                        }`}
                       />
                     </div>
                     <div className="space-y-2">
@@ -198,7 +223,11 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
                         value={profileData.location}
                         onChange={(e) => setProfileData({...profileData, location: e.target.value})}
                         disabled={!isEditing}
-                        className="bg-gray-700 border-gray-600 text-white"
+                        className={`bg-gray-700 border-gray-600 text-white ${
+                          isEditing 
+                            ? 'border-blue-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20' 
+                            : 'opacity-60 cursor-not-allowed'
+                        }`}
                       />
                     </div>
                   </div>
@@ -211,7 +240,11 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
                       value={profileData.bio}
                       onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
                       disabled={!isEditing}
-                      className="bg-gray-700 border-gray-600 text-white min-h-[100px]"
+                      className={`bg-gray-700 border-gray-600 text-white min-h-[100px] ${
+                        isEditing 
+                          ? 'border-blue-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20' 
+                          : 'opacity-60 cursor-not-allowed'
+                      }`}
                       placeholder="Cuéntanos sobre tu experiencia en trading..."
                     />
                   </div>
