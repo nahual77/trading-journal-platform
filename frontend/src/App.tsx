@@ -13,7 +13,25 @@ function App() {
   useEffect(() => {
     console.log('App: Iniciando useEffect');
     
-    // Solo usar onAuthStateChange para manejar la autenticación
+    // Obtener sesión inicial
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log('App: getSession result', { session, error, hasUser: !!session?.user });
+      
+      setUser(session?.user ?? null);
+      setLoading(false);
+      
+      // Detectar tipo de usuario
+      if (session?.user) {
+        const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
+        console.log('App: UserType desde localStorage:', storedUserType);
+        setUserType(storedUserType as 'individual' | 'educator' || 'individual');
+      } else {
+        console.log('App: No hay sesión, estableciendo userType=null');
+        setUserType(null);
+      }
+    });
+    
+    // Escuchar cambios de autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('App: Auth state change', { event, session, user: session?.user, hasUser: !!session?.user });
       
