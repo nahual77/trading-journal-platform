@@ -12,6 +12,7 @@ import BalanceChart from './BalanceChart';
 import LanguageSelector from './LanguageSelector';
 import DownloadDropdown from './DownloadDropdown';
 import { UserMenu } from './UserMenu';
+import { BackendConnection } from './BackendConnection';
 import { supabase } from '../supabaseClient';
 import {
   BookOpen,
@@ -30,13 +31,13 @@ type ActiveView = 'journals' | 'plan' | 'flightPlan' | 'statistics' | 'backtesti
 
 interface TradingJournalProps {
   isNewUser?: boolean;
+  user: any;
 }
 
-export default function TradingJournal({ isNewUser = false }: TradingJournalProps) {
+export default function TradingJournal({ isNewUser = false, user }: TradingJournalProps) {
   const { t } = useTranslation();
   const [activeView, setActiveView] = useState<ActiveView>('journals');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
 
   // Estados para calculadora independiente por diario
   const [initialBalances, setInitialBalances] = useState<{ [key: string]: number }>({});
@@ -229,20 +230,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
     localStorage.setItem('nagual_plan_points', JSON.stringify(planPoints));
   }, [planPoints]);
 
-  // Obtener usuario actual
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-    };
-    getUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  // El estado del usuario se maneja en App.tsx, no necesitamos duplicarlo aquí
 
 
 
@@ -263,12 +251,14 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
 
   // Función para manejar logout
   const handleLogout = async () => {
+    console.log('🔄 TradingJournal: Iniciando logout...');
     try {
-      await supabase.auth.signOut();
-      setUser(null);
+      console.log('🔄 TradingJournal: Llamando a supabase.auth.signOut()...');
+      const result = await supabase.auth.signOut();
+      console.log('🔄 TradingJournal: Resultado de signOut:', result);
+      // El estado del usuario se maneja en App.tsx a través de onAuthStateChange
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-      setUser(null);
+      console.error('❌ TradingJournal: Error al cerrar sesión:', error);
     }
   };
 
@@ -297,18 +287,18 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
       icon: BarChart3,
       description: t('statistics.subtitle'),
     },
-    {
-      id: 'backtesting' as ActiveView,
-      name: t('navigation.backtesting'),
-      icon: TestTube,
-      description: t('backtesting.subtitle'),
-    },
-    {
-      id: 'mt5' as ActiveView,
-      name: t('navigation.mt5'),
-      icon: Activity,
-      description: t('tradingJournal.mt5Description'),
-    },
+  {
+    id: 'backtesting' as ActiveView,
+    name: t('navigation.backtesting'),
+    icon: TestTube,
+    description: t('backtesting.subtitle'),
+  },
+  {
+    id: 'mt5' as ActiveView,
+    name: t('navigation.mt5'),
+    icon: Activity,
+    description: t('tradingJournal.mt5Description'),
+  },
   ];
 
   // Función simple para cambiar de vista
@@ -454,7 +444,7 @@ export default function TradingJournal({ isNewUser = false }: TradingJournalProp
           </div>
         );
 
-      case 'mt5':
+        case 'mt5':
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">

@@ -1,5 +1,26 @@
 ---
-description:
-globs:
 alwaysApply: true
 ---
+
+# Reglas de Cursor
+
+1. SOLO ejecuta las órdenes que yo te dé explícitamente.  
+   - No inventes pasos adicionales.  
+   - No ejecutes nada que yo no haya autorizado.  
+
+2. SI crees que hay algo más que se pueda hacer:  
+   - Pregúntame primero.  
+   - NO lo ejecutes hasta que yo te dé autorización con la palabra **"Autorizado"**.  
+
+3. SI no puedes cumplir con una orden:  
+   - Respóndeme de inmediato y de forma clara con algo como: **"No puedo hacer eso"**.  
+   - No des vueltas ni explicaciones innecesarias.  
+
+4. SI la terminal o el sistema se bloquea:  
+   - Avísame de inmediato con un mensaje claro.  
+   - No intentes reiniciarlo ni continuar sin mi permiso.  
+
+5. PALABRAS CLAVE:  
+   - **"Autorizado"** → cuando apruebo que hagas algo.  
+   - **"Detente"** → cuando debes parar de inmediato lo que estés haciendo.  
+   - **"Reinicia reglas"** → debes recordar estas reglas y volver a aplicarlas estrictamente.  

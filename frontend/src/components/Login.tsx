@@ -642,14 +642,6 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
               margin-top: 1rem !important;
             }
           }
-          
-          /* Reducir solo el logo del header en móvil vertical */
-          @media (max-width: 640px) {
-            .header-logo {
-              height: 48px !important;
-              max-width: 85% !important;
-            }
-          }
         `
       }} />
     </div>

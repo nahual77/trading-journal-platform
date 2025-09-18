@@ -21,7 +21,7 @@ function App() {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('App: Auth state change', { event, session });
+      console.log('App: Auth state change', { event, session, user: session?.user });
       setUser(session?.user ?? null);
       setLoading(false);
       
@@ -36,6 +36,11 @@ function App() {
           localStorage.setItem(userKey, 'true');
         }
       }
+      
+      // Limpiar isNewUser cuando se cierra sesión
+      if (event === 'SIGNED_OUT') {
+        setIsNewUser(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -47,7 +52,7 @@ function App() {
     return <div>Cargando...</div>;
   }
 
-  return user ? <TradingJournal isNewUser={isNewUser} /> : <Auth />;
+  return user ? <TradingJournal isNewUser={isNewUser} user={user} /> : <Auth />;
 }
 
 export default App;

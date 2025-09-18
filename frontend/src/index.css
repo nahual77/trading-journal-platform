@@ -483,3 +483,37 @@
   }
 }
 
+/* Estilos para el contenedor de botones móviles */
+@media (max-width: 640px), (max-width: 896px) and (orientation: landscape) {
+  .mobile-buttons-container {
+    gap: 0.25rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  .mobile-buttons-container .user-menu-container {
+    min-width: auto !important;
+  }
+  
+  .mobile-buttons-container .user-menu-container button {
+    padding: 0.375rem 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .mobile-buttons-container .user-menu-container .hidden {
+    display: none !important;
+  }
+}
+
+/* Asegurar que el menú de usuario sea visible en móvil */
+@media (max-width: 768px) {
+  .user-menu-container {
+    position: relative !important;
+    z-index: 50 !important;
+  }
+  
+  .user-menu-container button {
+    min-width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+}
+
