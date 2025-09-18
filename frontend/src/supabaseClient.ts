@@ -122,6 +122,37 @@ export const supabase = {
         error: null 
       });
     },
+    updateUser: (updates: any) => {
+      console.log('Mock: Actualizando usuario:', updates);
+      
+      if (updates.password) {
+        // Simular validación de contraseña actual
+        const currentPassword = prompt('Ingresa tu contraseña actual para confirmar el cambio:');
+        if (!currentPassword) {
+          return Promise.resolve({ 
+            data: { user: null }, 
+            error: { message: 'Contraseña actual requerida' } 
+          });
+        }
+        
+        // Simular actualización exitosa
+        if (currentUser) {
+          currentUser.updated_at = new Date().toISOString();
+          localStorage.setItem('supabase-mock-user', JSON.stringify(currentUser));
+          console.log('Mock: Usuario actualizado en localStorage');
+        }
+        
+        return Promise.resolve({ 
+          data: { user: currentUser }, 
+          error: null 
+        });
+      }
+      
+      return Promise.resolve({ 
+        data: { user: currentUser }, 
+        error: null 
+      });
+    },
   },
   from: () => ({
     select: () => Promise.resolve({ data: [], error: null }),
