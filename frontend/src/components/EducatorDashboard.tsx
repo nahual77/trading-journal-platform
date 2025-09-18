@@ -216,7 +216,91 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
       {/* Header */}
       <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          {/* Layout móvil */}
+          <div className="lg:hidden">
+            <div className="flex flex-col space-y-4 py-4">
+              {/* Logo y título en móvil */}
+              <div className="flex items-center justify-center space-x-4">
+                <img 
+                  src="/logo-growjou.png" 
+                  alt="Growjou" 
+                  className="h-10 w-auto"
+                />
+                <div className="text-center">
+                  <h1 className="text-lg font-bold text-white">Dashboard del Educador</h1>
+                  <p className="text-gray-400 text-xs">Gestiona tus módulos y estudiantes</p>
+                </div>
+              </div>
+              
+              {/* Botones en móvil */}
+              <div className="flex flex-wrap justify-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-300 hover:bg-gray-700 text-xs"
+                  onClick={handleCommonArea}
+                >
+                  <MessageSquare className="h-3 w-3 mr-1" />
+                  Área Común
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-300 hover:bg-gray-700 text-xs"
+                  onClick={handleSettings}
+                >
+                  <Settings className="h-3 w-3 mr-1" />
+                  Configuración
+                </Button>
+                
+                {/* Menú desplegable del usuario para móvil */}
+                <div className="relative educator-menu-container">
+                  <button
+                    onClick={toggleUserMenu}
+                    className="flex items-center space-x-1 px-2 py-1 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group"
+                  >
+                    <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center">
+                      <User className="h-3 w-3 text-white" />
+                    </div>
+                    <ChevronDown className={`h-3 w-3 text-gray-400 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Menú desplegable para móvil */}
+                  {isUserMenuOpen && (
+                    <div 
+                      className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
+                      style={{ 
+                        zIndex: 99999,
+                        position: 'absolute',
+                        pointerEvents: 'auto'
+                      }}
+                    >
+                      <div className="py-2">
+                        <button
+                          onClick={handleProfile}
+                          className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                        >
+                          <User className="h-3 w-3" />
+                          <span>Mi Perfil</span>
+                        </button>
+                        
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200"
+                        >
+                          <LogOut className="h-3 w-3" />
+                          <span>Cerrar Sesión</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Layout desktop */}
+          <div className="hidden lg:flex justify-between items-center py-4">
             {/* Logo */}
             <div className="flex items-center space-x-4">
               <img 
