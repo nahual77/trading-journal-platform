@@ -17,7 +17,7 @@ function App() {
     const timeoutId = setTimeout(() => {
       console.log('App: Timeout alcanzado, estableciendo loading=false');
       setLoading(false);
-    }, 3000);
+    }, 5000);
     
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       console.log('App: getSession result', { session, error, hasUser: !!session?.user });
