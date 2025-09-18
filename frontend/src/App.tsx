@@ -64,6 +64,19 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Función para manejar logout
+  const handleLogout = async () => {
+    console.log('🔄 App: Iniciando logout...');
+    try {
+      console.log('🔄 App: Llamando a supabase.auth.signOut()...');
+      const result = await supabase.auth.signOut();
+      console.log('🔄 App: Resultado de signOut:', result);
+      // El estado del usuario se maneja a través de onAuthStateChange
+    } catch (error) {
+      console.error('❌ App: Error al cerrar sesión:', error);
+    }
+  };
+
   console.log('App: Render state', { loading, user, isNewUser, userType });
 
   if (loading) {
@@ -76,7 +89,7 @@ function App() {
 
   // Mostrar dashboard según el tipo de usuario
   if (userType === 'educator') {
-    return <EducatorDashboard />;
+    return <EducatorDashboard onLogout={handleLogout} />;
   }
 
   return <TradingJournal isNewUser={isNewUser} user={user} />;
