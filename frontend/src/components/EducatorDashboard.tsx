@@ -294,17 +294,17 @@ const EducatorDashboard: React.FC = () => {
                     <div className="py-2">
                       <button
                         onClick={handleProfile}
-                        className="w-full px-4 py-3 text-left text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 flex items-center space-x-3"
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
                       >
-                        <User className="h-4 w-4 text-gray-400" />
+                        <User className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
                         <span>Mi Perfil</span>
                       </button>
                       
                       <button
                         onClick={handleLogout}
-                        className="w-full px-4 py-3 text-left text-sm text-red-300 hover:bg-red-900/20 hover:text-red-200 transition-colors duration-200 flex items-center space-x-3"
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200 hover:translate-x-1 group"
                       >
-                        <LogOut className="h-4 w-4 text-red-400" />
+                        <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
                         <span>Cerrar Sesión</span>
                       </button>
                     </div>
