@@ -126,16 +126,7 @@ export const supabase = {
       console.log('Mock: Actualizando usuario:', updates);
       
       if (updates.password) {
-        // Simular validación de contraseña actual
-        const currentPassword = prompt('Ingresa tu contraseña actual para confirmar el cambio:');
-        if (!currentPassword) {
-          return Promise.resolve({ 
-            data: { user: null }, 
-            error: { message: 'Contraseña actual requerida' } 
-          });
-        }
-        
-        // Simular actualización exitosa
+        // Simular actualización exitosa (ya se validó la contraseña actual en el frontend)
         if (currentUser) {
           currentUser.updated_at = new Date().toISOString();
           localStorage.setItem('supabase-mock-user', JSON.stringify(currentUser));
