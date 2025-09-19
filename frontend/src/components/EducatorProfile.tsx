@@ -281,12 +281,18 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
         {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="profile" className="flex items-center space-x-2">
+            <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-800">
+              <TabsTrigger 
+                value="profile" 
+                className="flex items-center space-x-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+              >
                 <User className="h-4 w-4" />
                 <span>Perfil</span>
               </TabsTrigger>
-              <TabsTrigger value="security" className="flex items-center space-x-2">
+              <TabsTrigger 
+                value="security" 
+                className="flex items-center space-x-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+              >
                 <Shield className="h-4 w-4" />
                 <span>Seguridad</span>
               </TabsTrigger>
@@ -305,7 +311,7 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
                       variant="outline"
                       size="sm"
                       onClick={() => setIsEditing(!isEditing)}
-                      className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       {isEditing ? 'Cancelar' : 'Editar'}
@@ -534,7 +540,7 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
                       onClick={handlePasswordChange}
                       variant="outline"
                       size="sm"
-                      className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                     >
                       Cambiar
                     </Button>
@@ -555,7 +561,7 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
                       onClick={handle2FAToggle}
                       variant="outline"
                       size="sm"
-                      className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                     >
                       {securityData.twoFactorEnabled ? 'Desactivar' : 'Activar'}
                     </Button>
@@ -576,7 +582,7 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
                       onClick={handleViewSessions}
                       variant="outline"
                       size="sm"
-                      className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                     >
                       Ver sesiones
                     </Button>
@@ -597,7 +603,7 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
                       onClick={handleViewHistory}
                       variant="outline"
                       size="sm"
-                      className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                     >
                       Ver historial
                     </Button>
