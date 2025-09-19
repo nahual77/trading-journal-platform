@@ -585,7 +585,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="w-full text-gray-300 border-gray-600 hover:bg-gray-700"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                         onClick={() => setSelectedModule(module.id)}
                       >
                         <ArrowRight className="h-4 w-4 mr-2" />
@@ -602,7 +602,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
           <TabsContent value="students" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold text-white">Estudiantes Recientes</h2>
-              <Button variant="outline" className="text-gray-300 border-gray-600 hover:bg-gray-700">
+              <Button variant="outline" className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600">
                 Ver Todos
               </Button>
             </div>
