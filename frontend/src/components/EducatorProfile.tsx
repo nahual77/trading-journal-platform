@@ -22,7 +22,8 @@ import {
   Edit,
   Camera,
   Eye,
-  EyeOff
+  EyeOff,
+  X
 } from 'lucide-react';
 
 interface EducatorProfileProps {
@@ -46,6 +47,8 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
   });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [show2FAModal, setShow2FAModal] = useState(false);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   // Datos del perfil (en un futuro vendrán de la API)
   const [profileData, setProfileData] = useState({
@@ -188,6 +191,44 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
     alert('2FA activado correctamente');
   };
 
+  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      alert('Por favor selecciona un archivo de imagen válido');
+      return;
+    }
+
+    // Validar tamaño (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('La imagen debe ser menor a 5MB');
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+
+    // Crear URL temporal para previsualización
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      setAvatar(result);
+      setIsUploadingAvatar(false);
+      alert('Avatar actualizado correctamente');
+    };
+    reader.onerror = () => {
+      alert('Error al cargar la imagen');
+      setIsUploadingAvatar(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatar(null);
+    alert('Avatar eliminado correctamente');
+  };
+
   const handleViewSessions = () => {
     // TODO: Implementar vista de sesiones
     alert('Funcionalidad de sesiones activas - Próximamente');
@@ -274,16 +315,52 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
                   {/* Foto de perfil */}
                   <div className="flex items-center space-x-4">
                     <div className="relative">
-                      <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center">
-                        <User className="h-8 w-8 text-white" />
-                      </div>
+                      {avatar ? (
+                        <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-600">
+                          <img 
+                            src={avatar} 
+                            alt="Avatar" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center">
+                          <User className="h-8 w-8 text-white" />
+                        </div>
+                      )}
+                      
                       {isEditing && (
-                        <Button
-                          size="sm"
-                          className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full p-0"
-                        >
-                          <Camera className="h-3 w-3" />
-                        </Button>
+                        <div className="absolute -bottom-1 -right-1 flex space-x-1">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleAvatarUpload}
+                            className="hidden"
+                            id="avatar-upload"
+                            disabled={isUploadingAvatar}
+                          />
+                          <label
+                            htmlFor="avatar-upload"
+                            className="w-6 h-6 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center cursor-pointer transition-colors"
+                            title="Cambiar avatar"
+                          >
+                            {isUploadingAvatar ? (
+                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                            ) : (
+                              <Camera className="h-3 w-3 text-white" />
+                            )}
+                          </label>
+                          
+                          {avatar && (
+                            <button
+                              onClick={handleRemoveAvatar}
+                              className="w-6 h-6 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center transition-colors"
+                              title="Eliminar avatar"
+                            >
+                              <X className="h-3 w-3 text-white" />
+                            </button>
+                          )}
+                        </div>
                       )}
                     </div>
                     <div>
