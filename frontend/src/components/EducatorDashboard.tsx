@@ -279,7 +279,10 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
               
               {/* Botones en móvil */}
               <div className="flex flex-wrap justify-center gap-2">
-                <LanguageSelector />
+                {/* LanguageSelector en contenedor similar al menú de usuario */}
+                <div className="relative">
+                  <LanguageSelector />
+                </div>
                 
                 {/* Menú desplegable de configuración para móvil - invisible pero en el header */}
                 <div className="relative settings-menu-container" style={{ display: 'none' }}>
@@ -406,7 +409,10 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
             
             {/* Botones de acción */}
             <div className="flex items-center space-x-4">
-              <LanguageSelector />
+              {/* LanguageSelector en contenedor similar al menú de usuario */}
+              <div className="relative">
+                <LanguageSelector />
+              </div>
               
               {/* Menú desplegable de configuración para desktop - invisible pero en el header */}
               <div className="relative settings-menu-container" style={{ display: 'none' }}>
