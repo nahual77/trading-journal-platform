@@ -180,12 +180,12 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
   };
 
   const handle2FAToggle = () => {
-    if (profileData.twoFactorEnabled) {
+    if (securityData.twoFactorEnabled) {
       // Desactivar 2FA
       if (confirm('¿Estás seguro de que quieres desactivar la autenticación de dos factores? Esto reduce la seguridad de tu cuenta.')) {
         // TODO: Implementar desactivación 2FA
         console.log('Desactivando 2FA...');
-        setProfileData({...profileData, twoFactorEnabled: false});
+        setSecurityData({...securityData, twoFactorEnabled: false});
         alert('2FA desactivado correctamente');
       }
     } else {
@@ -195,7 +195,7 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
   };
 
   const handle2FASuccess = () => {
-    setProfileData({...profileData, twoFactorEnabled: true});
+    setSecurityData({...securityData, twoFactorEnabled: true});
     setShow2FAModal(false);
     alert('2FA activado correctamente');
   };
