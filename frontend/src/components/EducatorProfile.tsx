@@ -50,6 +50,8 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [showSessionsModal, setShowSessionsModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   // Cargar avatar desde localStorage al abrir el perfil
   React.useEffect(() => {
@@ -243,13 +245,11 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
   };
 
   const handleViewSessions = () => {
-    // TODO: Implementar vista de sesiones
-    alert('Funcionalidad de sesiones activas - Próximamente');
+    setShowSessionsModal(true);
   };
 
   const handleViewHistory = () => {
-    // TODO: Implementar historial
-    alert('Funcionalidad de historial - Próximamente');
+    setShowHistoryModal(true);
   };
 
   return (
@@ -757,6 +757,219 @@ export default function EducatorProfile({ onClose, onAvatarChange }: EducatorPro
         onClose={() => setShow2FAModal(false)}
         onSuccess={handle2FASuccess}
       />
+
+      {/* Modal de Sesiones Activas */}
+      {showSessionsModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100000] flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+            <div className="bg-gray-800 px-6 py-4 border-b border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-white">Sesiones Activas</h3>
+              <button
+                onClick={() => setShowSessionsModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <div>
+                        <div className="text-white font-medium">Sesión Actual</div>
+                        <div className="text-gray-400 text-sm">Chrome en Windows 10</div>
+                        <div className="text-gray-500 text-xs">IP: 192.168.1.100 • Madrid, España</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-green-400 text-sm font-medium">Activa</div>
+                      <div className="text-gray-500 text-xs">Ahora</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                      <div>
+                        <div className="text-white font-medium">Sesión Móvil</div>
+                        <div className="text-gray-400 text-sm">Safari en iPhone 14</div>
+                        <div className="text-gray-500 text-xs">IP: 192.168.1.101 • Madrid, España</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-yellow-400 text-sm font-medium">Inactiva</div>
+                      <div className="text-gray-500 text-xs">Hace 2 horas</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <div>
+                        <div className="text-white font-medium">Sesión Antigua</div>
+                        <div className="text-gray-400 text-sm">Firefox en MacBook Pro</div>
+                        <div className="text-gray-500 text-xs">IP: 192.168.1.102 • Barcelona, España</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-red-400 text-sm font-medium">Expirada</div>
+                      <div className="text-gray-500 text-xs">Hace 3 días</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowSessionsModal(false)}
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                >
+                  Cerrar
+                </Button>
+                <Button
+                  onClick={() => alert('Funcionalidad de cerrar sesiones - Próximamente')}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  Cerrar Todas las Sesiones
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Historial de Accesos */}
+      {showHistoryModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100000] flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-lg shadow-xl w-full max-w-4xl max-h-[80vh] overflow-hidden">
+            <div className="bg-gray-800 px-6 py-4 border-b border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-white">Historial de Accesos</h3>
+              <button
+                onClick={() => setShowHistoryModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="space-y-3">
+                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div>
+                        <div className="text-white font-medium">Acceso Exitoso</div>
+                        <div className="text-gray-400 text-sm">Chrome en Windows 10</div>
+                        <div className="text-gray-500 text-xs">IP: 192.168.1.100 • Madrid, España</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-white text-sm">2024-01-15 14:30</div>
+                      <div className="text-gray-500 text-xs">Hace 2 horas</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div>
+                        <div className="text-white font-medium">Acceso Exitoso</div>
+                        <div className="text-gray-400 text-sm">Safari en iPhone 14</div>
+                        <div className="text-gray-500 text-xs">IP: 192.168.1.101 • Madrid, España</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-white text-sm">2024-01-15 12:15</div>
+                      <div className="text-gray-500 text-xs">Hace 4 horas</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      <div>
+                        <div className="text-white font-medium">Intento de Acceso Fallido</div>
+                        <div className="text-gray-400 text-sm">Contraseña incorrecta</div>
+                        <div className="text-gray-500 text-xs">IP: 192.168.1.103 • Madrid, España</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-white text-sm">2024-01-15 10:45</div>
+                      <div className="text-gray-500 text-xs">Hace 6 horas</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div>
+                        <div className="text-white font-medium">Acceso Exitoso</div>
+                        <div className="text-gray-400 text-sm">Firefox en MacBook Pro</div>
+                        <div className="text-gray-500 text-xs">IP: 192.168.1.102 • Barcelona, España</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-white text-sm">2024-01-14 16:20</div>
+                      <div className="text-gray-500 text-xs">Ayer</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div>
+                        <div className="text-white font-medium">Acceso Exitoso</div>
+                        <div className="text-gray-400 text-sm">Chrome en Windows 10</div>
+                        <div className="text-gray-500 text-xs">IP: 192.168.1.100 • Madrid, España</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-white text-sm">2024-01-14 09:30</div>
+                      <div className="text-gray-500 text-xs">Ayer</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-between items-center">
+                <div className="text-gray-400 text-sm">
+                  Mostrando 5 de 25 accesos recientes
+                </div>
+                <div className="flex space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowHistoryModal(false)}
+                    className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    Cerrar
+                  </Button>
+                  <Button
+                    onClick={() => alert('Funcionalidad de exportar historial - Próximamente')}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Exportar Historial
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
