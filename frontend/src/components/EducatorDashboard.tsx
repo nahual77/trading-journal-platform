@@ -248,24 +248,6 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
               {/* Botones en móvil */}
               <div className="flex flex-wrap justify-center gap-2">
                 <LanguageSelector />
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-gray-300 hover:bg-gray-700 text-xs"
-                  onClick={handleCommonArea}
-                >
-                  <MessageSquare className="h-3 w-3 mr-1" />
-                  Área Común
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-gray-300 hover:bg-gray-700 text-xs"
-                  onClick={handleSettings}
-                >
-                  <Settings className="h-3 w-3 mr-1" />
-                  Configuración
-                </Button>
                 
                 {/* Menú desplegable del usuario para móvil */}
                 <div className="relative educator-menu-container">
@@ -333,24 +315,6 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
             {/* Botones de acción */}
             <div className="flex items-center space-x-4">
               <LanguageSelector />
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-gray-300 hover:bg-gray-700"
-                onClick={handleCommonArea}
-              >
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Área Común
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-gray-300 hover:bg-gray-700"
-                onClick={handleSettings}
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                Configuración
-              </Button>
               
               {/* Menú desplegable del usuario */}
               <div className="relative educator-menu-container">
@@ -446,6 +410,62 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
           </div>
         </div>
       </header>
+
+      {/* Botones de acción para móvil */}
+      <div className="lg:hidden bg-gray-800/30 border-b border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 py-2">
+          <div className="flex justify-end">
+            <div className="flex items-center space-x-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-300 hover:bg-gray-700 text-xs"
+                onClick={handleCommonArea}
+              >
+                <MessageSquare className="h-3 w-3 mr-1" />
+                Área Común
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-300 hover:bg-gray-700 text-xs"
+                onClick={handleSettings}
+              >
+                <Settings className="h-3 w-3 mr-1" />
+                Configuración
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Botones de acción debajo del header - Desktop */}
+      <div className="hidden lg:block bg-gray-800/30 border-b border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex justify-end">
+            <div className="flex items-center space-x-3">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-300 hover:bg-gray-700"
+                onClick={handleCommonArea}
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Área Común
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-300 hover:bg-gray-700"
+                onClick={handleSettings}
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Configuración
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
