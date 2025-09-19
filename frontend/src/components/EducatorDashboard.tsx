@@ -298,7 +298,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                     <div 
                       className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
                       style={{ 
-                        zIndex: 99999,
+                        zIndex: 100000,
                         position: 'absolute',
                         pointerEvents: 'auto'
                       }}
@@ -383,7 +383,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                   <div 
                     className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
                     style={{ 
-                      zIndex: 99999,
+                      zIndex: 100000,
                       position: 'absolute',
                       pointerEvents: 'auto'
                     }}
