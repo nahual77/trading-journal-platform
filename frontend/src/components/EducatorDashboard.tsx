@@ -359,12 +359,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                   {/* Menú desplegable para móvil */}
                   {isUserMenuOpen && (
                   <div 
-                    className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
-                    style={{ 
-                      zIndex: '999999 !important',
-                      position: 'absolute',
-                      pointerEvents: 'auto'
-                    }}
+                    className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden z-50"
                     >
                       <div className="py-2">
                         <button
@@ -507,12 +502,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                 {/* Menú desplegable */}
                 {isUserMenuOpen && (
                   <div 
-                    className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
-                    style={{ 
-                      zIndex: '999999 !important',
-                      position: 'absolute',
-                      pointerEvents: 'auto'
-                    }}
+                    className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden z-50"
                   >
                     {/* Header del menú */}
                     <div className="px-4 py-3 border-b border-gray-700">
