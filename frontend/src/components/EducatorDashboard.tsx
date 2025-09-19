@@ -66,6 +66,15 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [avatar, setAvatar] = useState<string | null>(null);
+
+  // Cargar avatar desde localStorage
+  useEffect(() => {
+    const savedAvatar = localStorage.getItem('educator-avatar');
+    if (savedAvatar) {
+      setAvatar(savedAvatar);
+    }
+  }, []);
 
   // Simular carga de datos
   useEffect(() => {
@@ -345,9 +354,19 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                   className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 group hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-500/50"
                 >
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
-                      <User className="h-4 w-4 text-white transition-transform duration-200 group-hover:scale-110" />
-                    </div>
+                    {avatar ? (
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-600 transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
+                        <img 
+                          src={avatar} 
+                          alt="Avatar" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
+                        <User className="h-4 w-4 text-white transition-transform duration-200 group-hover:scale-110" />
+                      </div>
+                    )}
                     <div className="text-left">
                       <div className="text-sm font-medium text-white">
                         Educador
@@ -631,7 +650,10 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
 
       {/* Modal de Perfil */}
       {showProfile && (
-        <EducatorProfile onClose={() => setShowProfile(false)} />
+        <EducatorProfile 
+          onClose={() => setShowProfile(false)} 
+          onAvatarChange={setAvatar}
+        />
       )}
     </div>
   );

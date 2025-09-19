@@ -28,9 +28,10 @@ import {
 
 interface EducatorProfileProps {
   onClose: () => void;
+  onAvatarChange?: (avatar: string | null) => void;
 }
 
-export default function EducatorProfile({ onClose }: EducatorProfileProps) {
+export default function EducatorProfile({ onClose, onAvatarChange }: EducatorProfileProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -49,6 +50,14 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  // Cargar avatar desde localStorage al abrir el perfil
+  React.useEffect(() => {
+    const savedAvatar = localStorage.getItem('educator-avatar');
+    if (savedAvatar) {
+      setAvatar(savedAvatar);
+    }
+  }, []);
 
   // Datos del perfil (en un futuro vendrán de la API)
   const [profileData, setProfileData] = useState({
@@ -214,6 +223,8 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
     reader.onload = (e) => {
       const result = e.target?.result as string;
       setAvatar(result);
+      localStorage.setItem('educator-avatar', result);
+      onAvatarChange?.(result);
       setIsUploadingAvatar(false);
       alert('Avatar actualizado correctamente');
     };
@@ -226,6 +237,8 @@ export default function EducatorProfile({ onClose }: EducatorProfileProps) {
 
   const handleRemoveAvatar = () => {
     setAvatar(null);
+    localStorage.removeItem('educator-avatar');
+    onAvatarChange?.(null);
     alert('Avatar eliminado correctamente');
   };
 
