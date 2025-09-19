@@ -281,6 +281,66 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
               <div className="flex flex-wrap justify-center gap-2">
                 <LanguageSelector />
                 
+                {/* Menú desplegable de configuración para móvil - invisible pero en el header */}
+                <div className="relative settings-menu-container" style={{ display: 'none' }}>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-300 hover:bg-gray-700 text-xs"
+                    onClick={toggleSettingsMenu}
+                  >
+                    <Settings className="h-3 w-3 mr-1" />
+                    Configuración
+                    <ChevronDown className={`h-3 w-3 ml-1 transition-transform duration-200 ${isSettingsMenuOpen ? 'rotate-180' : ''}`} />
+                  </Button>
+
+                  {/* Menú desplegable de configuración para móvil */}
+                  {isSettingsMenuOpen && (
+                    <div 
+                      className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
+                      style={{ 
+                        zIndex: 99999,
+                        position: 'absolute',
+                        pointerEvents: 'auto'
+                      }}
+                    >
+                      <div className="py-2">
+                        <button
+                          onClick={handleAcademySettings}
+                          className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                        >
+                          <Building2 className="h-3 w-3" />
+                          <span>Academia</span>
+                        </button>
+                        
+                        <button
+                          onClick={handleModulesSettings}
+                          className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                        >
+                          <BookOpen className="h-3 w-3" />
+                          <span>Módulos</span>
+                        </button>
+                        
+                        <button
+                          onClick={handleStudentsSettings}
+                          className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                        >
+                          <Users className="h-3 w-3" />
+                          <span>Estudiantes</span>
+                        </button>
+                        
+                        <button
+                          onClick={handleCommunicationSettings}
+                          className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                        >
+                          <MessageCircle className="h-3 w-3" />
+                          <span>Comunicación</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
                 {/* Menú desplegable del usuario para móvil */}
                 <div className="relative educator-menu-container">
                   <button
@@ -298,7 +358,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                   <div 
                     className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
                     style={{ 
-                      zIndex: 999999,
+                      zIndex: '999999 !important',
                       position: 'absolute',
                       pointerEvents: 'auto'
                     }}
@@ -348,6 +408,66 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
             <div className="flex items-center space-x-4">
               <LanguageSelector />
               
+              {/* Menú desplegable de configuración para desktop - invisible pero en el header */}
+              <div className="relative settings-menu-container" style={{ display: 'none' }}>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-300 hover:bg-gray-700"
+                  onClick={toggleSettingsMenu}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Configuración
+                  <ChevronDown className={`h-4 w-4 ml-2 transition-transform duration-200 ${isSettingsMenuOpen ? 'rotate-180' : ''}`} />
+                </Button>
+
+                {/* Menú desplegable de configuración para desktop */}
+                {isSettingsMenuOpen && (
+                  <div 
+                    className="absolute right-0 top-full mt-2 w-56 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
+                    style={{ 
+                      zIndex: 99999,
+                      position: 'absolute',
+                      pointerEvents: 'auto'
+                    }}
+                  >
+                    <div className="py-2">
+                      <button
+                        onClick={handleAcademySettings}
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
+                      >
+                        <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
+                        <span>Academia</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleModulesSettings}
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
+                      >
+                        <BookOpen className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
+                        <span>Módulos</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleStudentsSettings}
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
+                      >
+                        <Users className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
+                        <span>Estudiantes</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleCommunicationSettings}
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
+                      >
+                        <MessageCircle className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
+                        <span>Comunicación</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
               {/* Menú desplegable del usuario */}
               <div className="relative educator-menu-container">
                 <button
@@ -383,7 +503,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                   <div 
                     className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
                     style={{ 
-                      zIndex: 999999,
+                      zIndex: '999999 !important',
                       position: 'absolute',
                       pointerEvents: 'auto'
                     }}
