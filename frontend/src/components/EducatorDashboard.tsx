@@ -391,9 +391,19 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                     <div className="px-4 py-3 border-b border-gray-700">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center space-x-3 min-w-0 flex-1">
-                          <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center flex-shrink-0">
-                            <User className="h-5 w-5 text-white" />
-                          </div>
+                          {avatar ? (
+                            <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-600 flex-shrink-0">
+                              <img 
+                                src={avatar} 
+                                alt="Avatar" 
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-gold-400 rounded-full flex items-center justify-center flex-shrink-0">
+                              <User className="h-5 w-5 text-white" />
+                            </div>
+                          )}
                           <div className="min-w-0 flex-1">
                             <div className="text-sm font-medium text-white truncate">
                               Educador
