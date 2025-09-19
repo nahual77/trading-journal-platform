@@ -257,9 +257,9 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-visible">
       {/* Header */}
-      <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700">
+      <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 overflow-visible">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Layout móvil */}
           <div className="lg:hidden">
@@ -299,7 +299,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                     <div 
                       className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
                       style={{ 
-                        zIndex: 99999,
+                        zIndex: 1,
                         position: 'absolute',
                         pointerEvents: 'auto'
                       }}
@@ -426,7 +426,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                   <div 
                     className="absolute right-0 top-full mt-2 w-56 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
                     style={{ 
-                      zIndex: 99999,
+                      zIndex: 1,
                       position: 'absolute',
                       pointerEvents: 'auto'
                     }}
@@ -595,7 +595,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                   <div 
                     className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
                     style={{ 
-                      zIndex: 99999,
+                      zIndex: 1,
                       position: 'absolute',
                       pointerEvents: 'auto'
                     }}
@@ -673,7 +673,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                   <div 
                     className="absolute right-0 top-full mt-2 w-56 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
                     style={{ 
-                      zIndex: 99999,
+                      zIndex: 1,
                       position: 'absolute',
                       pointerEvents: 'auto'
                     }}
