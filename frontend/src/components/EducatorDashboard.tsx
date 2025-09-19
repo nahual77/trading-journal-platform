@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import EducatorProfile from './EducatorProfile';
+import LanguageSelector from './LanguageSelector';
 import { 
   Users, 
   GraduationCap, 
@@ -54,6 +56,7 @@ interface Student {
 }
 
 const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<EducatorStats>({
     totalStudents: 0,
     totalModules: 0,
@@ -244,6 +247,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
               
               {/* Botones en móvil */}
               <div className="flex flex-wrap justify-center gap-2">
+                <LanguageSelector />
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -328,6 +332,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
             
             {/* Botones de acción */}
             <div className="flex items-center space-x-4">
+              <LanguageSelector />
               <Button 
                 variant="ghost" 
                 size="sm" 

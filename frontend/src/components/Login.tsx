@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../supabaseClient';
 import { Mail, Lock, LogIn, RefreshCw, UserPlus, X } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import LanguageSelector from './LanguageSelector';
 
 interface LoginProps {
   onSwitchToRegister?: () => void;
 }
 
 export default function Login({ onSwitchToRegister }: LoginProps) {
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -324,7 +327,10 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
           <div className="w-full max-w-xs lg:max-w-sm mx-2 lg:mx-0">
             {/* Formulario de login */}
             <div className="card-premium landscape-form-container">
-              <h2 className="text-base lg:text-xl font-bold text-white mb-3 lg:mb-5 text-center">Iniciar Sesión</h2>
+              <div className="flex justify-between items-center mb-3 lg:mb-5">
+                <h2 className="text-base lg:text-xl font-bold text-white">{t('auth.login')}</h2>
+                <LanguageSelector />
+              </div>
 
               {/* Toggle Switch para tipo de usuario */}
               <div className="flex justify-center mb-4">
@@ -338,7 +344,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                     }`}
                     onClick={() => setUserType('individual')}
                   >
-                    Usuario Individual
+{t('auth.individual')}
                   </button>
                   <button
                     type="button"
@@ -349,7 +355,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                     }`}
                     onClick={() => setUserType('academy')}
                   >
-                    Academia
+{t('auth.academy')}
                   </button>
                 </div>
               </div>
@@ -358,7 +364,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
               {userType === 'academy' && (
                 <div className="mb-4 p-3 bg-gray-800/50 rounded-lg border border-gray-600">
                   <label className="block text-xs font-medium text-gray-300 mb-2 text-center">
-                    Tipo de Usuario
+{t('auth.academyRole')}
                   </label>
                   <div className="flex space-x-4 justify-center">
                     <label className="flex items-center">
@@ -369,7 +375,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                         onChange={(e) => setAcademyRole(e.target.value as 'educator')}
                         className="mr-2 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-xs text-gray-300">Soy Educador</span>
+                      <span className="text-xs text-gray-300">{t('auth.educator')}</span>
                     </label>
                     <label className="flex items-center">
                       <input
@@ -379,7 +385,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                         onChange={(e) => setAcademyRole(e.target.value as 'student')}
                         className="mr-2 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-xs text-gray-300">Soy Alumno</span>
+                      <span className="text-xs text-gray-300">{t('auth.student')}</span>
                     </label>
                   </div>
                 </div>
@@ -389,7 +395,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
               {userType === 'academy' && academyRole === 'student' && (
                 <div className="mb-4">
                   <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
-                    Código de Academia
+{t('auth.academyCode')}
                   </label>
                   <div className="relative">
                     <input
@@ -414,7 +420,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
               <form onSubmit={handleLogin} className="space-y-2 lg:space-y-4">
                 <div className="w-full mx-auto">
                   <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
-                    Email
+{t('auth.email')}
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
@@ -431,7 +437,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
 
                 <div className="w-full mx-auto">
                   <label className="block text-xs font-medium text-gray-300 mb-1 text-center">
-                    Contraseña
+{t('auth.password')}
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
@@ -456,7 +462,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                   ) : (
                     <LogIn className="h-3 w-3" />
                   )}
-                  <span>{loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}</span>
+                  <span>{loading ? t('auth.loading') : t('auth.login')}</span>
                 </button>
               </form>
 
@@ -465,21 +471,21 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                 {/* Botón de registro */}
                 <div className="text-center">
                   <p className="text-xs text-gray-400 mb-2">
-                    ¿No tienes cuenta?
+{t('auth.register')}
                   </p>
                   <button
                     onClick={() => setShowRegisterModal(true)}
                     className="w-full flex items-center justify-center space-x-2 px-2 py-2 lg:py-2 bg-green-600/10 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-600/20 hover:border-green-600/50 transition-colors text-xs lg:text-sm"
                   >
                     <UserPlus className="h-3 w-3" />
-                    <span>Crear Cuenta</span>
+                    <span>{t('auth.register')}</span>
                   </button>
                 </div>
 
                 {/* Recuperar contraseña */}
                 <div className="text-center">
                   <p className="text-xs text-gray-400 mb-2">
-                    ¿Olvidaste tu contraseña?
+{t('auth.forgotPassword')}
                   </p>
                   <button
                     onClick={handlePasswordRecovery}
@@ -492,7 +498,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
                       <Mail className="h-3 w-3" />
                     )}
                     <span>
-                      {recoveryLoading ? 'Enviando...' : 'Recuperar Contraseña'}
+                      {recoveryLoading ? t('auth.loading') : t('auth.passwordRecovery')}
                     </span>
                   </button>
 
