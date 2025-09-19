@@ -446,7 +446,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
       {/* Botones de acción para móvil */}
       <div className="lg:hidden bg-gray-800/30 border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 py-2">
-          <div className="flex justify-end">
+          <div className="flex justify-center">
             <div className="flex items-center space-x-2">
               <Button 
                 variant="ghost" 
@@ -519,7 +519,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
       {/* Botones de acción debajo del header - Desktop */}
       <div className="hidden lg:block bg-gray-800/30 border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex justify-end">
+          <div className="flex justify-center">
             <div className="flex items-center space-x-3">
               <Button 
                 variant="ghost" 
