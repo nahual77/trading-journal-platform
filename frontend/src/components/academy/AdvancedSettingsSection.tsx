@@ -512,3 +512,4 @@ const AdvancedSettingsSection: React.FC = () => {
 };
 
 export default AdvancedSettingsSection;
+

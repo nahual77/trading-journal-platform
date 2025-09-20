@@ -369,3 +369,4 @@ const CommonAreaSection: React.FC = () => {
 };
 
 export default CommonAreaSection;
+

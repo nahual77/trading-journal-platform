@@ -72,3 +72,4 @@ const AcademySidebar: React.FC<AcademySidebarProps> = ({
 };
 
 export default AcademySidebar;
+
