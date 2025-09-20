@@ -112,7 +112,7 @@ const AcademyPage: React.FC<AcademyPageProps> = ({ onBack }) => {
         <AcademySidebar
           sections={sections}
           activeSection={activeSection}
-          onSectionChange={setActiveSection}
+          onSectionChange={(sectionId) => setActiveSection(sectionId as AcademySection)}
         />
 
         {/* Main Content */}
