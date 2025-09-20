@@ -6,6 +6,7 @@ import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import EducatorProfile from './EducatorProfile';
 import LanguageSelector from './LanguageSelector';
+import AcademyPage from '../pages/AcademyPage';
 import { 
   Users, 
   GraduationCap, 
@@ -74,6 +75,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
+  const [showAcademyPage, setShowAcademyPage] = useState(false);
 
   // Cargar avatar desde localStorage
   useEffect(() => {
@@ -213,11 +215,6 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
     setIsUserMenuOpen(false); // Cerrar menú de usuario si está abierto
   };
 
-  const handleAcademySettings = () => {
-    setIsSettingsMenuOpen(false);
-    alert('Configuración de Academia - Próximamente');
-  };
-
   const handleModulesSettings = () => {
     setIsSettingsMenuOpen(false);
     alert('Configuración de Módulos - Próximamente');
@@ -231,6 +228,15 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
   const handleCommunicationSettings = () => {
     setIsSettingsMenuOpen(false);
     alert('Configuración de Comunicación - Próximamente');
+  };
+
+  const handleAcademySettings = () => {
+    setIsSettingsMenuOpen(false);
+    setShowAcademyPage(true);
+  };
+
+  const handleBackFromAcademy = () => {
+    setShowAcademyPage(false);
   };
 
   const handleProfile = () => {
@@ -255,6 +261,11 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
     e.stopPropagation();
     setIsUserMenuOpen(!isUserMenuOpen);
   };
+
+  // Si se debe mostrar la página de Academia, renderizarla
+  if (showAcademyPage) {
+    return <AcademyPage onBack={handleBackFromAcademy} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
