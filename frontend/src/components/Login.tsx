@@ -265,25 +265,25 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
           ? 'opacity-100 transform translate-x-0' 
           : 'opacity-0 transform -translate-x-12'
       }`}>
-        <img
-          src="/logo-growjou.png"
-          alt="GrowJou - My Trading Journal"
+      <img
+        src="/logo-growjou.png"
+        alt="GrowJou - My Trading Journal"
           className="block opacity-100"
-          style={{ 
-            height: isMobile ? '80px' : '200px',
-            width: 'auto',
-            maxWidth: isMobile ? '85%' : '90%',
-            objectFit: 'contain',
-            position: logoInCenter ? 'fixed' : 'absolute',
-            top: logoInCenter ? '50%' : '15px',
-            left: '50%',
-            transform: logoInCenter 
-              ? 'translate(-50%, -50%) scale(1.1)' 
-              : 'translate(-50%, 0) scale(1)',
-            zIndex: logoInCenter ? 20 : 10,
-            transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-          }}
-        />
+        style={{ 
+          height: isMobile ? '80px' : '200px',
+          width: 'auto',
+          maxWidth: isMobile ? '85%' : '90%',
+          objectFit: 'contain',
+          position: logoInCenter ? 'fixed' : 'absolute',
+          top: logoInCenter ? '50%' : '15px',
+          left: '50%',
+          transform: logoInCenter 
+            ? 'translate(-50%, -50%) scale(1.1)' 
+            : 'translate(-50%, 0) scale(1)',
+          zIndex: logoInCenter ? 20 : 10,
+          transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        }}
+      />
       </div>
 
       {/* Contenido principal responsive */}
@@ -301,7 +301,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             ? 'opacity-100 transform translate-x-0' 
             : 'opacity-0 transform -translate-x-12'
         }`}>
-          <div className="text-center">
+                <div className="text-center">
             <img
               src="/logo-growjou.png"
               alt="GrowJou - My Trading Journal"
