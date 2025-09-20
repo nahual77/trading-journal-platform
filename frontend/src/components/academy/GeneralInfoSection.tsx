@@ -292,3 +292,4 @@ const GeneralInfoSection: React.FC = () => {
 };
 
 export default GeneralInfoSection;
+

@@ -127,3 +127,4 @@ const AcademyPage: React.FC<AcademyPageProps> = ({ onBack }) => {
 };
 
 export default AcademyPage;
+

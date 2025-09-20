@@ -216,3 +216,4 @@ const AcademyDashboard: React.FC = () => {
 };
 
 export default AcademyDashboard;
+
