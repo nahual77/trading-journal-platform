@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+// Importar traducciones de forma estática para asegurar que se incluyan en el bundle
 import esTranslation from '../locales/es/translation.json';
 import enTranslation from '../locales/en/translation.json';
 import ptTranslation from '../locales/pt/translation.json';
@@ -34,14 +35,20 @@ i18n
   .init({
     resources,
     fallbackLng: 'es',
-    debug: false,
+    lng: 'es', // Idioma por defecto explícito
+    debug: process.env.NODE_ENV === 'development',
     interpolation: {
       escapeValue: false
     },
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage']
-    }
+    },
+    react: {
+      useSuspense: false
+    },
+    // Asegurar que las traducciones estén disponibles inmediatamente
+    initImmediate: false
   });
 
 export default i18n;
