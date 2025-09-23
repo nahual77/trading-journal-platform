@@ -29,26 +29,40 @@ const resources = {
   ar: { translation: arTranslation }
 };
 
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    resources,
-    fallbackLng: 'es',
-    lng: 'es', // Idioma por defecto explícito
-    debug: process.env.NODE_ENV === 'development',
-    interpolation: {
-      escapeValue: false
-    },
-    detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage']
-    },
-    react: {
-      useSuspense: false
-    },
-    // Asegurar que las traducciones estén disponibles inmediatamente
-    initImmediate: false
-  });
+// Función para inicializar i18n de forma síncrona
+const initI18n = () => {
+  i18n
+    .use(LanguageDetector)
+    .use(initReactI18next)
+    .init({
+      resources,
+      fallbackLng: 'es',
+      lng: 'es', // Idioma por defecto explícito
+      debug: process.env.NODE_ENV === 'development',
+      interpolation: {
+        escapeValue: false
+      },
+      detection: {
+        order: ['localStorage', 'navigator', 'htmlTag'],
+        caches: ['localStorage']
+      },
+      react: {
+        useSuspense: false
+      },
+      // Asegurar que las traducciones estén disponibles inmediatamente
+      initImmediate: false,
+      // Configuración adicional para producción
+      load: 'languageOnly',
+      preload: ['es', 'en'],
+      saveMissing: false,
+      missingKeyHandler: (lng, ns, key) => {
+        console.warn(`Missing translation key: ${key} for language: ${lng}`);
+        return key; // Devolver la clave si no se encuentra la traducción
+      }
+    });
+};
+
+// Inicializar inmediatamente
+initI18n();
 
 export default i18n;
