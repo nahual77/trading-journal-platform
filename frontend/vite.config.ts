@@ -13,14 +13,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          i18n: ['i18next', 'react-i18next']
-        }
-      }
-    }
-  }
 })
 
