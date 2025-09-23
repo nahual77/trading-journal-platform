@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, Check } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
@@ -29,8 +29,25 @@ const LanguageSelector: React.FC = () => {
     setIsOpen(false);
   };
 
+  // Cerrar selector al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isOpen && !target.closest('.language-selector-container')) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [isOpen]);
+
   return (
-    <div className="relative">
+    <div className="relative language-selector-container">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center ${isMobile ? 'space-x-1 px-2 py-1' : 'space-x-2 px-3 py-2'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors language-button-mobile`}
