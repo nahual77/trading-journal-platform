@@ -6,6 +6,7 @@ import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import EducatorProfile from './EducatorProfile';
 import LanguageSelector from './LanguageSelector';
+import AcademyPage from '../pages/AcademyPage';
 import { 
   Users, 
   GraduationCap, 
@@ -19,7 +20,10 @@ import {
   ArrowRight,
   LogOut,
   User,
-  ChevronDown
+  ChevronDown,
+  Building2,
+  BookOpen,
+  MessageCircle
 } from 'lucide-react';
 
 interface EducatorStats {
@@ -70,6 +74,8 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
+  const [showAcademyPage, setShowAcademyPage] = useState(false);
 
   // Cargar avatar desde localStorage
   useEffect(() => {
@@ -156,22 +162,25 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
     ]);
   }, []);
 
-  // Cerrar menú al hacer click fuera
+  // Cerrar menús al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
       if (isUserMenuOpen && !target.closest('.educator-menu-container')) {
         setIsUserMenuOpen(false);
       }
+      if (isSettingsMenuOpen && !target.closest('.settings-menu-container')) {
+        setIsSettingsMenuOpen(false);
+      }
     };
 
-    if (isUserMenuOpen) {
+    if (isUserMenuOpen || isSettingsMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [isUserMenuOpen]);
+  }, [isUserMenuOpen, isSettingsMenuOpen]);
 
   const getPerformanceColor = (performance: string) => {
     switch (performance) {
@@ -201,6 +210,35 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
     alert('Configuración del educador - Próximamente');
   };
 
+  const toggleSettingsMenu = () => {
+    setIsSettingsMenuOpen(!isSettingsMenuOpen);
+    setIsUserMenuOpen(false); // Cerrar menú de usuario si está abierto
+  };
+
+  const handleModulesSettings = () => {
+    setIsSettingsMenuOpen(false);
+    alert('Configuración de Módulos - Próximamente');
+  };
+
+  const handleStudentsSettings = () => {
+    setIsSettingsMenuOpen(false);
+    alert('Configuración de Estudiantes - Próximamente');
+  };
+
+  const handleCommunicationSettings = () => {
+    setIsSettingsMenuOpen(false);
+    alert('Configuración de Comunicación - Próximamente');
+  };
+
+  const handleAcademySettings = () => {
+    setIsSettingsMenuOpen(false);
+    setShowAcademyPage(true);
+  };
+
+  const handleBackFromAcademy = () => {
+    setShowAcademyPage(false);
+  };
+
   const handleProfile = () => {
     setShowProfile(true);
     setIsUserMenuOpen(false);
@@ -223,6 +261,11 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
     e.stopPropagation();
     setIsUserMenuOpen(!isUserMenuOpen);
   };
+
+  // Si se debe mostrar la página de Academia, renderizarla
+  if (showAcademyPage) {
+    return <AcademyPage onBack={handleBackFromAcademy} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
@@ -414,7 +457,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
       {/* Botones de acción para móvil */}
       <div className="lg:hidden bg-gray-800/30 border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 py-2">
-          <div className="flex justify-end">
+          <div className="flex justify-center">
             <div className="flex items-center space-x-2">
               <Button 
                 variant="ghost" 
@@ -425,15 +468,60 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                 <MessageSquare className="h-3 w-3 mr-1" />
                 Área Común
               </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-gray-300 hover:bg-gray-700 text-xs"
-                onClick={handleSettings}
-              >
-                <Settings className="h-3 w-3 mr-1" />
-                Configuración
-              </Button>
+              {/* Menú desplegable de configuración para móvil */}
+              <div className="relative settings-menu-container">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-300 hover:bg-gray-700 text-xs"
+                  onClick={toggleSettingsMenu}
+                >
+                  <Settings className="h-3 w-3 mr-1" />
+                  Configuración
+                  <ChevronDown className={`h-3 w-3 ml-1 transition-transform duration-200 ${isSettingsMenuOpen ? 'rotate-180' : ''}`} />
+                </Button>
+
+                {/* Menú desplegable de configuración para móvil */}
+                {isSettingsMenuOpen && (
+                  <div 
+                    className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden z-50"
+                  >
+                    <div className="py-2">
+                      <button
+                        onClick={handleAcademySettings}
+                        className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                      >
+                        <Building2 className="h-3 w-3" />
+                        <span>Academia</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleModulesSettings}
+                        className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                      >
+                        <BookOpen className="h-3 w-3" />
+                        <span>Módulos</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleStudentsSettings}
+                        className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                      >
+                        <Users className="h-3 w-3" />
+                        <span>Estudiantes</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleCommunicationSettings}
+                        className="w-full flex items-center space-x-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                      >
+                        <MessageCircle className="h-3 w-3" />
+                        <span>Comunicación</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -442,7 +530,7 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
       {/* Botones de acción debajo del header - Desktop */}
       <div className="hidden lg:block bg-gray-800/30 border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex justify-end">
+          <div className="flex justify-center">
             <div className="flex items-center space-x-3">
               <Button 
                 variant="ghost" 
@@ -453,15 +541,60 @@ const EducatorDashboard: React.FC<EducatorDashboardProps> = ({ onLogout }) => {
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Área Común
               </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-gray-300 hover:bg-gray-700"
-                onClick={handleSettings}
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                Configuración
-              </Button>
+              {/* Menú desplegable de configuración para desktop */}
+              <div className="relative settings-menu-container">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-300 hover:bg-gray-700"
+                  onClick={toggleSettingsMenu}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Configuración
+                  <ChevronDown className={`h-4 w-4 ml-2 transition-transform duration-200 ${isSettingsMenuOpen ? 'rotate-180' : ''}`} />
+                </Button>
+
+                {/* Menú desplegable de configuración para desktop */}
+                {isSettingsMenuOpen && (
+                  <div 
+                    className="absolute right-0 top-full mt-2 w-56 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden z-50"
+                  >
+                    <div className="py-2">
+                      <button
+                        onClick={handleAcademySettings}
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
+                      >
+                        <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
+                        <span>Academia</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleModulesSettings}
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
+                      >
+                        <BookOpen className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
+                        <span>Módulos</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleStudentsSettings}
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
+                      >
+                        <Users className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
+                        <span>Estudiantes</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleCommunicationSettings}
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 hover:translate-x-1 group"
+                      >
+                        <MessageCircle className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
+                        <span>Comunicación</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
