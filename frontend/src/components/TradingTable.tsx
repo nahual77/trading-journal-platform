@@ -755,8 +755,17 @@ function TradingTable({
                       column.key === 'hora' ? 'col-hora' :
                         isImageField(column.key) ? 'col-image' : ''
                     }`}
+                  style={{ 
+                    whiteSpace: 'normal', 
+                    wordWrap: 'break-word',
+                    lineHeight: '1.3',
+                    maxWidth: '120px',
+                    height: 'auto',
+                    minHeight: '40px',
+                    padding: '8px 12px'
+                  }}
                 >
-                  {column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}
+                  {column.name.startsWith('table.') ? t(column.name) : column.name}
                 </th>
               ))}
               <th className="px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">

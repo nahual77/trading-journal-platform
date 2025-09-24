@@ -205,7 +205,7 @@ export function JournalTabs({
               <div className="flex items-center space-x-2 bg-gray-800 rounded-lg px-3 py-2">
                 <input
                   type="text"
-                  placeholder="Nombre del diario"
+                  placeholder={t('journalTabs.newJournal')}
                   value={newJournalName}
                   onChange={(e) => setNewJournalName(e.target.value)}
                   onKeyDown={(e) => {
