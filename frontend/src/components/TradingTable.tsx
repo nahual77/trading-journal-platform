@@ -93,8 +93,8 @@ const SimpleImageField = ({
   return (
     <div
       className={`simple-image-field h-20 overflow-hidden cursor-pointer border-2 rounded ${activeImageField?.entryId === entryId && activeImageField?.fieldKey === fieldName
-          ? 'border-blue-500 bg-blue-500/10'
-          : 'border-transparent hover:border-gray-500'
+        ? 'border-blue-500 bg-blue-500/10'
+        : 'border-transparent hover:border-gray-500'
         }`}
       onPaste={handlePaste}
       onClick={() => {
@@ -531,8 +531,8 @@ function TradingTable({
         <button
           onClick={() => onUpdateEntry(entry.id, { [column.key]: !value })}
           className={`px-3 py-1 rounded text-xs font-medium ${value
-              ? 'bg-green-600 text-white'
-              : 'bg-red-600 text-white'
+            ? 'bg-green-600 text-white'
+            : 'bg-red-600 text-white'
             }`}
         >
           {value ? t('common.yes') : t('common.no')}
@@ -751,12 +751,37 @@ function TradingTable({
               {visibleColumns.map((column) => (
                 <th
                   key={column.id}
-                  className={`px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider ${column.key === 'fecha' ? 'col-fecha' :
-                      column.key === 'hora' ? 'col-hora' :
-                        isImageField(column.key) ? 'col-image' : ''
+                  className={`px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider table-header-multiline ${column.key === 'fecha' ? 'col-fecha' :
+                    column.key === 'hora' ? 'col-hora' :
+                      isImageField(column.key) ? 'col-image' : ''
                     }`}
+                  style={{
+                    whiteSpace: 'pre-line',
+                    wordWrap: 'break-word',
+                    lineHeight: '1.2',
+                    maxWidth: '120px',
+                    height: 'auto',
+                    minHeight: '60px',
+                    padding: '8px 12px',
+                    textAlign: 'left',
+                    verticalAlign: 'top'
+                  }}
                 >
-                  {column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}
+                  {t(`table.${column.name.replace(/^table\./, '').replace(/^TABLE\./, '')}`)
+                    .replace('Tipo Operación', 'Tipo\nOperación')
+                    .replace('Razón de entrada', 'Razón\nde entrada')
+                    .replace('Se cumplió el plan?', 'Se cumplió\nel plan?')
+                    .replace('Emociones (antes)', 'Emociones\n(antes)')
+                    .replace('Emociones (durante)', 'Emociones\n(durante)')
+                    .replace('Emociones (después)', 'Emociones\n(después)')
+                    .replace('Entry Reason', 'Razón\nde entrada')
+                    .replace('Plan Followed', 'Se cumplió\nel plan?')
+                    .replace('Emotions Before', 'Emociones\n(antes)')
+                    .replace('Emotions During', 'Emociones\n(durante)')
+                    .replace('Emotions After', 'Emociones\n(después)')
+                    .replace('Entries Not Taken', 'Entradas\nno tomadas')
+                    .replace('What Happened With Entries', 'Qué pasó\ncon entradas')
+                  }
                 </th>
               ))}
               <th className="px-3 py-2 text-left text-xs font-medium text-gold-300 uppercase tracking-wider w-16">
@@ -788,8 +813,8 @@ function TradingTable({
                     <td
                       key={column.id}
                       className={`px-3 py-2 text-xs text-gray-300 ${column.key === 'fecha' ? 'col-fecha' :
-                          column.key === 'hora' ? 'col-hora' :
-                            isImageField(column.key) ? 'col-image' : ''
+                        column.key === 'hora' ? 'col-hora' :
+                          isImageField(column.key) ? 'col-image' : ''
                         }`}
                       style={{ height: '100px', maxHeight: '100px', overflow: 'hidden' }}
                     >
@@ -821,8 +846,8 @@ function TradingTable({
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
               className={`px-2 py-1 text-sm rounded ${currentPage === 1
-                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                  : 'bg-gray-700 text-white hover:bg-gray-600'
+                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-700 text-white hover:bg-gray-600'
                 }`}
             >
               {t('table.first')}
@@ -831,8 +856,8 @@ function TradingTable({
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
               className={`px-2 py-1 text-sm rounded ${currentPage === 1
-                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                  : 'bg-gray-700 text-white hover:bg-gray-600'
+                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-700 text-white hover:bg-gray-600'
                 }`}
             >
               {t('table.previous')}
@@ -844,8 +869,8 @@ function TradingTable({
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
               className={`px-2 py-1 text-sm rounded ${currentPage === totalPages
-                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                  : 'bg-gray-700 text-white hover:bg-gray-600'
+                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-700 text-white hover:bg-gray-600'
                 }`}
             >
               {t('table.next')}
@@ -854,8 +879,8 @@ function TradingTable({
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
               className={`px-2 py-1 text-sm rounded ${currentPage === totalPages
-                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                  : 'bg-gray-700 text-white hover:bg-gray-600'
+                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-700 text-white hover:bg-gray-600'
                 }`}
             >
               {t('table.last')}

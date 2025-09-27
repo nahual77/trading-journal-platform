@@ -40,3 +40,23 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Estilos para encabezados de tabla con saltos de línea */
+.table-header-multiline {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  line-height: 1.2 !important;
+  max-width: 120px !important;
+  height: auto !important;
+  min-height: 60px !important;
+  padding: 8px 12px !important;
+  text-align: left !important;
+  vertical-align: top !important;
+}
+
+/* Forzar saltos de línea en encabezados específicos */
+th.table-header-multiline {
+  white-space: pre-line !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
