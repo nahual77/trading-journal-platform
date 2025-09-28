@@ -543,5 +543,27 @@
       "setupComplete": "¡2FA configurado correctamente!",
       "close": "Cerrar"
     }
+  },
+  "columnManager": {
+    "manageColumns": "Gestionar columnas",
+    "columns": "Columnas",
+    "visible": "visibles",
+    "addNewColumn": "Agregar nueva columna",
+    "addColumn": "Agregar columna",
+    "editColumn": "Editar columna",
+    "columnKey": "Clave de columna",
+    "columnName": "Nombre de columna",
+    "columnType": "Tipo de columna",
+    "options": "Opciones",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar esta columna?",
+    "types": {
+      "text": "Texto",
+      "number": "Número",
+      "boolean": "Sí/No",
+      "date": "Fecha",
+      "time": "Hora",
+      "image": "Imagen",
+      "select": "Selección"
+    }
   }
 }
