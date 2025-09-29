@@ -413,6 +413,19 @@ export function useTradingJournalState() {
     }
   }, [validAppState.activeJournalId, validAppState.journals, updateColumn]);
 
+  const reorderColumns = useCallback((columns: ColumnDefinition[], journalId?: string) => {
+    const targetJournalId = journalId || validAppState.activeJournalId;
+    
+    setAppState(prev => ({
+      ...prev,
+      journals: prev.journals.map(journal =>
+        journal.id === targetJournalId
+          ? { ...journal, customColumns: columns }
+          : journal
+      ),
+    }));
+  }, [validAppState.activeJournalId, setAppState]);
+
   // === GESTIÓN DE IMÁGENES ===
 
   const addImageToEntry = useCallback((entryId: string, image: TradeImage, journalId?: string) => {
@@ -725,6 +738,7 @@ export function useTradingJournalState() {
     updateColumn,
     removeColumn,
     toggleColumn,
+    reorderColumns,
 
     // Imágenes
     addImageToEntry,

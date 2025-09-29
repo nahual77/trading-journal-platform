@@ -18,6 +18,7 @@ interface TradingTableProps {
   onAddColumn: (column: Omit<ColumnDefinition, 'id' | 'order'>) => void;
   onRemoveColumn: (columnId: string) => void;
   onToggleColumn: (columnId: string) => void;
+  onReorderColumns: (columns: ColumnDefinition[]) => void;
 }
 
 // Simple Image Field Component - MINIMALISTA
@@ -730,6 +731,10 @@ function TradingTable({
         <ColumnManager
           columns={columns}
           onToggleColumn={onToggleColumn}
+          onUpdateColumn={onUpdateColumn}
+          onRemoveColumn={onRemoveColumn}
+          onAddColumn={onAddColumn}
+          onReorderColumns={onReorderColumns}
         />
       </div>
 

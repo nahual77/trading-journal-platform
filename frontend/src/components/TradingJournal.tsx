@@ -392,6 +392,7 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
                 onAddColumn={(column) => addCustomColumn(column, activeJournal.id)}
                 onRemoveColumn={(columnId) => removeColumn(columnId, activeJournal.id)}
                 onToggleColumn={(columnId) => toggleColumn(columnId, activeJournal.id)}
+                onReorderColumns={(columns) => reorderColumns(columns, activeJournal.id)}
               />
 
               {/* Gráfico de Progresión de Balance */}

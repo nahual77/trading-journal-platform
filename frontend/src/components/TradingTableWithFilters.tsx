@@ -15,6 +15,7 @@ interface TradingTableWithFiltersProps {
   onAddColumn: (column: Omit<ColumnDefinition, 'id' | 'order'>) => void;
   onRemoveColumn: (columnId: string) => void;
   onToggleColumn: (columnId: string) => void;
+  onReorderColumns: (columns: ColumnDefinition[]) => void;
 }
 
 interface FilterState {
