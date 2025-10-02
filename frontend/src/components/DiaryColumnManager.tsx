@@ -7,17 +7,20 @@ interface DiaryColumnManagerProps {
   columns: ColumnDefinition[];
   onColumnsChange: (columns: ColumnDefinition[]) => void;
   onToggleColumn: (columnId: string) => void;
+  onReorderColumns?: (columnId: string, direction: 'up' | 'down') => void;
 }
 
-export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({ 
-  columns, 
+export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
+  columns,
   onColumnsChange,
-  onToggleColumn 
+  onToggleColumn,
+  onReorderColumns
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingColumn, setEditingColumn] = useState<ColumnDefinition | null>(null);
+  const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
   const [newColumn, setNewColumn] = useState<Partial<ColumnDefinition>>({
     key: '',
     name: '',
@@ -48,7 +51,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
 
   // Ordenar columnas por su orden definido
   const sortedColumns = [...columns].sort((a, b) => a.order - b.order);
-  
+
   // Contar columnas visibles
   const visibleCount = columns.filter(col => col.visible).length;
   const totalCount = columns.length;
@@ -82,9 +85,10 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
   };
 
   const handleUpdateColumn = (updatedColumn: ColumnDefinition) => {
-    onColumnsChange(columns.map(col => 
+    const updatedColumns = columns.map(col =>
       col.id === updatedColumn.id ? updatedColumn : col
-    ));
+    );
+    onColumnsChange(updatedColumns);
     setEditingColumn(null);
     setIsEditing(false);
   };
@@ -96,15 +100,60 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
   };
 
   const handleMoveColumn = (columnId: string, direction: 'up' | 'down') => {
-    const columnIndex = columns.findIndex(col => col.id === columnId);
-    if (columnIndex === -1) return;
+    if (onReorderColumns) {
+      onReorderColumns(columnId, direction);
+    } else {
+      // Fallback: implementación local
+      const columnIndex = columns.findIndex(col => col.id === columnId);
+      if (columnIndex === -1) return;
 
-    const newIndex = direction === 'up' ? columnIndex - 1 : columnIndex + 1;
-    if (newIndex < 0 || newIndex >= columns.length) return;
+      const newIndex = direction === 'up' ? columnIndex - 1 : columnIndex + 1;
+      if (newIndex < 0 || newIndex >= columns.length) return;
+
+      const newColumns = [...columns];
+      const [movedColumn] = newColumns.splice(columnIndex, 1);
+      newColumns.splice(newIndex, 0, movedColumn);
+
+      // Actualizar el orden
+      const updatedColumns = newColumns.map((col, index) => ({
+        ...col,
+        order: index + 1
+      }));
+
+      onColumnsChange(updatedColumns);
+    }
+  };
+
+  // Funciones de drag and drop
+  const handleDragStart = (e: React.DragEvent, columnId: string) => {
+    setDraggedColumn(columnId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, targetColumnId: string) => {
+    e.preventDefault();
+
+    if (!draggedColumn || draggedColumn === targetColumnId) {
+      setDraggedColumn(null);
+      return;
+    }
+
+    const draggedIndex = columns.findIndex(col => col.id === draggedColumn);
+    const targetIndex = columns.findIndex(col => col.id === targetColumnId);
+
+    if (draggedIndex === -1 || targetIndex === -1) {
+      setDraggedColumn(null);
+      return;
+    }
 
     const newColumns = [...columns];
-    const [movedColumn] = newColumns.splice(columnIndex, 1);
-    newColumns.splice(newIndex, 0, movedColumn);
+    const [movedColumn] = newColumns.splice(draggedIndex, 1);
+    newColumns.splice(targetIndex, 0, movedColumn);
 
     // Actualizar el orden
     const updatedColumns = newColumns.map((col, index) => ({
@@ -113,6 +162,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
     }));
 
     onColumnsChange(updatedColumns);
+    setDraggedColumn(null);
   };
 
   const columnTypes = [
@@ -158,10 +208,15 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
               {sortedColumns.map((column) => (
                 <div
                   key={column.id}
-                  className="flex items-center space-x-2 p-2 bg-gray-700 rounded-lg"
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, column.id)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, column.id)}
+                  className={`flex items-center space-x-2 p-2 bg-gray-700 rounded-lg cursor-move transition-all ${draggedColumn === column.id ? 'opacity-50 scale-95' : 'hover:bg-gray-600'
+                    }`}
                 >
                   <GripVertical className="h-4 w-4 text-gray-400 cursor-move" />
-                  
+
                   <button
                     onClick={() => onToggleColumn(column.id)}
                     className="flex-shrink-0"
@@ -175,7 +230,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
 
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-white truncate">
-                      {column.name}
+                      {t(`table.${column.name}`)}
                     </div>
                     <div className="text-xs text-gray-400">
                       {column.key} • {t(`columnManager.types.${column.type}`)}
@@ -219,7 +274,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
               <h4 className="text-sm font-medium text-white mb-3">
                 {t('columnManager.addNewColumn')}
               </h4>
-              
+
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs text-gray-300 mb-1">
@@ -228,7 +283,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
                   <input
                     type="text"
                     value={newColumn.key || ''}
-                    onChange={(e) => setNewColumn({...newColumn, key: e.target.value})}
+                    onChange={(e) => setNewColumn({ ...newColumn, key: e.target.value })}
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:outline-none focus:border-blue-500"
                     placeholder="ej: mi_campo"
                   />
@@ -241,7 +296,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
                   <input
                     type="text"
                     value={newColumn.name || ''}
-                    onChange={(e) => setNewColumn({...newColumn, name: e.target.value})}
+                    onChange={(e) => setNewColumn({ ...newColumn, name: e.target.value })}
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:outline-none focus:border-blue-500"
                     placeholder="Mi Campo"
                   />
@@ -253,7 +308,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
                   </label>
                   <select
                     value={newColumn.type || 'text'}
-                    onChange={(e) => setNewColumn({...newColumn, type: e.target.value as any})}
+                    onChange={(e) => setNewColumn({ ...newColumn, type: e.target.value as any })}
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:outline-none focus:border-blue-500"
                   >
                     {columnTypes.map(type => (
@@ -273,7 +328,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
                       type="text"
                       value={newColumn.options?.join(', ') || ''}
                       onChange={(e) => setNewColumn({
-                        ...newColumn, 
+                        ...newColumn,
                         options: e.target.value.split(',').map(opt => opt.trim()).filter(opt => opt)
                       })}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:outline-none focus:border-blue-500"
@@ -303,7 +358,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
             <h3 className="text-lg font-semibold text-white mb-4">
               {t('columnManager.editColumn')}
             </h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm text-gray-300 mb-1">
@@ -312,7 +367,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
                 <input
                   type="text"
                   value={editingColumn.name}
-                  onChange={(e) => setEditingColumn({...editingColumn, name: e.target.value})}
+                  onChange={(e) => setEditingColumn({ ...editingColumn, name: e.target.value })}
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
                 />
               </div>
@@ -323,7 +378,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
                 </label>
                 <select
                   value={editingColumn.type}
-                  onChange={(e) => setEditingColumn({...editingColumn, type: e.target.value as any})}
+                  onChange={(e) => setEditingColumn({ ...editingColumn, type: e.target.value as any })}
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
                 >
                   {columnTypes.map(type => (
@@ -343,7 +398,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
                     type="text"
                     value={editingColumn.options?.join(', ') || ''}
                     onChange={(e) => setEditingColumn({
-                      ...editingColumn, 
+                      ...editingColumn,
                       options: e.target.value.split(',').map(opt => opt.trim()).filter(opt => opt)
                     })}
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
@@ -357,7 +412,7 @@ export const DiaryColumnManager: React.FC<DiaryColumnManagerProps> = ({
                   type="checkbox"
                   id="visible"
                   checked={editingColumn.visible}
-                  onChange={(e) => setEditingColumn({...editingColumn, visible: e.target.checked})}
+                  onChange={(e) => setEditingColumn({ ...editingColumn, visible: e.target.checked })}
                   className="rounded"
                 />
                 <label htmlFor="visible" className="text-sm text-gray-300">

@@ -72,3 +72,4 @@ Una vez que la tabla esté creada:
 - `test-supabase-connection.js` - Script de prueba
 
 
+

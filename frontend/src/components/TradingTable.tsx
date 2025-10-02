@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { TradeEntry, ColumnDefinition, TradeImage } from '../types/trading';
 import { Plus, Trash2, Search, Calendar, RotateCcw } from 'lucide-react';
 import { ImageModal } from './ImageModal';
-import { ColumnManager } from './ColumnManager';
+import { DiaryColumnManager } from './DiaryColumnManager';
 import { TranslatableDatePicker } from './TranslatableDatePicker';
 
 interface TradingTableProps {
@@ -14,10 +14,9 @@ interface TradingTableProps {
   onDeleteEntry: (entryId: string) => void;
   onAddImage: (entryId: string, image: TradeImage) => void;
   onRemoveImage: (entryId: string, imageId: string) => void;
-  onUpdateColumn: (columnId: string, updates: Partial<ColumnDefinition>) => void;
-  onAddColumn: (column: Omit<ColumnDefinition, 'id' | 'order'>) => void;
-  onRemoveColumn: (columnId: string) => void;
+  onColumnsChange: (columns: ColumnDefinition[]) => void;
   onToggleColumn: (columnId: string) => void;
+  onReorderColumns?: (columnId: string, direction: 'up' | 'down') => void;
 }
 
 // Simple Image Field Component - MINIMALISTA
@@ -148,7 +147,9 @@ function TradingTable({
   onDeleteEntry,
   onAddImage,
   onRemoveImage,
+  onColumnsChange,
   onToggleColumn,
+  onReorderColumns,
 }: TradingTableProps) {
   const { t } = useTranslation();
   const [editingCell, setEditingCell] = useState<string | null>(null);
@@ -727,9 +728,11 @@ function TradingTable({
           </button>
         </div>
 
-        <ColumnManager
+        <DiaryColumnManager
           columns={columns}
+          onColumnsChange={onColumnsChange}
           onToggleColumn={onToggleColumn}
+          onReorderColumns={onReorderColumns}
         />
       </div>
 

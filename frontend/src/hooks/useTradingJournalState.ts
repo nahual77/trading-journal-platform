@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useEffect } from 'react';
 import { useLocalStorage } from './useLocalStorage';
+import { useDiaryColumns } from './useDiaryColumns';
 import {
   AppState,
   TradingJournal,

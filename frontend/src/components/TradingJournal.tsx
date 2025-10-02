@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTradingJournalState } from '../hooks/useTradingJournalState';
+import { useTradingJournalWithColumns } from '../hooks/useTradingJournalWithColumns';
 import { JournalTabs } from './JournalTabs';
 import { TradingTableWithFilters } from './TradingTableWithFilters';
 import { TradingPlan } from './TradingPlan';
@@ -57,6 +57,10 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
   const {
     appState,
     activeJournal,
+    columns,
+    visibleColumns,
+    columnsLoading,
+    columnsError,
     createJournal,
     updateJournalName,
     deleteJournal,
@@ -64,10 +68,6 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
     createTradeEntry,
     updateTradeEntry,
     deleteTradeEntry,
-    addCustomColumn,
-    updateColumn,
-    removeColumn,
-    toggleColumn,
     addImageToEntry,
     removeImageFromEntry,
     updateTradingPlan,
@@ -77,7 +77,9 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
     exportData,
     handleExportJournalCSV,
     handleExportAllJournalsCSV,
-  } = useTradingJournalState();
+    handleColumnsChange,
+    handleToggleColumn,
+  } = useTradingJournalWithColumns();
 
 
 
@@ -287,18 +289,18 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
       icon: BarChart3,
       description: t('statistics.subtitle'),
     },
-  {
-    id: 'backtesting' as ActiveView,
-    name: t('navigation.backtesting'),
-    icon: TestTube,
-    description: t('backtesting.subtitle'),
-  },
-  {
-    id: 'mt5' as ActiveView,
-    name: t('navigation.mt5'),
-    icon: Activity,
-    description: t('tradingJournal.mt5Description'),
-  },
+    {
+      id: 'backtesting' as ActiveView,
+      name: t('navigation.backtesting'),
+      icon: TestTube,
+      description: t('backtesting.subtitle'),
+    },
+    {
+      id: 'mt5' as ActiveView,
+      name: t('navigation.mt5'),
+      icon: Activity,
+      description: t('tradingJournal.mt5Description'),
+    },
   ];
 
   // Función simple para cambiar de vista
@@ -382,16 +384,15 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
 
               <TradingTableWithFilters
                 entries={activeJournal.entries}
-                columns={activeJournal.customColumns}
+                columns={activeJournal.customColumns || columns}
                 onAddEntry={() => createTradeEntry(activeJournal.id)}
-                onUpdateEntry={(entryId, updates) => updateTradeEntry(entryId, updates, activeJournal.id)}
-                onDeleteEntry={(entryId) => deleteTradeEntry(entryId, activeJournal.id)}
-                onAddImage={(entryId, image) => addImageToEntry(entryId, image, activeJournal.id)}
-                onRemoveImage={(entryId, imageId) => removeImageFromEntry(entryId, imageId, activeJournal.id)}
-                onUpdateColumn={(columnId, updates) => updateColumn(columnId, updates, activeJournal.id)}
-                onAddColumn={(column) => addCustomColumn(column, activeJournal.id)}
-                onRemoveColumn={(columnId) => removeColumn(columnId, activeJournal.id)}
-                onToggleColumn={(columnId) => toggleColumn(columnId, activeJournal.id)}
+                onUpdateEntry={(entryId, updates) => updateTradeEntry(entryId, updates)}
+                onDeleteEntry={(entryId) => deleteTradeEntry(entryId)}
+                onAddImage={(entryId, image) => addImageToEntry(entryId, image)}
+                onRemoveImage={(entryId, imageId) => removeImageFromEntry(entryId, imageId)}
+                onColumnsChange={handleColumnsChange}
+                onToggleColumn={handleToggleColumn}
+                onReorderColumns={(columnId, direction) => reorderColumns(columnId, direction)}
               />
 
               {/* Gráfico de Progresión de Balance */}
@@ -444,7 +445,7 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
           </div>
         );
 
-        case 'mt5':
+      case 'mt5':
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">

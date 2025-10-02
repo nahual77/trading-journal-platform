@@ -11,10 +11,9 @@ interface TradingTableWithFiltersProps {
   onDeleteEntry: (entryId: string) => void;
   onAddImage: (entryId: string, image: TradeImage) => void;
   onRemoveImage: (entryId: string, imageId: string) => void;
-  onUpdateColumn: (columnId: string, updates: Partial<ColumnDefinition>) => void;
-  onAddColumn: (column: Omit<ColumnDefinition, 'id' | 'order'>) => void;
-  onRemoveColumn: (columnId: string) => void;
+  onColumnsChange: (columns: ColumnDefinition[]) => void;
   onToggleColumn: (columnId: string) => void;
+  onReorderColumns?: (columnId: string, direction: 'up' | 'down') => void;
 }
 
 interface FilterState {
@@ -47,7 +46,7 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
     // Filtro por texto de búsqueda
     if (filters.searchText.trim()) {
       const searchLower = filters.searchText.toLowerCase();
-      result = result.filter(entry => 
+      result = result.filter(entry =>
         entry.simbolo?.toLowerCase().includes(searchLower) ||
         entry.fecha?.toLowerCase().includes(searchLower) ||
         entry.hora?.toLowerCase().includes(searchLower) ||
@@ -101,8 +100,8 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
 
   // Funciones para actualizar filtros
   const updateFilter = <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
-    setFilters(prev => ({ 
-      ...prev, 
+    setFilters(prev => ({
+      ...prev,
       [key]: value,
       // Resetear página cuando se cambian los filtros (excepto pageSize y currentPage)
       currentPage: key === 'pageSize' || key === 'currentPage' ? prev.currentPage : 1
@@ -127,7 +126,7 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
     const today = new Date();
     const fromDate = new Date(today);
     fromDate.setDate(today.getDate() - days);
-    
+
     updateFilter('dateFrom', fromDate.toISOString().split('T')[0]);
     updateFilter('dateTo', today.toISOString().split('T')[0]);
   };
@@ -146,7 +145,7 @@ export function TradingTableWithFilters(props: TradingTableWithFiltersProps) {
       </div>
 
       {/* Tabla */}
-      <TradingTable 
+      <TradingTable
         {...props}
         entries={filteredAndSortedEntries}
       />
