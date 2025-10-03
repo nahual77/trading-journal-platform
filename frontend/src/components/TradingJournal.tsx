@@ -143,18 +143,18 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
     console.log('✅ Verificación de guardado:', saved);
   };
 
-  // Funciones para manejar puntos del plan de trading
-  const addPlanPoint = () => {
+  // Funciones para manejar puntos del plan de trading (usando hook)
+  const handleAddPlanPoint = () => {
     setPlanPoints([...planPoints, ""]);
   };
 
-  const updatePlanPoint = (index: number, value: string) => {
+  const handleUpdatePlanPoint = (index: number, value: string) => {
     const newPoints = [...planPoints];
     newPoints[index] = value;
     setPlanPoints(newPoints);
   };
 
-  const deletePlanPoint = (index: number) => {
+  const handleDeletePlanPoint = (index: number) => {
     const newPoints = planPoints.filter((_, i) => i !== index);
     setPlanPoints(newPoints);
   };
@@ -389,7 +389,27 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
               <TradingTableWithFilters
                 entries={activeJournal.entries}
                 columns={activeJournal.customColumns || columns}
-                onAddEntry={() => createTradeEntry(activeJournal.id)}
+                onAddEntry={() => createTradeEntry({
+                  fecha: new Date().toISOString().split('T')[0],
+                  hora: new Date().toTimeString().split(' ')[0],
+                  activo: '',
+                  razonEntrada: '',
+                  antes: [],
+                  durante: [],
+                  ratio: '',
+                  beneficio: '',
+                  seCumplioElPlan: false,
+                  leccion: '',
+                  comentarios: '',
+                  emocionesAntes: '',
+                  emocionesDurante: '',
+                  emocionesDespues: '',
+                  entradasNoTomadas: [],
+                  queSucedioConEntradasNoTomadas: [],
+                  screenshots: [],
+                  tipoOperacion: '',
+                  customFields: {}
+                })}
                 onUpdateEntry={(entryId, updates) => updateTradeEntry(entryId, updates)}
                 onDeleteEntry={(entryId) => deleteTradeEntry(entryId)}
                 onAddImage={(entryId, image) => addImageToEntry(entryId, image)}
@@ -417,9 +437,9 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
               onToggleItem={toggleChecklistItem}
               onResetChecklist={resetChecklist}
               planPoints={planPoints}
-              onAddPlanPoint={addPlanPoint}
-              onUpdatePlanPoint={updatePlanPoint}
-              onDeletePlanPoint={(index) => deletePlanPoint(index)}
+              onAddPlanPoint={handleAddPlanPoint}
+              onUpdatePlanPoint={handleUpdatePlanPoint}
+              onDeletePlanPoint={handleDeletePlanPoint}
             />
           </div>
         );
