@@ -324,6 +324,19 @@ export function useTradingJournalWithColumns() {
     }));
   }, [setAppState]);
 
+  // Funciones de planPoints (mock - no implementadas)
+  const addPlanPoint = useCallback((point: string) => {
+    console.log('Mock: addPlanPoint', point);
+  }, []);
+
+  const updatePlanPoint = useCallback((index: number, point: string) => {
+    console.log('Mock: updatePlanPoint', index, point);
+  }, []);
+
+  const deletePlanPoint = useCallback((index: number) => {
+    console.log('Mock: deletePlanPoint', index);
+  }, []);
+
   // Funciones de exportación
   const exportData = useCallback(() => {
     const dataStr = JSON.stringify(validAppState, null, 2);
@@ -410,6 +423,9 @@ export function useTradingJournalWithColumns() {
     updateTradingPlan,
     toggleChecklistItem,
     resetChecklist,
+    addPlanPoint,
+    updatePlanPoint,
+    deletePlanPoint,
 
     // Configuración MT5
     updateMT5Config,

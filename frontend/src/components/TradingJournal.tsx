@@ -73,12 +73,16 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
     updateTradingPlan,
     toggleChecklistItem,
     resetChecklist,
+    addPlanPoint,
+    updatePlanPoint,
+    deletePlanPoint,
     updateMT5Config,
     exportData,
     handleExportJournalCSV,
     handleExportAllJournalsCSV,
     handleColumnsChange,
     handleToggleColumn,
+    reorderColumns,
   } = useTradingJournalWithColumns();
 
 
@@ -385,7 +389,7 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
               <TradingTableWithFilters
                 entries={activeJournal.entries}
                 columns={activeJournal.customColumns || columns}
-                onAddEntry={() => createTradeEntry(activeJournal.id, {})}
+                onAddEntry={() => createTradeEntry(activeJournal.id)}
                 onUpdateEntry={(entryId, updates) => updateTradeEntry(entryId, updates)}
                 onDeleteEntry={(entryId) => deleteTradeEntry(entryId)}
                 onAddImage={(entryId, image) => addImageToEntry(entryId, image)}
@@ -415,7 +419,7 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
               planPoints={planPoints}
               onAddPlanPoint={addPlanPoint}
               onUpdatePlanPoint={updatePlanPoint}
-              onDeletePlanPoint={(index) => deletePlanPoint(index.toString())}
+              onDeletePlanPoint={(index) => deletePlanPoint(index)}
             />
           </div>
         );
