@@ -253,7 +253,7 @@ export function useTradingJournalWithColumns() {
               e.id === entryId
                 ? {
                   ...e,
-                  images: [...(e.images || []), image]
+                  screenshots: [...(e.screenshots || []), image]
                 }
                 : e
             )
@@ -274,7 +274,7 @@ export function useTradingJournalWithColumns() {
               e.id === entryId
                 ? {
                   ...e,
-                  images: (e.images || []).filter(img => img.id !== imageId)
+                  screenshots: (e.screenshots || []).filter(img => img.id !== imageId)
                 }
                 : e
             )
@@ -349,9 +349,9 @@ export function useTradingJournalWithColumns() {
         entry.hora || '',
         entry.activo || '',
         entry.tipoOperacion || '',
-        entry.precioEntrada || '',
-        entry.precioSalida || '',
-        entry.cantidad || '',
+        entry.customFields?.precioEntrada || '',
+        entry.customFields?.precioSalida || '',
+        entry.customFields?.cantidad || '',
         entry.beneficio || '',
         entry.razonEntrada || '',
         entry.leccion || ''
@@ -422,5 +422,6 @@ export function useTradingJournalWithColumns() {
     // Gestión de columnas (nuevo sistema)
     handleColumnsChange,
     handleToggleColumn,
+    reorderColumns,
   };
 }

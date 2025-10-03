@@ -1,4 +1,3 @@
-import { supabase } from '../supabaseClient';
 import { ColumnDefinition } from '../types/trading';
 
 export interface UserTableColumns {
@@ -12,25 +11,19 @@ export interface UserTableColumns {
 
 /**
  * Obtener configuraciones de columnas de un usuario para un tipo de tabla específico
+ * Mock implementation - uses localStorage
  */
 export const getUserColumns = async (
   userId: string,
   tableType: 'diary' | 'backtesting'
 ): Promise<ColumnDefinition[]> => {
   try {
-    const { data, error } = await supabase
-      .from('user_table_columns')
-      .select('column_config')
-      .eq('user_id', userId)
-      .eq('table_type', tableType)
-      .single();
-
-    if (error) {
-      console.error('Error fetching user columns:', error);
-      return [];
+    const key = `user_columns_${userId}_${tableType}`;
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      return JSON.parse(stored);
     }
-
-    return data?.column_config || [];
+    return [];
   } catch (error) {
     console.error('Error in getUserColumns:', error);
     return [];
@@ -39,6 +32,7 @@ export const getUserColumns = async (
 
 /**
  * Guardar configuraciones de columnas de un usuario
+ * Mock implementation - uses localStorage
  */
 export const saveUserColumns = async (
   userId: string,
@@ -46,20 +40,9 @@ export const saveUserColumns = async (
   columns: ColumnDefinition[]
 ): Promise<boolean> => {
   try {
-    const { error } = await supabase
-      .from('user_table_columns')
-      .upsert({
-        user_id: userId,
-        table_type: tableType,
-        column_config: columns,
-        updated_at: new Date().toISOString()
-      });
-
-    if (error) {
-      console.error('Error saving user columns:', error);
-      return false;
-    }
-
+    const key = `user_columns_${userId}_${tableType}`;
+    localStorage.setItem(key, JSON.stringify(columns));
+    console.log('Mock: Columnas guardadas en localStorage', { userId, tableType, columns });
     return true;
   } catch (error) {
     console.error('Error in saveUserColumns:', error);
@@ -69,6 +52,7 @@ export const saveUserColumns = async (
 
 /**
  * Migrar columnas desde localStorage a Supabase
+ * Mock implementation - no migration needed
  */
 export const migrateColumnsFromLocalStorage = async (
   userId: string,
@@ -76,40 +60,9 @@ export const migrateColumnsFromLocalStorage = async (
   localStorageKey: string
 ): Promise<boolean> => {
   try {
-    // Obtener datos del localStorage
-    const storedData = localStorage.getItem(localStorageKey);
-    if (!storedData) {
-      console.log('No data found in localStorage for migration');
-      return false;
-    }
-
-    const appState = JSON.parse(storedData);
-    let columns: ColumnDefinition[] = [];
-
-    if (tableType === 'diary') {
-      // Extraer columnas del primer journal
-      const firstJournal = appState.journals?.[0];
-      if (firstJournal?.customColumns) {
-        columns = firstJournal.customColumns;
-      }
-    } else if (tableType === 'backtesting') {
-      // Para backtesting, usar columnas por defecto o las que estén en el estado
-      columns = appState.backtestingColumns || [];
-    }
-
-    if (columns.length === 0) {
-      console.log('No columns found to migrate');
-      return false;
-    }
-
-    // Guardar en Supabase
-    const success = await saveUserColumns(userId, tableType, columns);
-
-    if (success) {
-      console.log(`Successfully migrated ${columns.length} columns for ${tableType}`);
-    }
-
-    return success;
+    // Mock implementation - no migration needed
+    console.log('Mock: No migration needed for localStorage');
+    return true;
   } catch (error) {
     console.error('Error in migrateColumnsFromLocalStorage:', error);
     return false;
@@ -144,22 +97,9 @@ export const getColumnsWithFallback = async (
     return defaultColumns;
   }
 
-  // Si hay usuario autenticado, usar Supabase
+  // Si hay usuario autenticado, usar mock Supabase (localStorage)
   try {
     const columns = await getUserColumns(userId, tableType);
-
-    // Si no hay columnas en Supabase, intentar migrar desde localStorage
-    if (columns.length === 0) {
-      console.log('No columns found in Supabase, attempting migration from localStorage');
-      const migrationSuccess = await migrateColumnsFromLocalStorage(userId, tableType, localStorageKey);
-
-      if (migrationSuccess) {
-        // Intentar obtener las columnas nuevamente después de la migración
-        const migratedColumns = await getUserColumns(userId, tableType);
-        return migratedColumns.length > 0 ? migratedColumns : defaultColumns;
-      }
-    }
-
     return columns.length > 0 ? columns : defaultColumns;
   } catch (error) {
     console.error('Error in getColumnsWithFallback:', error);
@@ -198,6 +138,6 @@ export const saveColumnsWithFallback = async (
     }
   }
 
-  // Si hay usuario autenticado, usar Supabase
+  // Si hay usuario autenticado, usar mock Supabase (localStorage)
   return await saveUserColumns(userId, tableType, columns);
 };

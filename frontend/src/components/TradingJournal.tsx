@@ -323,7 +323,7 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
               onDeleteJournal={deleteJournal}
               user={user}
               onLogout={handleLogout}
-              onExportJournalCSV={handleExportJournalCSV}
+              onExportJournalCSV={() => handleExportJournalCSV(activeJournal.id)}
               onExportAllJournalsCSV={handleExportAllJournalsCSV}
               onExportData={handleExportData}
             />
@@ -385,7 +385,7 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
               <TradingTableWithFilters
                 entries={activeJournal.entries}
                 columns={activeJournal.customColumns || columns}
-                onAddEntry={() => createTradeEntry(activeJournal.id)}
+                onAddEntry={() => createTradeEntry(activeJournal.id, {})}
                 onUpdateEntry={(entryId, updates) => updateTradeEntry(entryId, updates)}
                 onDeleteEntry={(entryId) => deleteTradeEntry(entryId)}
                 onAddImage={(entryId, image) => addImageToEntry(entryId, image)}
@@ -415,7 +415,7 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
               planPoints={planPoints}
               onAddPlanPoint={addPlanPoint}
               onUpdatePlanPoint={updatePlanPoint}
-              onDeletePlanPoint={deletePlanPoint}
+              onDeletePlanPoint={(index) => deletePlanPoint(index.toString())}
             />
           </div>
         );
@@ -461,7 +461,7 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
                   <h3 className="text-lg font-medium text-white">{journal.name}</h3>
                   <MT5Panel
                     mt5Config={journal.mt5Config}
-                    onUpdateConfig={(config) => updateMT5Config(config, journal.id)}
+                    onUpdateConfig={(config) => updateMT5Config(journal.id, config)}
                   />
                 </div>
               ))}
