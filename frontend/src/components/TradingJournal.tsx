@@ -434,7 +434,7 @@ export default function TradingJournal({ isNewUser = false, user }: TradingJourn
           <div>
             <TradingPlan
               tradingPlan={appState.tradingPlan}
-              onToggleItem={toggleChecklistItem}
+              onToggleItem={(itemId) => toggleChecklistItem(parseInt(itemId))}
               onResetChecklist={resetChecklist}
               planPoints={planPoints}
               onAddPlanPoint={handleAddPlanPoint}
