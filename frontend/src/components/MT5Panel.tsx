@@ -13,32 +13,28 @@ import {
   RefreshCw,
   BarChart3
 } from 'lucide-react';
-import { Line } from 'react-chartjs-2';
+import { LineChart, CartesianGrid, XAxis, YAxis, Line as RechartsLine, Tooltip as RechartsTooltip } from 'recharts';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+  ChartContainer,
+  ChartTooltipContent,
+  type ChartConfig,
+} from '@/components/ui/chart';
 
 interface MT5PanelProps {
   mt5Config: MT5Config;
   onUpdateConfig: (config: Partial<MT5Config>) => void;
 }
+
+const chartConfig = {
+  balance: {
+    label: 'Balance',
+    color: 'hsl(var(--chart-1))',
+  },
+  equity: {
+    label: 'Equity',
+    color: 'hsl(var(--chart-2))',
+  },
+} satisfies ChartConfig;
 
 export function MT5Panel({ mt5Config, onUpdateConfig }: MT5PanelProps) {
   const [showSettings, setShowSettings] = useState(false);
@@ -357,48 +353,6 @@ export function MT5Panel({ mt5Config, onUpdateConfig }: MT5PanelProps) {
     }
   };
 
-  const chartData = {
-    labels: history.map(h => new Date(h.date).toLocaleDateString()),
-    datasets: [
-      {
-        label: 'Balance',
-        data: history.map(h => h.balance),
-        borderColor: '#3B82F6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.1,
-      },
-      {
-        label: 'Equity',
-        data: history.map(h => h.equity),
-        borderColor: '#10B981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        tension: 0.1,
-      },
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-        labels: {
-          color: '#D1D5DB',
-        },
-      },
-    },
-    scales: {
-      x: {
-        ticks: { color: '#9CA3AF' },
-        grid: { color: '#374151' },
-      },
-      y: {
-        ticks: { color: '#9CA3AF' },
-        grid: { color: '#374151' },
-      },
-    },
-  };
 
   return (
     <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-4">
@@ -1028,9 +982,43 @@ Revisa logs en consola para ver la secuencia completa authorize → balance → 
       {showChart && history.length > 0 && (
         <div className="mb-4">
           <h4 className="text-sm font-medium text-gold-300 mb-3">Evolución de la Cuenta (7 días)</h4>
-          <div className="h-48 bg-gray-800/30 p-3 rounded-lg">
-            <Line data={chartData} options={chartOptions} />
-          </div>
+          <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+            <LineChart
+              accessibilityLayer
+              data={history}
+              margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickFormatter={(value) => new Date(value).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickFormatter={(value) => `$${value}`}
+              />
+              <RechartsTooltip cursor={false} content={<ChartTooltipContent />} />
+              <RechartsLine
+                dataKey="balance"
+                type="monotone"
+                stroke="var(--color-balance)"
+                strokeWidth={2}
+                dot={false}
+              />
+              <RechartsLine
+                dataKey="equity"
+                type="monotone"
+                stroke="var(--color-equity)"
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ChartContainer>
         </div>
       )}
 

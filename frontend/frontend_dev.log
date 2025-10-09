@@ -1,0 +1,2 @@
+ ERROR  ENOENT: no such file or directory, lstat '/app/frontend/frontend'
+For help, run: pnpm help run
