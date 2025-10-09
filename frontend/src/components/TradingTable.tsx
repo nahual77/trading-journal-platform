@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TradeEntry, ColumnDefinition, TradeImage } from '../types/trading';
 import { Plus, Trash2, Search, Calendar, RotateCcw } from 'lucide-react';
@@ -172,6 +172,11 @@ function TradingTable({
 
   // Estado para el campo de imagen activo
   const [activeImageField, setActiveImageField] = useState<{ entryId: string, fieldKey: string } | null>(null);
+  const activeImageFieldRef = useRef(activeImageField);
+
+  useEffect(() => {
+    activeImageFieldRef.current = activeImageField;
+  }, [activeImageField]);
 
   // Ajustar página actual cuando cambie el pageSize
   useEffect(() => {
@@ -184,56 +189,60 @@ function TradingTable({
   // Listener global para pegado de imágenes
   useEffect(() => {
     const handleGlobalPaste = (e: ClipboardEvent) => {
-      console.log('🌍 Global paste event detected');
+      // Aplazar la ejecución para permitir que el estado de React se actualice primero
+      setTimeout(() => {
+        const activeField = activeImageFieldRef.current;
+        console.log('🌍 Global paste event detected, active field:', activeField);
 
-      if (activeImageField) {
-        console.log('🎯 Active image field found:', activeImageField);
+        if (activeField) {
+          console.log('🎯 Active image field found via ref:', activeField);
 
-        const items = e.clipboardData?.items;
-        if (items) {
-          for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            if (item.type.startsWith('image/')) {
-              console.log('✅ Image detected in global paste');
-              e.preventDefault();
-              e.stopPropagation();
+          const items = e.clipboardData?.items;
+          if (items) {
+            for (let i = 0; i < items.length; i++) {
+              const item = items[i];
+              if (item.type.startsWith('image/')) {
+                console.log('✅ Image detected in global paste');
+                e.preventDefault();
+                e.stopPropagation();
 
-              const blob = item.getAsFile();
-              if (blob) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                  const result = event.target?.result as string;
-                  if (result) {
-                    const newImage: TradeImage = {
-                      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                      name: `${activeImageField.fieldKey}-${Date.now()}.png`,
-                      url: result,
-                      thumbnail: result,
-                    };
-                    console.log('🖼️ Replacing image in field:', activeImageField.fieldKey);
-                    // Usar onUpdateEntry directamente - REEMPLAZAR en lugar de agregar
-                    const entry = entries.find(e => e.id === activeImageField.entryId);
-                    if (entry) {
-                      // Solo mantener una imagen (reemplazar la existente)
-                      onUpdateEntry(activeImageField.entryId, {
-                        [activeImageField.fieldKey]: [newImage]
-                      });
+                const blob = item.getAsFile();
+                if (blob) {
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    const result = event.target?.result as string;
+                    if (result) {
+                      const newImage: TradeImage = {
+                        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                        name: `${activeField.fieldKey}-${Date.now()}.png`,
+                        url: result,
+                        thumbnail: result,
+                      };
+                      console.log('🖼️ Replacing image in field:', activeField.fieldKey);
+                      // Usar onUpdateEntry directamente - REEMPLAZAR en lugar de agregar
+                      const entry = entries.find(e => e.id === activeField.entryId);
+                      if (entry) {
+                        // Solo mantener una imagen (reemplazar la existente)
+                        onUpdateEntry(activeField.entryId, {
+                          [activeField.fieldKey]: [newImage]
+                        });
+                      }
                     }
-                  }
-                };
-                reader.readAsDataURL(blob);
+                  };
+                  reader.readAsDataURL(blob);
+                }
+                break;
               }
-              break;
             }
           }
         }
-      }
+      }, 0);
     };
 
     // Agregar listener con capture: true para capturar antes que otros elementos
     document.addEventListener('paste', handleGlobalPaste, true);
     return () => document.removeEventListener('paste', handleGlobalPaste, true);
-  }, [activeImageField, entries, onUpdateEntry]);
+  }, [entries, onUpdateEntry]);
 
   // Get visible columns
   const visibleColumns = useMemo(() => {
