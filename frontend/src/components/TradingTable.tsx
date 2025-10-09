@@ -172,6 +172,11 @@ function TradingTable({
 
   // Estado para el campo de imagen activo
   const [activeImageField, setActiveImageField] = useState<{ entryId: string, fieldKey: string } | null>(null);
+  const activeImageFieldRef = useRef(activeImageField);
+
+  useEffect(() => {
+    activeImageFieldRef.current = activeImageField;
+  }, [activeImageField]);
 
   // Ajustar página actual cuando cambie el pageSize
   useEffect(() => {
@@ -185,9 +190,10 @@ function TradingTable({
   useEffect(() => {
     const handleGlobalPaste = (e: ClipboardEvent) => {
       console.log('🌍 Global paste event detected');
+      const activeField = activeImageFieldRef.current;
 
-      if (activeImageField) {
-        console.log('🎯 Active image field found:', activeImageField);
+      if (activeField) {
+        console.log('🎯 Active image field found via ref:', activeField);
 
         const items = e.clipboardData?.items;
         if (items) {
@@ -206,17 +212,17 @@ function TradingTable({
                   if (result) {
                     const newImage: TradeImage = {
                       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                      name: `${activeImageField.fieldKey}-${Date.now()}.png`,
+                      name: `${activeField.fieldKey}-${Date.now()}.png`,
                       url: result,
                       thumbnail: result,
                     };
-                    console.log('🖼️ Replacing image in field:', activeImageField.fieldKey);
+                    console.log('🖼️ Replacing image in field:', activeField.fieldKey);
                     // Usar onUpdateEntry directamente - REEMPLAZAR en lugar de agregar
-                    const entry = entries.find(e => e.id === activeImageField.entryId);
+                    const entry = entries.find(e => e.id === activeField.entryId);
                     if (entry) {
                       // Solo mantener una imagen (reemplazar la existente)
-                      onUpdateEntry(activeImageField.entryId, {
-                        [activeImageField.fieldKey]: [newImage]
+                      onUpdateEntry(activeField.entryId, {
+                        [activeField.fieldKey]: [newImage]
                       });
                     }
                   }
@@ -233,7 +239,7 @@ function TradingTable({
     // Agregar listener con capture: true para capturar antes que otros elementos
     document.addEventListener('paste', handleGlobalPaste, true);
     return () => document.removeEventListener('paste', handleGlobalPaste, true);
-  }, [activeImageField, entries, onUpdateEntry]);
+  }, [entries, onUpdateEntry]);
 
   // Get visible columns
   const visibleColumns = useMemo(() => {
