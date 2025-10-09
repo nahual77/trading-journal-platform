@@ -189,51 +189,54 @@ function TradingTable({
   // Listener global para pegado de imágenes
   useEffect(() => {
     const handleGlobalPaste = (e: ClipboardEvent) => {
-      console.log('🌍 Global paste event detected');
-      const activeField = activeImageFieldRef.current;
+      // Aplazar la ejecución para permitir que el estado de React se actualice primero
+      setTimeout(() => {
+        const activeField = activeImageFieldRef.current;
+        console.log('🌍 Global paste event detected, active field:', activeField);
 
-      if (activeField) {
-        console.log('🎯 Active image field found via ref:', activeField);
+        if (activeField) {
+          console.log('🎯 Active image field found via ref:', activeField);
 
-        const items = e.clipboardData?.items;
-        if (items) {
-          for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            if (item.type.startsWith('image/')) {
-              console.log('✅ Image detected in global paste');
-              e.preventDefault();
-              e.stopPropagation();
+          const items = e.clipboardData?.items;
+          if (items) {
+            for (let i = 0; i < items.length; i++) {
+              const item = items[i];
+              if (item.type.startsWith('image/')) {
+                console.log('✅ Image detected in global paste');
+                e.preventDefault();
+                e.stopPropagation();
 
-              const blob = item.getAsFile();
-              if (blob) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                  const result = event.target?.result as string;
-                  if (result) {
-                    const newImage: TradeImage = {
-                      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                      name: `${activeField.fieldKey}-${Date.now()}.png`,
-                      url: result,
-                      thumbnail: result,
-                    };
-                    console.log('🖼️ Replacing image in field:', activeField.fieldKey);
-                    // Usar onUpdateEntry directamente - REEMPLAZAR en lugar de agregar
-                    const entry = entries.find(e => e.id === activeField.entryId);
-                    if (entry) {
-                      // Solo mantener una imagen (reemplazar la existente)
-                      onUpdateEntry(activeField.entryId, {
-                        [activeField.fieldKey]: [newImage]
-                      });
+                const blob = item.getAsFile();
+                if (blob) {
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    const result = event.target?.result as string;
+                    if (result) {
+                      const newImage: TradeImage = {
+                        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                        name: `${activeField.fieldKey}-${Date.now()}.png`,
+                        url: result,
+                        thumbnail: result,
+                      };
+                      console.log('🖼️ Replacing image in field:', activeField.fieldKey);
+                      // Usar onUpdateEntry directamente - REEMPLAZAR en lugar de agregar
+                      const entry = entries.find(e => e.id === activeField.entryId);
+                      if (entry) {
+                        // Solo mantener una imagen (reemplazar la existente)
+                        onUpdateEntry(activeField.entryId, {
+                          [activeField.fieldKey]: [newImage]
+                        });
+                      }
                     }
-                  }
-                };
-                reader.readAsDataURL(blob);
+                  };
+                  reader.readAsDataURL(blob);
+                }
+                break;
               }
-              break;
             }
           }
         }
-      }
+      }, 0);
     };
 
     // Agregar listener con capture: true para capturar antes que otros elementos
