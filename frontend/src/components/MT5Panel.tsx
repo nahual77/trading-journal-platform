@@ -13,6 +13,7 @@ import {
   RefreshCw,
   BarChart3
 } from 'lucide-react';
+
 import { LineChart, CartesianGrid, XAxis, YAxis, Line as RechartsLine, Tooltip as RechartsTooltip } from 'recharts';
 import {
   ChartContainer,
