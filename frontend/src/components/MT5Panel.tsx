@@ -13,27 +13,12 @@ import {
   RefreshCw,
   BarChart3
 } from 'lucide-react';
-import { Line } from 'react-chartjs-2';
+import { Area, XAxis, YAxis, CartesianGrid, AreaChart } from 'recharts';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 interface MT5PanelProps {
   mt5Config: MT5Config;
@@ -357,46 +342,20 @@ export function MT5Panel({ mt5Config, onUpdateConfig }: MT5PanelProps) {
     }
   };
 
-  const chartData = {
-    labels: history.map(h => new Date(h.date).toLocaleDateString()),
-    datasets: [
-      {
-        label: 'Balance',
-        data: history.map(h => h.balance),
-        borderColor: '#3B82F6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.1,
-      },
-      {
-        label: 'Equity',
-        data: history.map(h => h.equity),
-        borderColor: '#10B981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        tension: 0.1,
-      },
-    ],
-  };
+  const chartData = history.map(h => ({
+    date: new Date(h.date).toLocaleDateString(),
+    balance: h.balance,
+    equity: h.equity,
+  }));
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-        labels: {
-          color: '#D1D5DB',
-        },
-      },
+  const chartConfig = {
+    balance: {
+      label: "Balance",
+      color: "#3B82F6",
     },
-    scales: {
-      x: {
-        ticks: { color: '#9CA3AF' },
-        grid: { color: '#374151' },
-      },
-      y: {
-        ticks: { color: '#9CA3AF' },
-        grid: { color: '#374151' },
-      },
+    equity: {
+      label: "Equity",
+      color: "#10B981",
     },
   };
 
@@ -1029,7 +988,49 @@ Revisa logs en consola para ver la secuencia completa authorize → balance → 
         <div className="mb-4">
           <h4 className="text-sm font-medium text-gold-300 mb-3">Evolución de la Cuenta (7 días)</h4>
           <div className="h-48 bg-gray-800/30 p-3 rounded-lg">
-            <Line data={chartData} options={chartOptions} />
+            <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+              <AreaChart
+                accessibilityLayer
+                data={chartData}
+                margin={{
+                  left: 12,
+                  right: 12,
+                }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) => value.slice(0, 5)}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) => `$${value}`}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent indicator="dot" />}
+                />
+                <Area
+                  dataKey="balance"
+                  type="natural"
+                  fill="var(--color-balance)"
+                  fillOpacity={0.4}
+                  stroke="var(--color-balance)"
+                />
+                <Area
+                  dataKey="equity"
+                  type="natural"
+                  fill="var(--color-equity)"
+                  fillOpacity={0.4}
+                  stroke="var(--color-equity)"
+                />
+              </AreaChart>
+            </ChartContainer>
           </div>
         </div>
       )}
