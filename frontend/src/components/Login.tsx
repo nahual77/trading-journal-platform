@@ -90,10 +90,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       } else if (data.user) {
         console.log('✅ Login exitoso:', data.user);
         
-        // Guardar tipo de usuario en localStorage
-        const userTypeToStore = userType === 'academy' ? 'educator' : 'individual';
-        localStorage.setItem(`user-type-${data.user.id}`, userTypeToStore);
-        console.log('💾 Tipo de usuario guardado:', userTypeToStore);
+        // El tipo de usuario se manejará a través de perfiles en la base de datos.
         
         // El usuario será redirigido automáticamente por el App.tsx
         // Limpiar errores previos

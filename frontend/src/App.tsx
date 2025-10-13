@@ -21,13 +21,11 @@ function App() {
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Detectar tipo de usuario
+        // El tipo de usuario se obtendrá del perfil en la base de datos.
+        // Por ahora, todos los usuarios son 'individual'.
         if (session?.user) {
-          const storedUserType = localStorage.getItem(`user-type-${session.user.id}`);
-          console.log('App: UserType desde localStorage:', storedUserType);
-          setUserType(storedUserType as 'individual' | 'educator' || 'individual');
+          setUserType('individual');
         } else {
-          console.log('App: No hay sesión, estableciendo userType=null');
           setUserType(null);
         }
       });
@@ -51,19 +49,11 @@ function App() {
         loadSession();
       }
       
-      // Detectar si es un nuevo usuario que se acaba de registrar
+      // La lógica de "nuevo usuario" se basará en si existe un perfil en la BD.
       if (event === 'SIGNED_IN' && session?.user) {
-        // Verificar si es la primera vez que este usuario inicia sesión
-        const userKey = `nagual-user-${session.user.id}`;
-        const hasUsedApp = localStorage.getItem(userKey);
-        
-        if (!hasUsedApp) {
-          setIsNewUser(true);
-          localStorage.setItem(userKey, 'true');
-        }
+        setIsNewUser(false); // Asumir que no es nuevo por ahora.
       }
       
-      // Limpiar isNewUser cuando se cierra sesión
       if (event === 'SIGNED_OUT') {
         setIsNewUser(false);
         setUserType(null);
