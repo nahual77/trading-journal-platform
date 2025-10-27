@@ -23,7 +23,7 @@ import {
   Plane,
   RefreshCw
 } from 'lucide-react';
-import { ColumnDefinition } from '../types/trading';
+import { ColumnDefinition, TradeImage } from '../types/trading';
 
 type ActiveView = 'journals' | 'plan' | 'flightPlan' | 'statistics' | 'backtesting' | 'mt5';
 
@@ -61,6 +61,12 @@ export default function TradingJournal({ user }: TradingJournalProps) {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+  };
+
+  // SOLUCIÓN: Función adaptadora
+  const handleAddScreenshot = (entryId: string, image: TradeImage) => {
+    // La tabla solo sabe de "screenshots", así que lo añadimos como tipo por defecto
+    addImageToEntry(entryId, image, 'screenshots');
   };
 
   const navigationItems = [
@@ -123,7 +129,7 @@ export default function TradingJournal({ user }: TradingJournalProps) {
                 onAddEntry={createTradeEntry}
                 onUpdateEntry={updateTradeEntry}
                 onDeleteEntry={deleteTradeEntry}
-                onAddImage={addImageToEntry}
+                onAddImage={handleAddScreenshot}
                 onRemoveImage={(imageId) => removeImageFromEntry(imageId)}
                 onColumnsChange={(cols: ColumnDefinition[]) => { /* Esta lógica necesita ser reimplementada si es necesaria */ }}
                 onToggleColumn={toggleColumn}
