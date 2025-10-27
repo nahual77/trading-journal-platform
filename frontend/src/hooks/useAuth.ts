@@ -1,11 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-
-interface User {
-  id: string;
-  email: string;
-  created_at: string;
-}
+import type { User } from '@supabase/supabase-js';
 
 interface AuthState {
   user: User | null;
