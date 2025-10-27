@@ -8,10 +8,10 @@ import {
   TradingPlan,
   ColumnDefinition,
   TradeImage,
-  DEFAULT_TRADING_PLAN
+  DEFAULT_TRADING_PLAN,
+  DEFAULT_COLUMNS,
 } from '../types/trading';
 
-// Estado inicial vacío para cuando no hay usuario o se están cargando los datos
 const createInitialState = (): AppState => ({
   journals: [],
   activeJournalId: null,
@@ -23,11 +23,9 @@ export function useTradingJournalState() {
   const [appState, setAppState] = useState<AppState>(createInitialState());
   const [loading, setLoading] = useState(true);
 
-  // Efecto para cargar, recargar o limpiar los datos basado en el estado del usuario
   useEffect(() => {
     const loadData = async () => {
       if (user) {
-        console.log('🔄 Usuario detectado, cargando datos desde la base de datos...');
         setLoading(true);
         try {
           const [journals, tradingPlan, prefs] = await Promise.all([
@@ -36,152 +34,157 @@ export function useTradingJournalState() {
             databaseService.getUserPreferences(),
           ]);
 
-          // Cargar las entradas para el diario activo
-          if (prefs.activeJournalId && journals.length > 0) {
-              const activeJournal = journals.find(j => j.id === prefs.activeJournalId);
-              if (activeJournal) {
-                  activeJournal.entries = await databaseService.getTradeEntries(activeJournal.id);
-              }
+          const activeId = prefs.activeJournalId || (journals.length > 0 ? journals[0].id : null);
+
+          if (activeId) {
+            const activeJournal = journals.find(j => j.id === activeId);
+            if (activeJournal && activeJournal.entries.length === 0) {
+              activeJournal.entries = await databaseService.getTradeEntries(activeId);
+            }
           }
 
           setAppState({
             journals,
             tradingPlan,
-            activeJournalId: prefs.activeJournalId || (journals.length > 0 ? journals[0].id : null),
+            activeJournalId: activeId,
           });
-          console.log('✅ Datos cargados exitosamente.');
         } catch (error) {
-          console.error('❌ Error al cargar los datos del usuario:', error);
-          setAppState(createInitialState()); // En caso de error, mostrar estado vacío
+          console.error('Error loading user data:', error);
+          setAppState(createInitialState());
         } finally {
           setLoading(false);
         }
       } else {
-        console.log('🗑️ No hay usuario, limpiando el estado de la aplicación.');
         setAppState(createInitialState());
         setLoading(false);
       }
     };
-
     loadData();
   }, [user]);
 
-  // Memoizar el diario activo para evitar recálculos
   const activeJournal = useMemo(() => {
     if (!appState.activeJournalId) return null;
-    return appState.journals.find(j => j.id === appState.activeJournalId) || appState.journals[0] || null;
+    return appState.journals.find(j => j.id === appState.activeJournalId) || null;
   }, [appState.journals, appState.activeJournalId]);
 
-  const generateId = () => Date.now().toString() + Math.random().toString(36).substr(2, 9);
+  // === HELPERS ===
+  const reloadJournals = useCallback(async () => {
+      const journals = await databaseService.getJournals();
+      setAppState(prev => ({ ...prev, journals }));
+  }, []);
 
-  // === GESTIÓN DE JOURNALS ===
 
+  // === JOURNALS ===
   const createJournal = useCallback(async (name: string) => {
     const newJournalId = await databaseService.createJournal(name);
-    // Recargar todos los datos para mantener la consistencia
-    const journals = await databaseService.getJournals();
-    setAppState(prev => ({ ...prev, journals, activeJournalId: newJournalId }));
-    return newJournalId;
-  }, []);
+    await reloadJournals(); // Recarga para obtener el nuevo journal con sus columnas por defecto
+    await setActiveJournal(newJournalId);
+  }, [reloadJournals]);
 
   const updateJournalName = useCallback(async (journalId: string, name: string) => {
     await databaseService.updateJournalName(journalId, name);
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(j => (j.id === journalId ? { ...j, name } : j)),
-    }));
+    setAppState(prev => ({ ...prev, journals: prev.journals.map(j => j.id === journalId ? { ...j, name } : j) }));
   }, []);
 
   const deleteJournal = useCallback(async (journalId: string) => {
     await databaseService.deleteJournal(journalId);
-    const remainingJournals = appState.journals.filter(j => j.id !== journalId);
-    let newActiveId = appState.activeJournalId;
-    if (newActiveId === journalId) {
-        newActiveId = remainingJournals.length > 0 ? remainingJournals[0].id : null;
-    }
-    setAppState(prev => ({ ...prev, journals: remainingJournals, activeJournalId: newActiveId }));
-  }, [appState.journals, appState.activeJournalId]);
+    const remaining = appState.journals.filter(j => j.id !== journalId);
+    const newActiveId = (appState.activeJournalId === journalId) ? (remaining[0]?.id || null) : appState.activeJournalId;
+    setAppState(prev => ({ ...prev, journals: remaining, activeJournalId: newActiveId }));
+  }, [appState]);
 
   const setActiveJournal = useCallback(async (journalId: string) => {
-      await databaseService.updateUserPreferences({ activeJournalId: journalId });
-      // Cargar las entradas para el nuevo diario activo
-      const journal = appState.journals.find(j => j.id === journalId);
-      if(journal && journal.entries.length === 0) { // Cargar solo si no están ya cargadas
-        const entries = await databaseService.getTradeEntries(journalId);
-        setAppState(prev => ({
-            ...prev,
-            journals: prev.journals.map(j => j.id === journalId ? {...j, entries} : j),
-            activeJournalId: journalId
-        }));
-      } else {
-        setAppState(prev => ({ ...prev, activeJournalId: journalId }));
-      }
+    await databaseService.updateUserPreferences({ activeJournalId: journalId });
+    const journal = appState.journals.find(j => j.id === journalId);
+    if (journal && journal.entries.length === 0) {
+      const entries = await databaseService.getTradeEntries(journalId);
+      setAppState(prev => ({ ...prev, journals: prev.journals.map(j => j.id === journalId ? { ...j, entries } : j), activeJournalId: journalId }));
+    } else {
+      setAppState(prev => ({ ...prev, activeJournalId: journalId }));
+    }
   }, [appState.journals]);
 
-  // === GESTIÓN DE ENTRADAS ===
-
-  const createTradeEntry = useCallback(async (journalId?: string) => {
-    const targetJournalId = journalId || activeJournal?.id;
-    if (!targetJournalId) return null;
-
-    const newEntryId = await databaseService.createTradeEntry(targetJournalId);
-    const newEntry = (await databaseService.getTradeEntries(targetJournalId)).find(e => e.id === newEntryId);
-
-    if (newEntry) {
-        setAppState(prev => ({
-            ...prev,
-            journals: prev.journals.map(j =>
-                j.id === targetJournalId ? { ...j, entries: [newEntry, ...j.entries] } : j
-            ),
-        }));
-    }
+  // === TRADE ENTRIES ===
+  const createTradeEntry = useCallback(async () => {
+    if (!activeJournal) return null;
+    const newEntryId = await databaseService.createTradeEntry(activeJournal.id);
+    const entries = await databaseService.getTradeEntries(activeJournal.id); // Recargar para obtener la nueva entrada completa
+    setAppState(prev => ({ ...prev, journals: prev.journals.map(j => j.id === activeJournal.id ? { ...j, entries } : j) }));
     return newEntryId;
   }, [activeJournal]);
 
-  const updateTradeEntry = useCallback(async (entryId: string, updates: Partial<TradeEntry>, journalId?: string) => {
-    const targetJournalId = journalId || activeJournal?.id;
-    if (!targetJournalId) return;
-
+  const updateTradeEntry = useCallback(async (entryId: string, updates: Partial<TradeEntry>) => {
+    if (!activeJournal) return;
     await databaseService.updateTradeEntry(entryId, updates);
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(j =>
-        j.id === targetJournalId
-          ? { ...j, entries: j.entries.map(e => e.id === entryId ? { ...e, ...updates } : e) }
-          : j
-      ),
-    }));
+    setAppState(prev => ({ ...prev, journals: prev.journals.map(j => j.id === activeJournal.id ? { ...j, entries: j.entries.map(e => e.id === entryId ? { ...e, ...updates } : e) } : j) }));
   }, [activeJournal]);
 
-  const deleteTradeEntry = useCallback(async (entryId: string, journalId?: string) => {
-    const targetJournalId = journalId || activeJournal?.id;
-    if (!targetJournalId) return;
-
+  const deleteTradeEntry = useCallback(async (entryId: string) => {
+    if (!activeJournal) return;
     await databaseService.deleteTradeEntry(entryId);
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(j =>
-        j.id === targetJournalId ? { ...j, entries: j.entries.filter(e => e.id !== entryId) } : j
-      ),
-    }));
+    setAppState(prev => ({ ...prev, journals: prev.journals.map(j => j.id === activeJournal.id ? { ...j, entries: j.entries.filter(e => e.id !== entryId) } : j) }));
   }, [activeJournal]);
 
-  // ... (El resto de funciones como gestión de columnas, imágenes, etc., seguirían un patrón similar)
-  // ... (Por brevedad, se omiten pero se necesitaría adaptarlas también)
-    const updateTradingPlan = useCallback(async (plan: Partial<TradingPlan>) => {
+  // === IMAGES ===
+  const addImageToEntry = useCallback(async (entryId: string, image: TradeImage, imageType: string) => {
+      if(!activeJournal) return;
+      await databaseService.addTradeImage(entryId, image, imageType);
+      const entries = await databaseService.getTradeEntries(activeJournal.id);
+      setAppState(prev => ({...prev, journals: prev.journals.map(j => j.id === activeJournal.id ? {...j, entries} : j)}));
+  }, [activeJournal]);
+
+  const removeImageFromEntry = useCallback(async (imageId: string) => {
+    if(!activeJournal) return;
+    await databaseService.removeTradeImage(imageId);
+    const entries = await databaseService.getTradeEntries(activeJournal.id);
+    setAppState(prev => ({...prev, journals: prev.journals.map(j => j.id === activeJournal.id ? {...j, entries} : j)}));
+  }, [activeJournal]);
+
+  // === COLUMNS ===
+  const addCustomColumn = useCallback(async (column: Omit<ColumnDefinition, 'id' | 'order'>) => {
+      if(!activeJournal) return;
+      await databaseService.addCustomColumn(activeJournal.id, column);
+      await reloadJournals();
+  }, [activeJournal, reloadJournals]);
+
+  const updateColumn = useCallback(async (columnId: string, updates: Partial<ColumnDefinition>) => {
+      if(!activeJournal) return;
+      await databaseService.updateColumn(columnId, updates);
+      await reloadJournals();
+  }, [activeJournal, reloadJournals]);
+
+  const removeColumn = useCallback(async (columnId: string) => {
+      if(!activeJournal) return;
+      await databaseService.removeColumn(columnId);
+      await reloadJournals();
+  }, [activeJournal, reloadJournals]);
+
+  const toggleColumn = useCallback(async (columnId: string) => {
+      if(!activeJournal) return;
+      const column = activeJournal.customColumns.find(c => c.id === columnId);
+      if(column) {
+          await databaseService.updateColumn(columnId, { visible: !column.visible });
+          await reloadJournals();
+      }
+  }, [activeJournal, reloadJournals]);
+
+  // === TRADING PLAN ===
+  const updateTradingPlan = useCallback(async (plan: Partial<TradingPlan>) => {
     await databaseService.updateTradingPlan(plan);
-    setAppState(prev => ({
-      ...prev,
-      tradingPlan: { ...prev.tradingPlan, ...plan, lastUpdated: new Date().toISOString() },
-    }));
+    setAppState(prev => ({ ...prev, tradingPlan: { ...prev.tradingPlan, ...plan, lastUpdated: new Date().toISOString() } }));
   }, []);
+
+  // Dummy functions for plan points to satisfy component props.
+  // This logic needs to be migrated to use the `checklist` inside `tradingPlan`.
+  const onAddPlanPoint = () => console.warn("onAddPlanPoint not implemented");
+  const onUpdatePlanPoint = () => console.warn("onUpdatePlanPoint not implemented");
+  const onDeletePlanPoint = () => console.warn("onDeletePlanPoint not implemented");
 
 
   return {
     appState,
     activeJournal,
     loading,
-    // Se exportan las funciones adaptadas
     createJournal,
     updateJournalName,
     deleteJournal,
@@ -189,7 +192,15 @@ export function useTradingJournalState() {
     createTradeEntry,
     updateTradeEntry,
     deleteTradeEntry,
+    addImageToEntry,
+    removeImageFromEntry,
+    addCustomColumn,
+    updateColumn,
+    removeColumn,
+    toggleColumn,
     updateTradingPlan,
-    // ... exportar el resto de funciones adaptadas
+    onAddPlanPoint,
+    onUpdatePlanPoint,
+    onDeletePlanPoint,
   };
 }

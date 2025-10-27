@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTradingJournalState } from '../hooks/useTradingJournalState';
 import { JournalTabs } from './JournalTabs';
@@ -23,6 +23,7 @@ import {
   Plane,
   RefreshCw
 } from 'lucide-react';
+import { ColumnDefinition } from '../types/trading';
 
 type ActiveView = 'journals' | 'plan' | 'flightPlan' | 'statistics' | 'backtesting' | 'mt5';
 
@@ -35,7 +36,6 @@ export default function TradingJournal({ user }: TradingJournalProps) {
   const [activeView, setActiveView] = useState<ActiveView>('journals');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // El nuevo hook que maneja el estado desde la base de datos
   const {
     appState,
     activeJournal,
@@ -47,17 +47,18 @@ export default function TradingJournal({ user }: TradingJournalProps) {
     createTradeEntry,
     updateTradeEntry,
     deleteTradeEntry,
+    addImageToEntry,
+    removeImageFromEntry,
+    addCustomColumn,
+    updateColumn,
+    removeColumn,
+    toggleColumn,
     updateTradingPlan,
+    onAddPlanPoint,
+    onUpdatePlanPoint,
+    onDeletePlanPoint
   } = useTradingJournalState();
 
-  // La lógica de initialBalances y planPoints ahora debe ser manejada
-  // dentro de useTradingJournalState y venir de la base de datos.
-  // Por ahora, estos son placeholders.
-  const [initialBalances, setInitialBalances] = useState<{ [key: string]: number }>({});
-  const planPoints = appState.tradingPlan?.checklist?.map(item => item.text) || [];
-
-
-  // Manejador de logout
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
@@ -102,13 +103,7 @@ export default function TradingJournal({ user }: TradingJournalProps) {
   }
 
   const renderActiveView = () => {
-    // ...el switch/case para renderActiveView se mantiene similar
-    // pero usando las nuevas funciones y el estado.
-    // Por brevedad, nos enfocamos en que el contenedor principal
-    // y la lógica de carga ya están correctos.
-    // El contenido interno de `renderActiveView` necesitaría ser adaptado
-    // para usar las nuevas funciones asíncronas, pero la estructura general es la misma.
-        switch (activeView) {
+    switch (activeView) {
       case 'journals':
         return (
           <div className="space-y-6">
@@ -125,9 +120,14 @@ export default function TradingJournal({ user }: TradingJournalProps) {
              <TradingTableWithFilters
                 entries={activeJournal.entries}
                 columns={activeJournal.customColumns || []}
-                onAddEntry={() => createTradeEntry()}
+                onAddEntry={createTradeEntry}
                 onUpdateEntry={updateTradeEntry}
                 onDeleteEntry={deleteTradeEntry}
+                onAddImage={addImageToEntry}
+                onRemoveImage={(imageId) => removeImageFromEntry(imageId)}
+                onColumnsChange={(cols: ColumnDefinition[]) => { /* Esta lógica necesita ser reimplementada si es necesaria */ }}
+                onToggleColumn={toggleColumn}
+                onReorderColumns={(colId: string, dir: 'up' | 'down') => { /* Esta lógica necesita ser reimplementada */ }}
               />
             <BalanceChart
                 entries={activeJournal.entries}
@@ -143,11 +143,13 @@ export default function TradingJournal({ user }: TradingJournalProps) {
               tradingPlan={appState.tradingPlan}
               onToggleItem={(itemId) => { /* adaptar */ }}
               onResetChecklist={() => { /* adaptar */ }}
-              planPoints={planPoints}
+              planPoints={appState.tradingPlan?.checklist?.map(item => item.text) || []}
+              onAddPlanPoint={onAddPlanPoint}
+              onUpdatePlanPoint={onUpdatePlanPoint}
+              onDeletePlanPoint={onDeletePlanPoint}
             />
           </div>
         );
-      // ... otros casos ...
       default:
         return null;
     }
