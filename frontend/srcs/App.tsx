@@ -6,6 +6,10 @@ import EducatorDashboard from './components/EducatorDashboard';
 function App() {
   const { user, loading: authLoading } = useAuth();
 
+  // El tipo de usuario todavía se puede manejar aquí si es necesario,
+  // pero la lógica principal de la sesión la maneja useAuth.
+  // Por ahora, lo simplificamos a si el usuario existe o no.
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">

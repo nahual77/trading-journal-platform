@@ -1,752 +1,206 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
-import { useLocalStorage } from './useLocalStorage';
-import { useDiaryColumns } from './useDiaryColumns';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { databaseService } from '../services/databaseService';
+import { useAuth } from './useAuth';
 import {
   AppState,
   TradingJournal,
   TradeEntry,
   TradingPlan,
-  DEFAULT_COLUMNS,
-  DEFAULT_TRADING_PLAN,
   ColumnDefinition,
-  TradeImage
+  TradeImage,
+  DEFAULT_TRADING_PLAN,
+  DEFAULT_COLUMNS,
 } from '../types/trading';
 
-// Estado inicial para usuarios nuevos (solo un diario)
-const createNewUserState = (): AppState => {
-  const journalId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-
-  return {
-    journals: [
-      {
-        id: journalId,
-        name: 'Mi Diario de Trading',
-        entries: [],
-        customColumns: DEFAULT_COLUMNS,
-        mt5Config: {
-          broker: 'Deriv (SVG) LLC',
-          accountNumber: journalId.substr(0, 8),
-          serverName: 'DerivSVG-Server-02',
-          password: '',
-          balance: 1000.00,
-          equity: 1000.00,
-          margin: 0.00,
-          freeMargin: 1000.00,
-          connected: false,
-        }
-      }
-    ],
-    activeJournalId: journalId,
-    tradingPlan: DEFAULT_TRADING_PLAN,
-  };
-};
-
-// Estado inicial de la aplicación (para usuarios existentes)
-const initialAppState: AppState = {
-  journals: [
-    {
-      id: '1',
-      name: 'Diario Principal',
-      entries: [],
-      customColumns: DEFAULT_COLUMNS,
-      mt5Config: {
-        broker: 'Deriv (SVG) LLC',
-        accountNumber: '80340837',
-        serverName: 'DerivSVG-Server-02',
-        password: '',
-        balance: 1000.00,
-        equity: 1000.00,
-        margin: 0.00,
-        freeMargin: 1000.00,
-        connected: false,
-      }
-    },
-    {
-      id: '2',
-      name: 'Diario Swing',
-      entries: [],
-      customColumns: DEFAULT_COLUMNS,
-      mt5Config: {
-        broker: 'Deriv (SVG) LLC',
-        accountNumber: '80340838',
-        serverName: 'DerivSVG-Server-02',
-        password: '',
-        balance: 5000.00,
-        equity: 5000.00,
-        margin: 0.00,
-        freeMargin: 5000.00,
-        connected: false,
-      }
-    }
-  ],
-  activeJournalId: '1',
+const createInitialState = (): AppState => ({
+  journals: [],
+  activeJournalId: null,
   tradingPlan: DEFAULT_TRADING_PLAN,
-};
+});
 
 export function useTradingJournalState() {
-  // Detectar si es un usuario nuevo (sin datos guardados)
-  const [appState, setAppState] = useLocalStorage<AppState>('nagual-trader-journal-state', createNewUserState());
+  const { user } = useAuth();
+  const [appState, setAppState] = useState<AppState>(createInitialState());
+  const [loading, setLoading] = useState(true);
 
-  // Crear un estado válido siempre
-  const validAppState = useMemo((): AppState => {
-    if (appState && appState.journals && appState.journals.length > 0) {
-      return appState;
-    }
-    return createNewUserState();
-  }, [appState]);
-
-  // Debug: ver qué está pasando - SOLO cuando cambie validAppState
   useEffect(() => {
-    console.log('useTradingJournalState Debug:', {
-      appState,
-      validAppState,
-      hasJournals: validAppState.journals?.length,
-      activeJournalId: validAppState.activeJournalId
-    });
-  }, [validAppState, appState]);
+    const loadData = async () => {
+      if (user) {
+        setLoading(true);
+        try {
+          const [journals, tradingPlan, prefs] = await Promise.all([
+            databaseService.getJournals(),
+            databaseService.getTradingPlan(),
+            databaseService.getUserPreferences(),
+          ]);
 
-  // Obtener journal activo - MEMOIZADO
+          const activeId = prefs.activeJournalId || (journals.length > 0 ? journals[0].id : null);
+
+          if (activeId) {
+            const activeJournal = journals.find(j => j.id === activeId);
+            if (activeJournal && activeJournal.entries.length === 0) {
+              activeJournal.entries = await databaseService.getTradeEntries(activeId);
+            }
+          }
+
+          setAppState({
+            journals,
+            tradingPlan,
+            activeJournalId: activeId,
+          });
+        } catch (error) {
+          console.error('Error loading user data:', error);
+          setAppState(createInitialState());
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setAppState(createInitialState());
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [user]);
+
   const activeJournal = useMemo(() => {
-    return validAppState.journals.find(j => j.id === validAppState.activeJournalId) || validAppState.journals[0];
-  }, [validAppState.journals, validAppState.activeJournalId]);
-
-  // Función para generar IDs únicos
-  const generateId = () => Date.now().toString() + Math.random().toString(36).substr(2, 9);
-
-  // Función para actualizar columnas existentes con claves de traducción
-  const updateColumnsWithTranslationKeys = useCallback(() => {
-    const columnTranslationMap: { [key: string]: string } = {
-      'Fecha': 'date',
-      'Hora': 'time',
-      'Activo': 'asset',
-      'Razón de entrada': 'entryReason',
-      'Antes': 'before',
-      'Durante': 'during',
-      'Ratio': 'ratio',
-      'Beneficio': 'profit',
-      'Plan Seguido': 'planFollowed',
-      'Se cumplió el plan?': 'planFollowed',
-      'Lección': 'lesson',
-      'Emociones Antes': 'emotionsBefore',
-      'Emociones (antes)': 'emotionsBefore',
-      'Emociones Durante': 'emotionsDuring',
-      'Emociones (durante)': 'emotionsDuring',
-      'Emociones Después': 'emotionsAfter',
-      'Emociones (después)': 'emotionsAfter',
-      'Entradas no tomadas': 'entriesNotTaken',
-      'Que sucedió con estas entradas': 'whatHappenedWithEntries',
-      'Tipo Operación': 'operationType',
-      'Tipo de Operación': 'operationType',
-    };
-
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal => ({
-        ...journal,
-        customColumns: journal.customColumns.map(column => ({
-          ...column,
-          name: columnTranslationMap[column.name] || column.name
-        }))
-      }))
-    }));
-  }, [setAppState]);
-
-  // Si el estado no era válido, actualizarlo
-  React.useEffect(() => {
-    if (appState !== validAppState) {
-      setAppState(validAppState);
-    }
-  }, [appState, validAppState, setAppState]);
-
-  // Ejecutar actualización de columnas una sola vez al cargar
-  React.useEffect(() => {
-    const hasUpdatedColumns = localStorage.getItem('columns-translation-updated');
-    if (!hasUpdatedColumns) {
-      updateColumnsWithTranslationKeys();
-      localStorage.setItem('columns-translation-updated', 'true');
-    }
-  }, [updateColumnsWithTranslationKeys]);
-
-  // Función para limpiar y resetear las columnas (temporal)
-  const resetColumns = useCallback(() => {
-    // Limpiar el flag de actualización
-    localStorage.removeItem('columns-translation-updated');
-
-    // Resetear las columnas a sus valores originales
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal => ({
-        ...journal,
-        customColumns: journal.customColumns.map(column => ({
-          ...column,
-          name: column.name.replace(/^table\./, '').replace(/^TABLE\./, '')
-        }))
-      }))
-    }));
-  }, [setAppState]);
-
-  // Ejecutar reset de columnas una vez - SOLO UNA VEZ
-  React.useEffect(() => {
-    // Solo ejecutar si no se ha ejecutado antes
-    if (!localStorage.getItem('columns-reset-executed')) {
-      resetColumns();
-      localStorage.setItem('columns-reset-executed', 'true');
-    }
-  }, []); // Array vacío para ejecutar solo una vez
-
-  // === GESTIÓN DE JOURNALS ===
-
-  const createJournal = useCallback((name: string) => {
-    const newJournal: TradingJournal = {
-      id: generateId(),
-      name,
-      entries: [],
-      customColumns: [...DEFAULT_COLUMNS],
-      mt5Config: {
-        broker: 'Deriv (SVG) LLC',
-        accountNumber: generateId().substr(0, 8),
-        serverName: 'DerivSVG-Server-02',
-        password: '',
-        balance: 1000.00,
-        equity: 1000.00,
-        margin: 0.00,
-        freeMargin: 1000.00,
-        connected: false,
-      }
-    };
-
-    setAppState(prev => ({
-      ...prev,
-      journals: [...prev.journals, newJournal],
-      activeJournalId: newJournal.id,
-    }));
-
-    return newJournal.id;
-  }, [setAppState]);
-
-  const updateJournalName = useCallback((journalId: string, name: string) => {
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal =>
-        journal.id === journalId ? { ...journal, name } : journal
-      ),
-    }));
-  }, [setAppState]);
-
-  const deleteJournal = useCallback((journalId: string) => {
-    console.log('🗑️ deleteJournal llamado con ID:', journalId);
-    console.log('📊 Journals actuales:', appState.journals.map(j => ({ id: j.id, name: j.name })));
-
-    setAppState(prev => {
-      console.log('🔄 Estado anterior:', prev.journals.map(j => ({ id: j.id, name: j.name })));
-
-      const remainingJournals = prev.journals.filter(j => j.id !== journalId);
-      console.log('📋 Journals restantes:', remainingJournals.map(j => ({ id: j.id, name: j.name })));
-
-      if (remainingJournals.length === 0) {
-        // Si no hay journals, crear uno por defecto
-        const defaultJournal = { ...initialAppState.journals[0], id: generateId() };
-        console.log('➕ Creando journal por defecto:', defaultJournal);
-        return {
-          ...prev,
-          journals: [defaultJournal],
-          activeJournalId: defaultJournal.id,
-        };
-      }
-
-      const newActiveJournalId = prev.activeJournalId === journalId
-        ? remainingJournals[0].id
-        : prev.activeJournalId;
-
-      console.log('✅ Nuevo activeJournalId:', newActiveJournalId);
-
-      return {
-        ...prev,
-        journals: remainingJournals,
-        activeJournalId: newActiveJournalId,
-      };
-    });
-  }, [setAppState]);
-
-  const setActiveJournal = useCallback((journalId: string) => {
-    setAppState(prev => ({
-      ...prev,
-      activeJournalId: journalId,
-    }));
-  }, [setAppState]);
-
-  // === GESTIÓN DE ENTRADAS ===
-
-  const createTradeEntry = useCallback((journalId?: string) => {
-    const today = new Date();
-
-    const newEntry: TradeEntry = {
-      id: generateId(),
-      fecha: today.toISOString().split('T')[0],
-      hora: today.toTimeString().split(' ')[0].substring(0, 5),
-      activo: '',
-      razonEntrada: '',
-      antes: [], // Array de imágenes
-      durante: [], // Array de imágenes
-      ratio: '',
-      beneficio: '',
-      seCumplioElPlan: false,
-      leccion: '',
-      emocionesAntes: '',
-      emocionesDurante: '',
-      emocionesDespues: '',
-      entradasNoTomadas: [], // Array de imágenes
-      queSucedioConEntradasNoTomadas: [], // Array de imágenes
-      screenshots: [],
-      tipoOperacion: '',
-      customFields: {},
-    };
-
-    setAppState(prev => {
-      const targetJournalId = journalId || prev.activeJournalId;
-      return {
-        ...prev,
-        journals: prev.journals.map(journal =>
-          journal.id === targetJournalId
-            ? { ...journal, entries: [newEntry, ...journal.entries] }
-            : journal
-        ),
-      };
-    });
-
-    return newEntry.id;
-  }, [setAppState]);
-
-  const updateTradeEntry = useCallback((entryId: string, updates: Partial<TradeEntry>, journalId?: string) => {
-    const targetJournalId = journalId || validAppState.activeJournalId;
-
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal =>
-        journal.id === targetJournalId
-          ? {
-            ...journal,
-            entries: journal.entries.map(entry =>
-              entry.id === entryId ? { ...entry, ...updates } : entry
-            ),
-          }
-          : journal
-      ),
-    }));
-  }, [validAppState.activeJournalId, setAppState]);
-
-  const deleteTradeEntry = useCallback((entryId: string, journalId?: string) => {
-    const targetJournalId = journalId || validAppState.activeJournalId;
-
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal =>
-        journal.id === targetJournalId
-          ? { ...journal, entries: journal.entries.filter(entry => entry.id !== entryId) }
-          : journal
-      ),
-    }));
-  }, [validAppState.activeJournalId, setAppState]);
-
-  // === GESTIÓN DE COLUMNAS ===
-
-  const addCustomColumn = useCallback((column: Omit<ColumnDefinition, 'id' | 'order'>, journalId?: string) => {
-    const targetJournalId = journalId || validAppState.activeJournalId;
-
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal =>
-        journal.id === targetJournalId
-          ? {
-            ...journal,
-            customColumns: [
-              ...journal.customColumns,
-              {
-                ...column,
-                id: generateId(),
-                order: journal.customColumns.length + 1,
-              }
-            ],
-          }
-          : journal
-      ),
-    }));
-  }, [validAppState.activeJournalId, setAppState]);
-
-  const updateColumn = useCallback((columnId: string, updates: Partial<ColumnDefinition>, journalId?: string) => {
-    const targetJournalId = journalId || validAppState.activeJournalId;
-
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal =>
-        journal.id === targetJournalId
-          ? {
-            ...journal,
-            customColumns: journal.customColumns.map(column =>
-              column.id === columnId ? { ...column, ...updates } : column
-            ),
-          }
-          : journal
-      ),
-    }));
-  }, [validAppState.activeJournalId, setAppState]);
-
-  const removeColumn = useCallback((columnId: string, journalId?: string) => {
-    const targetJournalId = journalId || validAppState.activeJournalId;
-
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal =>
-        journal.id === targetJournalId
-          ? { ...journal, customColumns: journal.customColumns.filter(col => col.id !== columnId) }
-          : journal
-      ),
-    }));
-  }, [validAppState.activeJournalId, setAppState]);
-
-  const toggleColumn = useCallback((columnId: string, journalId?: string) => {
-    const targetJournalId = journalId || validAppState.activeJournalId;
-    const journal = validAppState.journals.find(j => j.id === targetJournalId);
-    const column = journal?.customColumns.find(col => col.id === columnId);
-
-    if (column) {
-      updateColumn(columnId, { visible: !column.visible }, targetJournalId);
-    }
-  }, [validAppState.activeJournalId, validAppState.journals, updateColumn]);
-
-  // === GESTIÓN DE IMÁGENES ===
-
-  const addImageToEntry = useCallback((entryId: string, image: TradeImage, journalId?: string) => {
-    const targetJournalId = journalId || validAppState.activeJournalId;
-
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal =>
-        journal.id === targetJournalId
-          ? {
-            ...journal,
-            entries: journal.entries.map(entry =>
-              entry.id === entryId
-                ? { ...entry, screenshots: [...entry.screenshots, image] }
-                : entry
-            ),
-          }
-          : journal
-      ),
-    }));
-  }, [validAppState.activeJournalId, setAppState]);
-
-  const removeImageFromEntry = useCallback((entryId: string, imageId: string, journalId?: string) => {
-    const targetJournalId = journalId || validAppState.activeJournalId;
-
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal =>
-        journal.id === targetJournalId
-          ? {
-            ...journal,
-            entries: journal.entries.map(entry =>
-              entry.id === entryId
-                ? { ...entry, screenshots: entry.screenshots.filter(img => img.id !== imageId) }
-                : entry
-            ),
-          }
-          : journal
-      ),
-    }));
-  }, [validAppState.activeJournalId, setAppState]);
-
-  // === GESTIÓN DEL PLAN DE TRADING ===
-
-  const updateTradingPlan = useCallback((plan: Partial<TradingPlan>) => {
-    setAppState(prev => ({
-      ...prev,
-      tradingPlan: { ...prev.tradingPlan, ...plan, lastUpdated: new Date().toISOString() },
-    }));
-  }, [setAppState]);
-
-  const toggleChecklistItem = useCallback((itemId: string) => {
-    setAppState(prev => ({
-      ...prev,
-      tradingPlan: {
-        ...prev.tradingPlan,
-        checklist: prev.tradingPlan.checklist.map(item =>
-          item.id === itemId ? { ...item, completed: !item.completed } : item
-        ),
-        lastUpdated: new Date().toISOString(),
-      },
-    }));
-  }, [setAppState]);
-
-  const resetChecklist = useCallback(() => {
-    setAppState(prev => ({
-      ...prev,
-      tradingPlan: {
-        ...prev.tradingPlan,
-        checklist: prev.tradingPlan.checklist.map(item => ({ ...item, completed: false })),
-        lastUpdated: new Date().toISOString(),
-      },
-    }));
-  }, [setAppState]);
-
-  // === CONFIGURACIÓN MT5 ===
-
-  const updateMT5Config = useCallback((config: Partial<typeof activeJournal.mt5Config>, journalId?: string) => {
-    const targetJournalId = journalId || validAppState.activeJournalId;
-
-    setAppState(prev => ({
-      ...prev,
-      journals: prev.journals.map(journal =>
-        journal.id === targetJournalId
-          ? { ...journal, mt5Config: { ...journal.mt5Config, ...config } }
-          : journal
-      ),
-    }));
-  }, [validAppState.activeJournalId, setAppState]);
-
-  // === UTILIDADES ===
-
-  const exportData = useCallback(() => {
-    const dataStr = JSON.stringify(validAppState, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `nagual-trader-journal-backup-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }, [validAppState]);
-
-  const importData = useCallback((data: AppState) => {
-    setAppState(data);
-  }, [setAppState]);
-
-  // === NUEVAS FUNCIONES DE EXPORTACIÓN CSV ===
-
-  // Función para exportar CSV con Drive URLs - CORREGIDA
-  const exportToCSV = useCallback((entries: TradeEntry[], journalName: string, driveBaseUrl?: string) => {
-    if (entries.length === 0) {
-      alert('No hay operaciones para exportar en este diario');
-      return;
-    }
-
-    // Headers del CSV - EXACTOS
-    const headers = [
-      'fecha',
-      'hora',
-      'razon_entrada',
-      'ratio',
-      'beneficio',
-      'se_cumplio_plan',
-      'leccion',
-      'emociones_antes',
-      'emociones_durante',
-      'emociones_despues',
-      'url_imagen_antes',
-      'url_imagen_durante',
-      'url_entradas_no_tomadas',
-      'url_que_sucedio_entradas',
-      'url_screenshots'
-    ];
-
-    // Función para limpiar y escapar campos correctamente
-    const cleanField = (value: any): string => {
-      if (!value && value !== 0) return '';
-
-      let cleaned = String(value);
-
-      // Reemplazar saltos de línea con espacios
-      cleaned = cleaned.replace(/[\r\n]+/g, ' ');
-
-      // Reemplazar múltiples espacios con uno solo
-      cleaned = cleaned.replace(/\s+/g, ' ');
-
-      // Trim espacios al inicio y final
-      cleaned = cleaned.trim();
-
-      // Si contiene comas, comillas, o caracteres problemáticos, envolver en comillas
-      if (cleaned.includes(',') || cleaned.includes('"') || cleaned.includes('\n') || cleaned.includes('\r')) {
-        // Escapar comillas dobles duplicándolas
-        cleaned = cleaned.replace(/"/g, '""');
-        // Envolver en comillas
-        cleaned = `"${cleaned}"`;
-      }
-
-      return cleaned;
-    };
-
-    // Generar filas CSV
-    const csvRows = [
-      // Header row
-      headers.join(','),
-
-      // Data rows
-      ...entries.map((entry, index) => {
-        // Generar URLs de imágenes si hay ruta base
-        const generateImageUrl = (prefix: string, imageIndex: number = 1) => {
-          if (!driveBaseUrl) return '';
-          return `${driveBaseUrl}/${prefix}_${String(index + 1).padStart(3, '0')}_${imageIndex}.png`;
-        };
-
-        // Crear fila con campos limpios - usando nombres correctos de la estructura
-        const row = [
-          cleanField(entry.fecha),
-          cleanField(entry.hora),
-          cleanField(entry.razonEntrada), // Nombre correcto del campo
-          cleanField(entry.ratio),
-          cleanField(entry.beneficio),
-          cleanField(entry.seCumplioElPlan ? 'SI' : 'NO'), // Boolean convertido correctamente
-          cleanField(entry.leccion),
-          cleanField(entry.emocionesAntes), // Nombre correcto del campo
-          cleanField(entry.emocionesDurante), // Nombre correcto del campo
-          cleanField(entry.emocionesDespues), // Nombre correcto del campo
-          cleanField(generateImageUrl('antes')),
-          cleanField(generateImageUrl('durante')),
-          cleanField(generateImageUrl('entradas_no_tomadas')),
-          cleanField(generateImageUrl('que_sucedio_entradas')),
-          cleanField(generateImageUrl('screenshots'))
-        ];
-
-        return row.join(',');
-      })
-    ];
-
-    // Unir todas las filas
-    const csvContent = csvRows.join('\n');
-
-    // Crear Blob con BOM para Excel compatibility
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], {
-      type: 'text/csv;charset=utf-8;'
-    });
-
-    // Descargar archivo
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${journalName.replace(/\s+/g, '_')}_operaciones.csv`);
-    link.style.visibility = 'hidden';
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    URL.revokeObjectURL(url);
+    if (!appState.activeJournalId) return null;
+    return appState.journals.find(j => j.id === appState.activeJournalId) || null;
+  }, [appState.journals, appState.activeJournalId]);
+
+  // === HELPERS ===
+  const reloadJournals = useCallback(async () => {
+      const journals = await databaseService.getJournals();
+      setAppState(prev => ({ ...prev, journals }));
   }, []);
 
-  // Función para manejar exportación con prompt
-  const handleExportJournalCSV = useCallback((journalId?: string) => {
-    const journal = journalId ?
-      validAppState.journals.find(j => j.id === journalId) :
-      validAppState.journals.find(j => j.id === validAppState.activeJournalId);
 
-    if (!journal) {
-      alert('No se encontró el diario a exportar');
-      return;
+  // === JOURNALS ===
+  const createJournal = useCallback(async (name: string) => {
+    const newJournalId = await databaseService.createJournal(name);
+    await reloadJournals(); // Recarga para obtener el nuevo journal con sus columnas por defecto
+    await setActiveJournal(newJournalId);
+  }, [reloadJournals]);
+
+  const updateJournalName = useCallback(async (journalId: string, name: string) => {
+    await databaseService.updateJournalName(journalId, name);
+    setAppState(prev => ({ ...prev, journals: prev.journals.map(j => j.id === journalId ? { ...j, name } : j) }));
+  }, []);
+
+  const deleteJournal = useCallback(async (journalId: string) => {
+    await databaseService.deleteJournal(journalId);
+    const remaining = appState.journals.filter(j => j.id !== journalId);
+    const newActiveId = (appState.activeJournalId === journalId) ? (remaining[0]?.id || null) : appState.activeJournalId;
+    setAppState(prev => ({ ...prev, journals: remaining, activeJournalId: newActiveId }));
+  }, [appState]);
+
+  const setActiveJournal = useCallback(async (journalId: string) => {
+    await databaseService.updateUserPreferences({ activeJournalId: journalId });
+    const journal = appState.journals.find(j => j.id === journalId);
+    if (journal && journal.entries.length === 0) {
+      const entries = await databaseService.getTradeEntries(journalId);
+      setAppState(prev => ({ ...prev, journals: prev.journals.map(j => j.id === journalId ? { ...j, entries } : j), activeJournalId: journalId }));
+    } else {
+      setAppState(prev => ({ ...prev, activeJournalId: journalId }));
     }
+  }, [appState.journals]);
 
-    // Preguntar por la ruta de Drive
-    const driveUrl = prompt(
-      'Ingresa la ruta base de tu carpeta de Google Drive para las imágenes:\n\n' +
-      'Ejemplo: https://drive.google.com/file/d/TU-CARPETA-ID\n\n' +
-      'Las imágenes se nombrarán como:\n' +
-      '- antes_001_1.png, antes_001_2.png\n' +
-      '- durante_002_1.png, etc.\n\n' +
-      'Deja vacío si no quieres incluir rutas de Drive:'
-    );
+  // === TRADE ENTRIES ===
+  const createTradeEntry = useCallback(async () => {
+    if (!activeJournal) return null;
+    const newEntryId = await databaseService.createTradeEntry(activeJournal.id);
+    const entries = await databaseService.getTradeEntries(activeJournal.id); // Recargar para obtener la nueva entrada completa
+    setAppState(prev => ({ ...prev, journals: prev.journals.map(j => j.id === activeJournal.id ? { ...j, entries } : j) }));
+    return newEntryId;
+  }, [activeJournal]);
 
-    // Si cancela, no exportar
-    if (driveUrl === null) return;
+  const updateTradeEntry = useCallback(async (entryId: string, updates: Partial<TradeEntry>) => {
+    if (!activeJournal) return;
+    await databaseService.updateTradeEntry(entryId, updates);
+    setAppState(prev => ({ ...prev, journals: prev.journals.map(j => j.id === activeJournal.id ? { ...j, entries: j.entries.map(e => e.id === entryId ? { ...e, ...updates } : e) } : j) }));
+  }, [activeJournal]);
 
-    // Limpiar la URL si tiene contenido
-    const cleanDriveUrl = driveUrl?.trim() || undefined;
+  const deleteTradeEntry = useCallback(async (entryId: string) => {
+    if (!activeJournal) return;
+    await databaseService.deleteTradeEntry(entryId);
+    setAppState(prev => ({ ...prev, journals: prev.journals.map(j => j.id === activeJournal.id ? { ...j, entries: j.entries.filter(e => e.id !== entryId) } : j) }));
+  }, [activeJournal]);
 
-    // Exportar CSV
-    exportToCSV(journal.entries, journal.name, cleanDriveUrl);
-  }, [validAppState.journals, validAppState.activeJournalId, exportToCSV]);
+  // === IMAGES ===
+  const addImageToEntry = useCallback(async (entryId: string, image: TradeImage, imageType: string) => {
+      if(!activeJournal) return;
+      await databaseService.addTradeImage(entryId, image, imageType);
+      const entries = await databaseService.getTradeEntries(activeJournal.id);
+      setAppState(prev => ({...prev, journals: prev.journals.map(j => j.id === activeJournal.id ? {...j, entries} : j)}));
+  }, [activeJournal]);
 
-  // Función para exportar todos los diarios
-  const handleExportAllJournalsCSV = useCallback(() => {
-    const allEntries: TradeEntry[] = [];
-    const journalNames: string[] = [];
+  const removeImageFromEntry = useCallback(async (imageId: string) => {
+    if(!activeJournal) return;
+    await databaseService.removeTradeImage(imageId);
+    const entries = await databaseService.getTradeEntries(activeJournal.id);
+    setAppState(prev => ({...prev, journals: prev.journals.map(j => j.id === activeJournal.id ? {...j, entries} : j)}));
+  }, [activeJournal]);
 
-    validAppState.journals.forEach(journal => {
-      if (journal.entries && journal.entries.length > 0) {
-        allEntries.push(...journal.entries);
-        journalNames.push(journal.name);
+  // === COLUMNS ===
+  const addCustomColumn = useCallback(async (column: Omit<ColumnDefinition, 'id' | 'order'>) => {
+      if(!activeJournal) return;
+      await databaseService.addCustomColumn(activeJournal.id, column);
+      await reloadJournals();
+  }, [activeJournal, reloadJournals]);
+
+  const updateColumn = useCallback(async (columnId: string, updates: Partial<ColumnDefinition>) => {
+      if(!activeJournal) return;
+      await databaseService.updateColumn(columnId, updates);
+      await reloadJournals();
+  }, [activeJournal, reloadJournals]);
+
+  const removeColumn = useCallback(async (columnId: string) => {
+      if(!activeJournal) return;
+      await databaseService.removeColumn(columnId);
+      await reloadJournals();
+  }, [activeJournal, reloadJournals]);
+
+  const toggleColumn = useCallback(async (columnId: string) => {
+      if(!activeJournal) return;
+      const column = activeJournal.customColumns.find(c => c.id === columnId);
+      if(column) {
+          await databaseService.updateColumn(columnId, { visible: !column.visible });
+          await reloadJournals();
       }
-    });
+  }, [activeJournal, reloadJournals]);
 
-    if (allEntries.length === 0) {
-      alert('No hay operaciones para exportar en ningún diario');
-      return;
-    }
+  // === TRADING PLAN ===
+  const updateTradingPlan = useCallback(async (plan: Partial<TradingPlan>) => {
+    await databaseService.updateTradingPlan(plan);
+    setAppState(prev => ({ ...prev, tradingPlan: { ...prev.tradingPlan, ...plan, lastUpdated: new Date().toISOString() } }));
+  }, []);
 
-    // Preguntar por la ruta de Drive
-    const driveUrl = prompt(
-      'Ingresa la ruta base de tu carpeta de Google Drive para las imágenes:\n\n' +
-      'Ejemplo: https://drive.google.com/file/d/TU-CARPETA-ID\n\n' +
-      'Las imágenes se nombrarán como:\n' +
-      '- antes_001_1.png, antes_001_2.png\n' +
-      '- durante_002_1.png, etc.\n\n' +
-      'Deja vacío si no quieres incluir rutas de Drive:'
-    );
+  // Dummy functions for plan points to satisfy component props.
+  // This logic needs to be migrated to use the `checklist` inside `tradingPlan`.
+  const onAddPlanPoint = () => console.warn("onAddPlanPoint not implemented");
+  const onUpdatePlanPoint = () => console.warn("onUpdatePlanPoint not implemented");
+  const onDeletePlanPoint = () => console.warn("onDeletePlanPoint not implemented");
 
-    // Si cancela, no exportar
-    if (driveUrl === null) return;
-
-    // Limpiar la URL si tiene contenido
-    const cleanDriveUrl = driveUrl?.trim() || undefined;
-
-    exportToCSV(allEntries, `Todos_los_Diarios_${journalNames.join('_')}`, cleanDriveUrl);
-  }, [validAppState.journals, exportToCSV]);
 
   return {
-    // Estado
-    appState: validAppState,
+    appState,
     activeJournal,
-
-    // Journals
+    loading,
     createJournal,
     updateJournalName,
     deleteJournal,
     setActiveJournal,
-
-    // Entradas
     createTradeEntry,
     updateTradeEntry,
     deleteTradeEntry,
-
-    // Columnas
+    addImageToEntry,
+    removeImageFromEntry,
     addCustomColumn,
     updateColumn,
     removeColumn,
     toggleColumn,
-
-    // Imágenes
-    addImageToEntry,
-    removeImageFromEntry,
-
-    // Plan de trading
     updateTradingPlan,
-    toggleChecklistItem,
-    resetChecklist,
-
-    // MT5
-    updateMT5Config,
-
-    // Utilidades
-    exportData,
-    importData,
-    updateColumnsWithTranslationKeys,
-
-    // Exportación CSV mejorada
-    exportToCSV,
-    handleExportJournalCSV,
-    handleExportAllJournalsCSV,
+    onAddPlanPoint,
+    onUpdatePlanPoint,
+    onDeletePlanPoint,
   };
 }

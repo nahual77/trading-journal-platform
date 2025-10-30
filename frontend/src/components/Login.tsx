@@ -143,113 +143,79 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
   const handleRegister = async (e: React.FormEvent) => {
     console.log('🚀 INICIANDO handleRegister');
     e.preventDefault();
-    console.log('🚀 Formulario enviado, datos:', registerData);
     
     setRegisterLoading(true);
     setRegisterError('');
     setRegisterMessage('');
 
-    // Validaciones básicas
     if (registerData.password !== registerData.confirmPassword) {
-      console.log('❌ Contraseñas no coinciden');
       setRegisterError('Las contraseñas no coinciden');
       setRegisterLoading(false);
       return;
     }
-
     if (registerData.password.length < 6) {
-      console.log('❌ Contraseña muy corta');
       setRegisterError('La contraseña debe tener al menos 6 caracteres');
       setRegisterLoading(false);
       return;
     }
 
-    console.log('✅ Validaciones pasadas, procediendo con Supabase');
-
-    // Verificar si el email ya existe antes de intentar crear
     try {
-      console.log('🔍 Verificando si el email ya existe:', registerData.email);
-      
-      const { data: existingUser, error: checkError } = await supabase.auth.signInWithPassword({
-        email: registerData.email,
-        password: 'dummy_password_to_check_if_exists'
-      });
-
-      console.log('🔍 Resultado de verificación:', { existingUser, checkError });
-
-      // Si hay error de "invalid credentials", significa que el email existe pero la contraseña es incorrecta
-      if (checkError && checkError.message.includes('Invalid login credentials')) {
-        console.log('❌ Email ya existe - bloqueando registro');
-        setRegisterError('Este email ya está registrado. Usa otro email o intenta iniciar sesión.');
-        setRegisterLoading(false);
-        return;
-      }
-
-      console.log('✅ Email disponible, procediendo con registro');
-      
-      const { data, error } = await supabase.auth.signUp({
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: registerData.email,
         password: registerData.password,
         options: {
           data: {
-            name: registerData.name,
+            full_name: registerData.name,
           },
         },
       });
 
-      console.log('📊 Respuesta de Supabase:', { data, error });
-      console.log('📊 data.user:', data.user);
-      console.log('📊 data.session:', data.session);
-
-      if (error) {
-        console.log('❌ Error de Supabase:', error);
-        
-        // Manejar errores específicos de Supabase
-        const errorMessage = error.message.toLowerCase();
-        if (errorMessage.includes('already registered') || 
-            errorMessage.includes('user already registered') ||
-            errorMessage.includes('already been registered') ||
-            errorMessage.includes('already exists') ||
-            errorMessage.includes('duplicate') ||
-            errorMessage.includes('already in use') ||
-            errorMessage.includes('email already') ||
-            errorMessage.includes('user exists') ||
-            errorMessage.includes('email address is already') ||
-            errorMessage.includes('user with this email') ||
-            errorMessage.includes('email is already taken') ||
-            errorMessage.includes('email has already been registered')) {
-          setRegisterError('Este email ya está registrado. Usa otro email o intenta iniciar sesión.');
+      if (signUpError) {
+        if (signUpError.message.includes('User already registered')) {
+            setRegisterError('Este email ya está registrado. Usa otro email o intenta iniciar sesión.');
         } else {
-          setRegisterError(error.message || 'Error al crear la cuenta');
+            setRegisterError(signUpError.message || 'Error al crear la cuenta');
         }
         setRegisterLoading(false);
         return;
       }
 
-      // Usuario creado exitosamente (ya verificamos que no existe)
-      if (data.user && data.user.id) {
-        console.log('✅ Usuario registrado exitosamente:', data.user);
+      if (signUpData.user) {
+        console.log('✅ Usuario registrado en auth:', signUpData.user);
+
+        // **SOLUCIÓN: Crear el registro de preferencias iniciales**
+        const { error: prefsError } = await supabase
+          .from('user_preferences')
+          .insert({
+            user_id: signUpData.user.id,
+            theme: 'dark',
+            language: 'es',
+            initial_balances: {}
+          });
+
+        if (prefsError) {
+            console.error('❌ Error creando preferencias de usuario:', prefsError);
+            // Opcional: podrías querer manejar este error, por ejemplo, eliminando el usuario de auth
+            // para que pueda intentar registrarse de nuevo. Por ahora, solo mostramos un error genérico.
+            setRegisterError('No se pudo configurar la cuenta. Intenta de nuevo.');
+            setRegisterLoading(false);
+            return;
+        }
+
+        console.log('✅ Preferencias de usuario creadas exitosamente.');
+        setRegisterMessage('¡Cuenta creada! Revisa tu email para confirmar y poder iniciar sesión.');
         
-        // Usuario registrado exitosamente
-        setRegisterMessage('¡Cuenta creada exitosamente!');
-        
-        // Cerrar modal después de 8 segundos
         setTimeout(() => {
           setShowRegisterModal(false);
           setRegisterData({ name: '', email: '', password: '', confirmPassword: '' });
           setRegisterMessage('');
         }, 8000);
       } else {
-        // Si no hay error pero tampoco hay usuario válido
-        console.log('❌ No se creó usuario');
-        console.log('❌ data.user es:', data.user);
         setRegisterError('Error al crear la cuenta. Intenta nuevamente.');
-        setRegisterLoading(false);
-        return;
       }
     } catch (error: any) {
-      console.error('Error al registrar:', error);
-      setRegisterError(error.message || 'Error al crear la cuenta');
+      console.error('Error general en registro:', error);
+      setRegisterError(error.message || 'Error inesperado al crear la cuenta.');
     } finally {
       setRegisterLoading(false);
     }
